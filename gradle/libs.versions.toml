@@ -1,0 +1,37 @@
+[versions]
+
+kotlin = "2.1.20"
+compose = "1.7.3"
+agp = "8.9.1"
+androidx-activityCompose = "1.10.1"
+androidx-uiTest = "1.7.8"
+hotReload = "1.0.0-alpha04"
+androidx-lifecycle = "2.9.0-alpha05"
+koin = "4.0.3"
+coil = "3.1.0"
+sketchCompose = "4.0.5"
+viewModel = "2.8.2"
+dateTime = "0.6.2"
+
+[libraries]
+
+androidx-activityCompose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
+androidx-uitest-testManifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-uiTest" }
+androidx-uitest-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidx-uiTest" }
+androidx-lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
+coil = { module = "io.coil-kt.coil3:coil-compose-core", version.ref = "coil" }
+coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
+sketch-compose = {module="io.github.panpf.sketch4:sketch-compose",version.ref = "sketchCompose"}
+sketch-http = {module="io.github.panpf.sketch4:sketch-http",version.ref = "sketchCompose"}
+viewmodel-compose = {module="org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "viewModel"}
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "dateTime" }
+[plugins]
+
+multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+compose = { id = "org.jetbrains.compose", version.ref = "compose" }
+android-application = { id = "com.android.application", version.ref = "agp" }
+hotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "hotReload" }
