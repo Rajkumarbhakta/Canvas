@@ -77,6 +77,7 @@ fun DrawingScreen(viewModel: DrawingViewModel = if (getPlatform() == Platforms.A
             Button(
                 modifier = Modifier.fillMaxWidth(0.6f).align(Alignment.CenterHorizontally),
                 onClick = {
+                    println("Clear Canvas")
                     viewModel.onAction(DrawingAction.OnClearCanvasList)
                 }
             ) {
