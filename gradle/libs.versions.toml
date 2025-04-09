@@ -12,6 +12,7 @@ coil = "3.1.0"
 sketchCompose = "4.0.5"
 viewModel = "2.8.2"
 dateTime = "0.6.2"
+colorPicker = "1.1.2"
 
 [libraries]
 
@@ -28,6 +29,7 @@ sketch-compose = {module="io.github.panpf.sketch4:sketch-compose",version.ref = 
 sketch-http = {module="io.github.panpf.sketch4:sketch-http",version.ref = "sketchCompose"}
 viewmodel-compose = {module="org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "viewModel"}
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "dateTime" }
+colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorPicker" }
 [plugins]
 
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

@@ -68,6 +68,7 @@ kotlin {
             implementation(libs.sketch.http)
             implementation(libs.viewmodel.compose)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.colorpicker.compose)
         }
 
         commonTest.dependencies {
