@@ -82,6 +82,7 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                         }
                     ) {
                         Icon(
+                            modifier = Modifier.size(20.dp),
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = "back"
                         )
