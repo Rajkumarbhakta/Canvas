@@ -1,7 +1,7 @@
 [versions]
 
 kotlin = "2.1.20"
-compose = "1.7.3"
+compose = "1.8.0-beta02"
 agp = "8.9.1"
 androidx-activityCompose = "1.10.1"
 androidx-uiTest = "1.7.8"
@@ -10,13 +10,14 @@ androidx-lifecycle = "2.9.0-alpha05"
 koin = "4.0.3"
 coil = "3.1.0"
 sketchCompose = "4.0.5"
-viewModel = "2.8.2"
+viewModel = "2.8.4"
 dateTime = "0.6.2"
 colorPicker = "1.1.2"
 kotlinx-coroutines = "1.10.1"
-kotlinx-serialization = "1.7.3"
+kotlinx-serialization = "1.8.0"
 material3WindowSizeClass = "1.7.3"
-navigation-compose = "2.8.0-alpha10"
+navigation-compose = "2.8.0-alpha11"
+material-icons-extended = "1.7.3"
 
 [libraries]
 
@@ -26,8 +27,6 @@ androidx-uitest-junit4 = { module = "androidx.compose.ui:ui-test-junit4", versio
 androidx-lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 androidx-navigation-compose = {module="org.jetbrains.androidx.navigation:navigation-compose",version.ref="navigation-compose"}
-koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
-koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 coil = { module = "io.coil-kt.coil3:coil-compose-core", version.ref = "coil" }
 coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
 sketch-compose = {module="io.github.panpf.sketch4:sketch-compose",version.ref = "sketchCompose"}
@@ -41,8 +40,12 @@ kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 material3-window-size = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "material3WindowSizeClass" }
-
-
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+koin-compose-viewmodel = {module="io.insert-koin:koin-compose-viewmodel",version.ref="koin"}
+koin-compose-viewmodel-navigation = {module="io.insert-koin:koin-compose-viewmodel-navigation",version.ref="koin"}
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
+material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "material-icons-extended" }
 
 [plugins]
 

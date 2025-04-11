@@ -18,10 +18,20 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.ColorPickerController
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
@@ -42,17 +53,72 @@ import com.rkbapps.canvas.ui.composables.DrawingCanvas
 import com.rkbapps.canvas.util.Constants
 import com.rkbapps.canvas.util.Platforms
 import com.rkbapps.canvas.util.getPlatform
+import org.koin.compose.viewmodel.koinViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DrawingScreen(viewModel: DrawingViewModel = if (getPlatform() == Platforms.ANDROID) viewModel() else DrawingViewModel()){
+fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel = koinViewModel()){
     val state = viewModel.state.collectAsStateWithLifecycle()
     val colorPickerController = rememberColorPickerController()
     val isColorPickerDialogVisible = remember { mutableStateOf(false) }
 
-    Scaffold {
+    val drawingName = remember {mutableStateOf("Untitled Drawing")}
+    val isEditDrawingNameDialogVisible = remember { mutableStateOf(false) }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(drawingName.value)
+                        IconButton(onClick = {
+                            isEditDrawingNameDialogVisible.value = true
+                        }) {
+                            Icon(Icons.Default.Edit, contentDescription = "edit name")
+                        }
+                    }
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            viewModel.onAction(DrawingAction.OnClearCanvasList)
+                            navController.navigateUp()
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                            contentDescription = "back"
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = {}
+                    ) {
+                        Icon(imageVector = Icons.Default.Save, contentDescription = "save drawing")
+                    }
+                }
+            )
+        }
+    ) {
         Column(Modifier.fillMaxSize().padding(it).padding(vertical = 10.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
+
+            if(isEditDrawingNameDialogVisible.value){
+                EditDrawingNameDialog(
+                    initialName = drawingName.value,
+                    onCanceled = {
+                        isEditDrawingNameDialogVisible.value = false
+                    }
+                ) {name->
+                    drawingName.value = name
+                    isEditDrawingNameDialogVisible.value = false
+                }
+            }
 
             if (isColorPickerDialogVisible.value){
                 ColorPickerDialog(
@@ -62,7 +128,6 @@ fun DrawingScreen(viewModel: DrawingViewModel = if (getPlatform() == Platforms.A
                     viewModel.onAction(DrawingAction.OnSelectColor(colorPickerController.selectedColor.value))
                 }
             }
-
 
             DrawingCanvas(
                 paths = state.value.paths,
@@ -116,7 +181,7 @@ fun DrawingScreen(viewModel: DrawingViewModel = if (getPlatform() == Platforms.A
 }
 
 @Composable
-fun ColorItems(
+private fun ColorItems(
     color:Color,
     isSelected: Boolean,
     onClick: (color:Color) -> Unit = {}
@@ -143,7 +208,7 @@ fun ColorItems(
 }
 
 @Composable
-fun ColorPickerDialog(
+private fun ColorPickerDialog(
     isColorPickerVisible:MutableState<Boolean>,
     controller: ColorPickerController,
     onColorChanged: (ColorEnvelope) -> Unit = {},
@@ -190,4 +255,52 @@ fun ColorPickerDialog(
             }
         }
     }
+}
+
+
+@Composable
+private fun EditDrawingNameDialog(
+    initialName: String,
+    onCanceled:()-> Unit,
+    onDone: (name:String) -> Unit
+){
+    val name: MutableState<String> = remember {mutableStateOf(initialName)}
+    AlertDialog(
+        onDismissRequest = {
+            onCanceled()
+        },
+        title = {
+            Text("Edit Drawing Name")
+        },
+        text = {
+            OutlinedTextField(
+                value = name.value,
+                onValueChange = {
+                    name.value = it
+                },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = {
+                    Text("Enter Drawing Name")
+                },
+                label = {
+                    Text("Name")
+                }
+
+            )
+        },
+        confirmButton = {
+            Button(onClick = {
+                onDone(name.value)
+            }) {
+                Text("Done")
+            }
+        },
+        dismissButton = {
+            Button(onClick = {
+                onCanceled()
+            }) {
+                Text("Cancel")
+            }
+        }
+    )
 }

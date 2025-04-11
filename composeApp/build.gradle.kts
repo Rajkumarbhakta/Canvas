@@ -63,8 +63,6 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
-            implementation(libs.koin.core)
-            implementation(libs.koin.compose)
             implementation(libs.sketch.compose)
             implementation(libs.sketch.http)
             implementation(libs.viewmodel.compose)
@@ -74,6 +72,13 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
             implementation(libs.material3.window.size)
+            //icons
+            implementation(libs.material.icons.extended)
+            //koin
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
+            implementation(libs.koin.compose.viewmodel.navigation)
             //navigation compose
             implementation(libs.androidx.navigation.compose)
         }
@@ -82,15 +87,25 @@ kotlin {
             implementation(kotlin("test"))
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.uiTest)
+            implementation(libs.kotlinx.coroutines.test)
         }
 
         androidMain.dependencies {
             implementation(compose.uiTooling)
             implementation(libs.androidx.activityCompose)
+            implementation(libs.kotlinx.coroutines.android)
+            //koin dependency injection
+            implementation(libs.koin.android)
+            implementation(libs.koin.compose)
         }
 
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
+            implementation(libs.kotlinx.coroutines.swing)
+        }
+
+        iosMain.dependencies {
+
         }
 
     }
