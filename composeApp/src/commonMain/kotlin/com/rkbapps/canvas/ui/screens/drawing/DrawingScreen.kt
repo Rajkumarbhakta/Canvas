@@ -1,4 +1,4 @@
-package com.rkbapps.canvas.ui
+package com.rkbapps.canvas.ui.screens.drawing
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
@@ -39,11 +38,10 @@ import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.ColorPickerController
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
+import com.rkbapps.canvas.ui.composables.DrawingCanvas
 import com.rkbapps.canvas.util.Constants
 import com.rkbapps.canvas.util.Platforms
 import com.rkbapps.canvas.util.getPlatform
-import com.rkbapps.canvas.viewmodels.DrawingAction
-import com.rkbapps.canvas.viewmodels.DrawingViewModel
 
 @Composable
 fun DrawingScreen(viewModel: DrawingViewModel = if (getPlatform() == Platforms.ANDROID) viewModel() else DrawingViewModel()){

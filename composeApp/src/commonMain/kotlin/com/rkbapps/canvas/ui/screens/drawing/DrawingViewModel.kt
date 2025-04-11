@@ -1,4 +1,4 @@
-package com.rkbapps.canvas.viewmodels
+package com.rkbapps.canvas.ui.screens.drawing
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color

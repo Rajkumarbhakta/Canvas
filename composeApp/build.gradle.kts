@@ -15,6 +15,7 @@ plugins {
     alias(libs.plugins.compose)
     alias(libs.plugins.android.application)
     alias(libs.plugins.hotReload)
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 kotlin {
@@ -69,6 +70,12 @@ kotlin {
             implementation(libs.viewmodel.compose)
             implementation(libs.kotlinx.datetime)
             implementation(libs.colorpicker.compose)
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.serialization.json)
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.material3.window.size)
+            //navigation compose
+            implementation(libs.androidx.navigation.compose)
         }
 
         commonTest.dependencies {

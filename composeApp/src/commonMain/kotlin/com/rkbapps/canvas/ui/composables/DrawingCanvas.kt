@@ -1,4 +1,4 @@
-package com.rkbapps.canvas.ui
+package com.rkbapps.canvas.ui.composables
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -9,6 +9,7 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -16,7 +17,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.util.fastForEach
 import com.rkbapps.canvas.model.PathData
-import com.rkbapps.canvas.viewmodels.DrawingAction
+import com.rkbapps.canvas.ui.screens.drawing.DrawingAction
 import kotlin.math.abs
 
 @Composable
@@ -100,7 +101,8 @@ private fun DrawScope.drawPath(
         style = Stroke(
             width = thickness,
             cap = StrokeCap.Round,
-            join = StrokeJoin.Round
+            join = StrokeJoin.Round,
+            pathEffect = PathEffect.dashPathEffect(floatArrayOf(2f, 10f), 0f)
         )
     )
 }
