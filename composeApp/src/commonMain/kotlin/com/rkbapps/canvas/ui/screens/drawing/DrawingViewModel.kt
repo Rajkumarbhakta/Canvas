@@ -25,6 +25,7 @@ class DrawingViewModel(
             is DrawingAction.OnSelectColor -> repository.onSelectColor(action.color)
             DrawingAction.OnClearCanvasList -> repository.onClearCanvasClick()
             is DrawingAction.OnThicknessChange -> repository.onThicknessChange(action.thickness)
+            is DrawingAction.OnPathEffectChange -> repository.onPathEffectChange(action.pathEffect)
         }
     }
 

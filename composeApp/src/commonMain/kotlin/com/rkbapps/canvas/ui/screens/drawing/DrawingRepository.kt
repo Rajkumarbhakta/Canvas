@@ -4,6 +4,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import com.rkbapps.canvas.model.DrawingState
 import com.rkbapps.canvas.model.PathData
+import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyleType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -16,6 +17,7 @@ sealed interface DrawingAction {
     data class OnSelectColor(val color: Color) : DrawingAction
     data object OnClearCanvasList : DrawingAction
     data class OnThicknessChange(val thickness: Float) : DrawingAction
+    data class OnPathEffectChange(val pathEffect: PaintingStyleType) : DrawingAction
 }
 
 class DrawingRepository {
@@ -63,6 +65,7 @@ class DrawingRepository {
                     id = Clock.System.now().toString(),
                     color = it.selectedColor,
                     thickness = it.selectedThickness,
+                    pathEffect = it.selectedPathEffect,
                     path = emptyList()
                 )
             )
@@ -79,4 +82,14 @@ class DrawingRepository {
             )
         }
     }
+
+    fun onPathEffectChange(pathEffect: PaintingStyleType) {
+        _state.update {
+            it.copy(
+                selectedPathEffect = pathEffect
+            )
+        }
+    }
+
+
 }

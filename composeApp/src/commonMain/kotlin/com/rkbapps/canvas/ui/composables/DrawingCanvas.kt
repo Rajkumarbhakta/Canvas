@@ -13,11 +13,13 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.util.fastForEach
 import com.rkbapps.canvas.model.PathData
 import com.rkbapps.canvas.ui.screens.drawing.DrawingAction
+import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyleType
 import kotlin.math.abs
 
 @Composable
@@ -52,14 +54,16 @@ fun DrawingCanvas(
             drawPath(
                 it.path,
                 it.color,
-                it.thickness
+                it.thickness,
+                it.pathEffect
             )
         }
         currentPath?.let {
             drawPath(
                 it.path,
                 it.color,
-                it.thickness
+                it.thickness,
+                it.pathEffect
             )
         }
     }
@@ -69,7 +73,8 @@ fun DrawingCanvas(
 private fun DrawScope.drawPath(
     path: List<Offset>,
     color:Color,
-    thickness: Float = 10f
+    thickness: Float = 10f,
+    pathEffect: PaintingStyleType,
 ){
     val smoothPath = Path().apply {
         if (path.isNotEmpty()){
@@ -98,12 +103,28 @@ private fun DrawScope.drawPath(
     drawPath(
         path = smoothPath,
         color = color,
-        style = Stroke(
-            width = thickness,
-            cap = StrokeCap.Round,
-            join = StrokeJoin.Round,
-            pathEffect = PathEffect.dashPathEffect(floatArrayOf(2f, 10f), 0f)
-        )
+        style = when(pathEffect){
+            PaintingStyleType.DOT -> {
+                Stroke(
+                    width = thickness,
+                    cap = StrokeCap.Round,
+                    join = StrokeJoin.Round,
+                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(2f, 15f), 0f)
+                )
+            }
+            PaintingStyleType.STROKE -> {
+                Stroke(
+                    width = thickness,
+                    cap = StrokeCap.Round,
+                    join = StrokeJoin.Round
+                )
+            }
+            PaintingStyleType.FILL -> {
+                Fill
+            }
+        }
     )
 }
+
+//dashPathEffect(floatArrayOf(2f, 25f), 0f)
 

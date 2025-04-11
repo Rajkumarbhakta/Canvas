@@ -1,29 +1,23 @@
 package com.rkbapps.canvas.ui.screens.drawing
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -32,7 +26,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.rkbapps.canvas.ui.composables.DrawingCanvas
-import com.rkbapps.canvas.ui.screens.drawing.composables.*
+import com.rkbapps.canvas.ui.screens.drawing.composables.ColorItemList
+import com.rkbapps.canvas.ui.screens.drawing.composables.EditDrawingNameDialog
+import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyle
+import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyleType
+import com.rkbapps.canvas.ui.screens.drawing.composables.ThicknessManagement
+import com.rkbapps.canvas.util.Log
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -104,12 +103,23 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                 modifier = Modifier.fillMaxWidth().weight(1f)
             )
 
-            ColorItemList(
-                selectedColor = state.value.selectedColor,
-            ){ color->
-                viewModel.onAction(DrawingAction.OnSelectColor(color))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                ColorItemList(
+                    selectedColor = state.value.selectedColor,
+                ){ color->
+                    viewModel.onAction(DrawingAction.OnSelectColor(color))
+                }
+                PaintingStyle(
+                    selected = state.value.selectedPathEffect,
+                ){
+                    Log.d("Path Effect",it)
+                    viewModel.onAction(DrawingAction.OnPathEffectChange(it))
+                }
             }
-
 
             ThicknessManagement(
                 value = state.value.selectedThickness
@@ -120,7 +130,7 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
             Button(
                 modifier = Modifier.fillMaxWidth(0.6f).align(Alignment.CenterHorizontally),
                 onClick = {
-                    println("Clear Canvas")
+                    Log.d("Clear Canvas","Clicked")
                     viewModel.onAction(DrawingAction.OnClearCanvasList)
                 }
             ) {
