@@ -125,6 +125,14 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    buildTypes {
+        debug {
+
+        }
+        release {
+
+        }
+    }
 }
 
 //https://developer.android.com/develop/ui/compose/testing#setup

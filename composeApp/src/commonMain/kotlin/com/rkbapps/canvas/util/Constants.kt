@@ -7,11 +7,14 @@ import androidx.compose.ui.graphics.Color
 object Constants {
     val colors = listOf(
         Color.Black,
+        Color.White,
         Color.Blue,
         Color.Cyan,
         Color.Red,
         Color.Green,
-        Color.Magenta
+        Color.Magenta,
+        Color.Yellow,
+        Color.Gray,
     )
 }
 
