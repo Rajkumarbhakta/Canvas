@@ -91,7 +91,7 @@ fun PaintingStyle(
 }
 
 @Composable
-private fun PaintingStyleItem(
+fun PaintingStyleItem(
     isSelected: Boolean = false,
     icon: @Composable ()->Unit,
     title: @Composable ()->Unit,

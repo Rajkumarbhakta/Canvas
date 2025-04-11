@@ -12,5 +12,7 @@ data class DrawingState(
     val selectedThickness: Float = 10f,
     val selectedPathEffect: PaintingStyleType = PaintingStyleType.STROKE,
     val currentPath: PathData? = null,
-    val paths : List<PathData> = emptyList()
+    val paths : List<PathData> = emptyList(),
+    val isEraserMode: Boolean = false,
+    val backgroundColor:Color = Color.White
 )

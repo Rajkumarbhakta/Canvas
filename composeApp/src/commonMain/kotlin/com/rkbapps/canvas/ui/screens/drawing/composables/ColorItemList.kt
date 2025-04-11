@@ -59,7 +59,7 @@ fun ColorItemList(
     Row(modifier = Modifier
         .background(color = MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(10.dp))
         .padding(8.dp)
-        .horizontalScroll(rememberScrollState()),
+        ,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -82,7 +82,7 @@ fun ColorItemList(
 
 
 @Composable
-private fun ColorItems(
+fun ColorItems(
     color:Color,
     isSelected: Boolean,
     imageVector: ImageVector?=null,
@@ -118,7 +118,7 @@ private fun ColorItems(
 }
 
 @Composable
-private fun ColorPickerDialog(
+fun ColorPickerDialog(
     isColorPickerVisible:MutableState<Boolean>,
     controller: ColorPickerController,
     onColorChanged: (ColorEnvelope) -> Unit = {},

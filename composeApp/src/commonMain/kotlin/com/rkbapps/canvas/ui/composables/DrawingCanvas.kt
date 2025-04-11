@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
@@ -26,13 +27,14 @@ import kotlin.math.abs
 fun DrawingCanvas(
     paths: List<PathData>,
     currentPath: PathData?,
+    backgroundColor:Color,
     onAction: (DrawingAction) -> Unit,
     modifier: Modifier = Modifier
 ){
     Canvas(
         modifier = modifier
             .clipToBounds()
-            .background(Color.White)
+            .background(backgroundColor)
             .pointerInput(true) {
                 detectDragGestures (
                     onDragStart = {
@@ -55,7 +57,9 @@ fun DrawingCanvas(
                 it.path,
                 it.color,
                 it.thickness,
-                it.pathEffect
+                it.pathEffect,
+                isEraser = it.isEraser,
+                backgroundColor
             )
         }
         currentPath?.let {
@@ -63,7 +67,9 @@ fun DrawingCanvas(
                 it.path,
                 it.color,
                 it.thickness,
-                it.pathEffect
+                it.pathEffect,
+                isEraser = it.isEraser,
+                backgroundColor
             )
         }
     }
@@ -75,6 +81,8 @@ private fun DrawScope.drawPath(
     color:Color,
     thickness: Float = 10f,
     pathEffect: PaintingStyleType,
+    isEraser: Boolean = false,
+    backgroundColor:Color = Color.White
 ){
     val smoothPath = Path().apply {
         if (path.isNotEmpty()){
@@ -100,30 +108,44 @@ private fun DrawScope.drawPath(
         }
     }
 
-    drawPath(
-        path = smoothPath,
-        color = color,
-        style = when(pathEffect){
-            PaintingStyleType.DOT -> {
-                Stroke(
-                    width = thickness,
-                    cap = StrokeCap.Round,
-                    join = StrokeJoin.Round,
-                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(2f, 15f), 0f)
-                )
+    if (isEraser){
+        drawPath(
+            path = smoothPath,
+            color = backgroundColor,
+            style = Stroke(
+                width = thickness,
+                cap = StrokeCap.Round,
+                join = StrokeJoin.Round
+            ),
+            blendMode = BlendMode.Src
+        )
+    }else{
+        drawPath(
+            path = smoothPath,
+            color = color,
+            style = when(pathEffect){
+                PaintingStyleType.DOT -> {
+                    Stroke(
+                        width = thickness,
+                        cap = StrokeCap.Round,
+                        join = StrokeJoin.Round,
+                        pathEffect = PathEffect.dashPathEffect(floatArrayOf(2f, 15f), 0f)
+                    )
+                }
+                PaintingStyleType.STROKE -> {
+                    Stroke(
+                        width = thickness,
+                        cap = StrokeCap.Round,
+                        join = StrokeJoin.Round
+                    )
+                }
+                PaintingStyleType.FILL -> {
+                    Fill
+                }
             }
-            PaintingStyleType.STROKE -> {
-                Stroke(
-                    width = thickness,
-                    cap = StrokeCap.Round,
-                    join = StrokeJoin.Round
-                )
-            }
-            PaintingStyleType.FILL -> {
-                Fill
-            }
-        }
-    )
+        )
+    }
+
 }
 
 //dashPathEffect(floatArrayOf(2f, 25f), 0f)

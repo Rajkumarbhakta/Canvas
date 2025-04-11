@@ -26,6 +26,8 @@ class DrawingViewModel(
             DrawingAction.OnClearCanvasList -> repository.onClearCanvasClick()
             is DrawingAction.OnThicknessChange -> repository.onThicknessChange(action.thickness)
             is DrawingAction.OnPathEffectChange -> repository.onPathEffectChange(action.pathEffect)
+            is DrawingAction.OnToggleEraser -> repository.onToggleEraser(action.isEraser)
+            is DrawingAction.OnBackgroundColorChange -> repository.onBackgroundColorChange(action.color)
         }
     }
 

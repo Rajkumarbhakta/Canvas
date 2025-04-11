@@ -13,5 +13,6 @@ data class PathData(
     val color: Color,
     val thickness: Float = 10f,
     val pathEffect: PaintingStyleType = PaintingStyleType.STROKE,
-    val path: List<Offset> = emptyList()
+    val path: List<Offset> = emptyList(),
+    val isEraser: Boolean = false
 )

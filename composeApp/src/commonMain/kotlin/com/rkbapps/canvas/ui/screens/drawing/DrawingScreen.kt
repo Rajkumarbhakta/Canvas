@@ -1,11 +1,17 @@
 package com.rkbapps.canvas.ui.screens.drawing
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
@@ -14,6 +20,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -22,16 +29,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import canvas.composeapp.generated.resources.Res
+import canvas.composeapp.generated.resources.ink_erase
 import com.rkbapps.canvas.ui.composables.DrawingCanvas
+import com.rkbapps.canvas.ui.screens.drawing.composables.BackgroundColorChangeItem
 import com.rkbapps.canvas.ui.screens.drawing.composables.ColorItemList
 import com.rkbapps.canvas.ui.screens.drawing.composables.EditDrawingNameDialog
+import com.rkbapps.canvas.ui.screens.drawing.composables.EraserItem
 import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyle
+import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyleItem
 import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyleType
 import com.rkbapps.canvas.ui.screens.drawing.composables.ThicknessManagement
 import com.rkbapps.canvas.util.Log
+import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,6 +55,8 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
 
     val drawingName = remember {mutableStateOf("Untitled Drawing")}
     val isEditDrawingNameDialogVisible = remember { mutableStateOf(false) }
+
+    val isEraserSelected = remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -100,24 +116,47 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                 paths = state.value.paths,
                 currentPath = state.value.currentPath,
                 onAction = viewModel::onAction,
-                modifier = Modifier.fillMaxWidth().weight(1f)
+                modifier = Modifier.fillMaxWidth().weight(1f),
+                backgroundColor = state.value.backgroundColor
             )
 
-            Row(
+            LazyRow (
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                ColorItemList(
-                    selectedColor = state.value.selectedColor,
-                ){ color->
-                    viewModel.onAction(DrawingAction.OnSelectColor(color))
+                item {
+                    BackgroundColorChangeItem{
+                        viewModel.onAction(DrawingAction.OnBackgroundColorChange(it))
+                    }
                 }
-                PaintingStyle(
-                    selected = state.value.selectedPathEffect,
-                ){
-                    Log.d("Path Effect",it)
-                    viewModel.onAction(DrawingAction.OnPathEffectChange(it))
+
+                item {
+                    ColorItemList(
+                        selectedColor = state.value.selectedColor,
+                    ){ color->
+                        isEraserSelected.value = false
+                        viewModel.onAction(DrawingAction.OnToggleEraser(false))
+                        viewModel.onAction(DrawingAction.OnSelectColor(color))
+                    }
+                }
+
+                item {
+                    EraserItem(
+                        isEraserSelected = isEraserSelected.value
+                    ) {
+                        isEraserSelected.value = true
+                        viewModel.onAction(DrawingAction.OnToggleEraser(true))
+                    }
+                }
+
+                item {
+                    PaintingStyle(
+                        selected = state.value.selectedPathEffect,
+                    ){
+                        Log.d("Path Effect",it)
+                        viewModel.onAction(DrawingAction.OnPathEffectChange(it))
+                    }
                 }
             }
 

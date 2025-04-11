@@ -18,6 +18,8 @@ sealed interface DrawingAction {
     data object OnClearCanvasList : DrawingAction
     data class OnThicknessChange(val thickness: Float) : DrawingAction
     data class OnPathEffectChange(val pathEffect: PaintingStyleType) : DrawingAction
+    data class OnToggleEraser(val isEraser: Boolean) : DrawingAction
+    data class OnBackgroundColorChange(val color: Color) : DrawingAction
 }
 
 class DrawingRepository {
@@ -66,6 +68,7 @@ class DrawingRepository {
                     color = it.selectedColor,
                     thickness = it.selectedThickness,
                     pathEffect = it.selectedPathEffect,
+                    isEraser = it.isEraserMode,
                     path = emptyList()
                 )
             )
@@ -87,6 +90,22 @@ class DrawingRepository {
         _state.update {
             it.copy(
                 selectedPathEffect = pathEffect
+            )
+        }
+    }
+
+    fun onToggleEraser(isEraser: Boolean) {
+        _state.update {
+            it.copy(
+                isEraserMode = isEraser
+            )
+        }
+    }
+
+    fun onBackgroundColorChange(color: Color) {
+        _state.update {
+            it.copy(
+                backgroundColor = color
             )
         }
     }
