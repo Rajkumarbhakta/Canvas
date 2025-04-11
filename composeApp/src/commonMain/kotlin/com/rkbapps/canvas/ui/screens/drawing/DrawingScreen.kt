@@ -159,7 +159,6 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                     }
                 }
             }
-
             ThicknessManagement(
                 value = state.value.selectedThickness
             ) {
