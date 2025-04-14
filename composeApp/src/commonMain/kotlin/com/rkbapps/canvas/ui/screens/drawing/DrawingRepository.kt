@@ -12,10 +12,13 @@ import com.rkbapps.canvas.navigation.Draw
 import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyleType
 import com.rkbapps.canvas.util.Log
 import com.rkbapps.canvas.util.json
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 
@@ -48,12 +51,13 @@ class DrawingRepository(
     init {
         val draw = saveStateHandle.toRoute<Draw>()
         draw.id?.let {
-            val design = dbOperations.getDesign(it)
-            if (design!=null){
-                Log.d("design ",json.encodeToString(SavedDesign.serializer(),design))
-                Log.d("data ",design)
-                _currentDesign.update { design }
-                _state.update { design.state }
+            CoroutineScope(Dispatchers.Default).launch {
+                delay(200)
+                val design = dbOperations.getDesign(it)
+                if (design!=null){
+                    _currentDesign.update { design }
+                    _state.update { design.state }
+                }
             }
         }
     }

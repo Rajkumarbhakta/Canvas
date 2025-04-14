@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Brush
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,6 +34,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -58,6 +61,8 @@ import org.koin.compose.viewmodel.koinViewModel
 fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = koinViewModel()) {
 
     val allDesign = viewModel.allDesign.collectAsStateWithLifecycle()
+    val currentDeletableProject = remember { mutableStateOf<SavedDesign?>(null) }
+
 
     Scaffold(
         topBar = {
@@ -97,6 +102,21 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = koin
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            currentDeletableProject.value?.let {
+                DeleteConfirmationDialog(
+                    projectName = it.name,
+                    onCancel = {
+                        currentDeletableProject.value = null
+                    }
+                ) {
+                    viewModel.deleteDesign(it.id)
+                    currentDeletableProject.value = null
+                }
+            }
+
+
+
             if (allDesign.value.designs.isNotEmpty()) {
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(200.dp),
@@ -104,9 +124,9 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = koin
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(items = allDesign.value.designs) {
+                    items(items = allDesign.value.designs.reversed()) {
                         DesignListItem(it, onDelete = {
-                            viewModel.deleteDesign(it.id)
+                            currentDeletableProject.value = it
                         }) {
                             navController.navigate(route = Draw(it.id))
                         }
@@ -190,4 +210,32 @@ fun DrawingShow(
             )
         }
     }
+}
+
+
+@Composable
+fun DeleteConfirmationDialog(projectName:String,onCancel:()-> Unit,onDone: () -> Unit){
+    AlertDialog(
+        onDismissRequest = {
+            onCancel()
+        },
+        title = {
+            Text("Confirm Deletion")
+        },
+        text = {
+            Text("Are you sure you want to delete $projectName?")
+        },
+        confirmButton = {
+            Button(onClick = onDone) {
+                Text("Delete")
+            }
+        },
+        dismissButton = {
+            Button(onClick = onCancel) {
+                Text("Cancel")
+            }
+        }
+    )
+
+
 }
