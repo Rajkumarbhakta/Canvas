@@ -30,6 +30,7 @@ class DrawingViewModel(
             is DrawingAction.OnBackgroundColorChange -> repository.onBackgroundColorChange(action.color)
             DrawingAction.OnRedo -> repository.onRedo()
             DrawingAction.OnUndo -> repository.onUndo()
+            is DrawingAction.SaveDesign -> repository.saveDesign(action.drawingState,action.name)
         }
     }
 

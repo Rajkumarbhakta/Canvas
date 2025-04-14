@@ -2,8 +2,10 @@ package com.rkbapps.canvas.ui.screens.drawing
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import com.rkbapps.canvas.db.DbOperations
 import com.rkbapps.canvas.model.DrawingState
 import com.rkbapps.canvas.model.PathData
+import com.rkbapps.canvas.model.SavedDesign
 import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyleType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,12 +26,16 @@ sealed interface DrawingAction {
     data class OnBackgroundColorChange(val color: Color) : DrawingAction
     data object OnUndo : DrawingAction
     data object OnRedo : DrawingAction
+    data class SaveDesign(val drawingState: DrawingState,val name:String):DrawingAction
 }
 
-class DrawingRepository {
+class DrawingRepository(
+    private val dbOperations: DbOperations
+) {
 
     private val _state = MutableStateFlow(DrawingState())
     val state = _state.asStateFlow()
+
 
     fun onThicknessChange(f: Float) {
         _state.update {
@@ -136,6 +142,11 @@ class DrawingRepository {
                 undoStack = _state.value.undoStack + listOf(_state.value.paths)
             )
         }
+    }
+
+    fun saveDesign(drawingState: DrawingState,name:String){
+        val saveDesign = SavedDesign(name = name, state = drawingState)
+        dbOperations.save(saveDesign)
     }
 
 

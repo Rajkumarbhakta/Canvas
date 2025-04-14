@@ -81,6 +81,8 @@ kotlin {
             implementation(libs.koin.compose.viewmodel.navigation)
             //navigation compose
             implementation(libs.androidx.navigation.compose)
+
+            implementation("com.russhwolf:multiplatform-settings:1.1.1")
         }
 
         commonTest.dependencies {
@@ -104,7 +106,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.swing)
         }
 
-        iosMain.dependencies {
+        nativeMain.dependencies {
 
         }
 

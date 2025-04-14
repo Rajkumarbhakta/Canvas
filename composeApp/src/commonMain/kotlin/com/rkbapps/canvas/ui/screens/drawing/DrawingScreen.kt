@@ -80,7 +80,9 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                 },
                 actions = {
                     IconButton(
-                        onClick = {}
+                        onClick = {
+                            viewModel.onAction(DrawingAction.SaveDesign(state.value,drawingName.value))
+                        }
                     ) {
                         Icon(imageVector = Icons.Default.Save, contentDescription = "save drawing")
                     }
