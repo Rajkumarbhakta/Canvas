@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SavedDesigns(
-    val designs: List<SavedDesign>
+    val designs: List<SavedDesign> = emptyList()
 )

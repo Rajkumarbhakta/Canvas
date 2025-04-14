@@ -3,6 +3,7 @@ package com.rkbapps.canvas.db
 import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.PreferencesSettings
 import com.russhwolf.settings.Settings
+import java.io.File
 import java.util.prefs.Preferences
 
 class DbManagerImpl: DbManager{
@@ -14,5 +15,9 @@ class DbManagerImpl: DbManager{
     override fun getSettings(): Settings = settings
 
     override fun getObservableSettings(): ObservableSettings = observableSettings
+
+    companion object{
+        private const val KEY = "drawings"
+    }
 
 }

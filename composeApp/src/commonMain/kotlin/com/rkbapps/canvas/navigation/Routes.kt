@@ -1,5 +1,6 @@
 package com.rkbapps.canvas.navigation
 
+import com.rkbapps.canvas.model.SavedDesign
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -10,4 +11,4 @@ object Home
 
 @Serializable
 @SerialName("draw")
-object Draw
+data class Draw(val design: String? = null)

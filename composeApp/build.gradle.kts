@@ -82,7 +82,8 @@ kotlin {
             //navigation compose
             implementation(libs.androidx.navigation.compose)
 
-            implementation("com.russhwolf:multiplatform-settings:1.1.1")
+            implementation("com.russhwolf:multiplatform-settings:1.3.0")
+            implementation("com.russhwolf:multiplatform-settings-coroutines:1.3.0")
         }
 
         commonTest.dependencies {

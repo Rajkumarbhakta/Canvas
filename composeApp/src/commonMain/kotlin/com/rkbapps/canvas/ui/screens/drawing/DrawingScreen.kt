@@ -20,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -42,8 +43,8 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel = koinViewModel()) {
     val state = viewModel.state.collectAsStateWithLifecycle()
+    val currentDesign = viewModel.currentDesign.collectAsStateWithLifecycle()
 
-    val drawingName = remember { mutableStateOf("Untitled Drawing") }
     val isEditDrawingNameDialogVisible = remember { mutableStateOf(false) }
 
     val isEraserSelected = remember { mutableStateOf(false) }
@@ -56,7 +57,7 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        Text(drawingName.value)
+                        Text(currentDesign.value?.name?:"Untitled drawing")
                         IconButton(onClick = {
                             isEditDrawingNameDialogVisible.value = true
                         }) {
@@ -81,7 +82,7 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                 actions = {
                     IconButton(
                         onClick = {
-                            viewModel.onAction(DrawingAction.SaveDesign(state.value,drawingName.value))
+                            viewModel.onAction(DrawingAction.SaveDesign(state.value,currentDesign.value?.name?:"Untitled drawing"))
                         }
                     ) {
                         Icon(imageVector = Icons.Default.Save, contentDescription = "save drawing")
@@ -96,12 +97,12 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
         ) {
             if (isEditDrawingNameDialogVisible.value) {
                 EditDrawingNameDialog(
-                    initialName = drawingName.value,
+                    initialName = currentDesign.value?.name?:"Untitled drawing",
                     onCanceled = {
                         isEditDrawingNameDialogVisible.value = false
                     }
                 ) { name ->
-                    drawingName.value = name
+                    viewModel.updateDrawingName(name)
                     isEditDrawingNameDialogVisible.value = false
                 }
             }

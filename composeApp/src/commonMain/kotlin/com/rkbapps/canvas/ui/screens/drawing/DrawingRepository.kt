@@ -2,11 +2,16 @@ package com.rkbapps.canvas.ui.screens.drawing
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.SavedStateHandle
+import androidx.navigation.toRoute
 import com.rkbapps.canvas.db.DbOperations
 import com.rkbapps.canvas.model.DrawingState
 import com.rkbapps.canvas.model.PathData
 import com.rkbapps.canvas.model.SavedDesign
+import com.rkbapps.canvas.navigation.Draw
 import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyleType
+import com.rkbapps.canvas.util.Log
+import com.rkbapps.canvas.util.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,15 +31,37 @@ sealed interface DrawingAction {
     data class OnBackgroundColorChange(val color: Color) : DrawingAction
     data object OnUndo : DrawingAction
     data object OnRedo : DrawingAction
-    data class SaveDesign(val drawingState: DrawingState,val name:String):DrawingAction
+    data class SaveDesign(val drawingState: DrawingState, val name: String) : DrawingAction
 }
 
 class DrawingRepository(
-    private val dbOperations: DbOperations
+    private val dbOperations: DbOperations,
+    saveStateHandle: SavedStateHandle
 ) {
 
     private val _state = MutableStateFlow(DrawingState())
     val state = _state.asStateFlow()
+
+    private val _currentDesign = MutableStateFlow<SavedDesign?>(null)
+    val currentDesign = _currentDesign.asStateFlow()
+
+    init {
+        val draw = saveStateHandle.toRoute<Draw>()
+        val design = if (draw.design == null) null else json.decodeFromString(
+            SavedDesign.serializer(),
+            draw.design
+        )
+
+        Log.d("design ",draw)
+        Log.d("design ",design?:"")
+
+        design?.let {
+            _state.value = design.state
+            _currentDesign.value = design
+
+        }
+
+    }
 
 
     fun onThicknessChange(f: Float) {
@@ -120,7 +147,7 @@ class DrawingRepository(
         }
     }
 
-    fun onUndo(){
+    fun onUndo() {
         val undoStack = _state.value.undoStack
         if (undoStack.isNotEmpty()) {
             val previous = undoStack.last()
@@ -132,7 +159,7 @@ class DrawingRepository(
         }
     }
 
-    fun onRedo(){
+    fun onRedo() {
         val redoStack = _state.value.redoStack
         if (redoStack.isNotEmpty()) {
             val next = redoStack.last()
@@ -144,9 +171,27 @@ class DrawingRepository(
         }
     }
 
-    fun saveDesign(drawingState: DrawingState,name:String){
-        val saveDesign = SavedDesign(name = name, state = drawingState)
-        dbOperations.save(saveDesign)
+    suspend fun saveDesign(drawingState: DrawingState, name: String) {
+        val design = if (currentDesign.value != null) {
+            _currentDesign.update {
+                it?.copy(name = name, state = drawingState)
+            }
+            currentDesign.value
+        } else {
+            _currentDesign.value = SavedDesign(name = name, state = drawingState)
+            SavedDesign(name = name, state = drawingState)
+        }
+        if (design != null) {
+            dbOperations.save(design)
+        }
+    }
+
+    fun updateDrawingName(name:String){
+        _currentDesign.update {
+            it?.copy(
+                name = name
+            )
+        }
     }
 
 
