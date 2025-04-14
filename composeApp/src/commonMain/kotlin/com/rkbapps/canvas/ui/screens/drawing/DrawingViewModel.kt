@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rkbapps.canvas.model.DrawingState
 import com.rkbapps.canvas.model.PathData
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -40,8 +41,4 @@ class DrawingViewModel(
             }
         }
     }
-
-
-
-
 }

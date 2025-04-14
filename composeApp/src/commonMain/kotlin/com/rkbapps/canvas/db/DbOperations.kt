@@ -1,9 +1,7 @@
 package com.rkbapps.canvas.db
 
-import com.rkbapps.canvas.model.DrawingState
 import com.rkbapps.canvas.model.SavedDesign
 import com.rkbapps.canvas.model.SavedDesigns
-import com.rkbapps.canvas.util.Log
 import com.rkbapps.canvas.util.Platforms
 import com.rkbapps.canvas.util.getPlatform
 import com.rkbapps.canvas.util.json
@@ -59,6 +57,12 @@ class DbOperations(private val dbManager: DbManager) {
         val savedDesigns = json.decodeFromString(SavedDesigns.serializer(),data)
         val newData = savedDesigns.copy(designs = savedDesigns.designs.filterNot { it.id == design.id })
         saveDrawingData(json.encodeToString(SavedDesigns.serializer(),newData), settings = dbManager.getSettings())
+    }
+
+    fun getDesign(id:String):SavedDesign?{
+        val data = loadDrawingData(settings = dbManager.getSettings())
+        val savedDesigns = json.decodeFromString(SavedDesigns.serializer(),data)
+        return savedDesigns.designs.find { it.id == id }
     }
 
     fun getAll():SavedDesigns {

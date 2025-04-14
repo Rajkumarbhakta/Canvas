@@ -42,25 +42,20 @@ class DrawingRepository(
     private val _state = MutableStateFlow(DrawingState())
     val state = _state.asStateFlow()
 
-    private val _currentDesign = MutableStateFlow<SavedDesign?>(null)
+    private val _currentDesign = MutableStateFlow<SavedDesign>(SavedDesign(name = "Untitled drawing", state = DrawingState()))
     val currentDesign = _currentDesign.asStateFlow()
 
     init {
         val draw = saveStateHandle.toRoute<Draw>()
-        val design = if (draw.design == null) null else json.decodeFromString(
-            SavedDesign.serializer(),
-            draw.design
-        )
-
-        Log.d("design ",draw)
-        Log.d("design ",design?:"")
-
-        design?.let {
-            _state.value = design.state
-            _currentDesign.value = design
-
+        draw.id?.let {
+            val design = dbOperations.getDesign(it)
+            if (design!=null){
+                Log.d("design ",json.encodeToString(SavedDesign.serializer(),design))
+                Log.d("data ",design)
+                _currentDesign.update { design }
+                _state.update { design.state }
+            }
         }
-
     }
 
 
@@ -172,27 +167,23 @@ class DrawingRepository(
     }
 
     suspend fun saveDesign(drawingState: DrawingState, name: String) {
-        val design = if (currentDesign.value != null) {
-            _currentDesign.update {
-                it?.copy(name = name, state = drawingState)
-            }
-            currentDesign.value
-        } else {
-            _currentDesign.value = SavedDesign(name = name, state = drawingState)
-            SavedDesign(name = name, state = drawingState)
+        _currentDesign.update {
+            it.copy(name = name, state = drawingState)
         }
-        if (design != null) {
-            dbOperations.save(design)
-        }
+        val design = currentDesign.value
+
+        dbOperations.save(design)
+
     }
 
     fun updateDrawingName(name:String){
         _currentDesign.update {
-            it?.copy(
+            it.copy(
                 name = name
             )
         }
     }
+
 
 
 }

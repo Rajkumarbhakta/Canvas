@@ -11,4 +11,4 @@ object Home
 
 @Serializable
 @SerialName("draw")
-data class Draw(val design: String? = null)
+data class Draw(val id: String? = null)
