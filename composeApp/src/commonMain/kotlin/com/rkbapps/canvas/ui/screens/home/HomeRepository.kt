@@ -33,4 +33,9 @@ class HomeRepository (
         }
     }
 
+    suspend fun deleteDesign(id: String,scope: CoroutineScope){
+        dbOperations.delete(id)
+        getAllDesign(scope)
+    }
+
 }

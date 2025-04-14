@@ -18,5 +18,10 @@ class HomeViewModel(
             repository.getAllDesign(viewModelScope)
         }
     }
+    fun deleteDesign(id:String){
+        viewModelScope.launch {
+            repository.deleteDesign(id,viewModelScope)
+        }
+    }
 
 }

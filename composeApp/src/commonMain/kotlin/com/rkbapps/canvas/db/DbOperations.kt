@@ -48,10 +48,10 @@ class DbOperations(private val dbManager: DbManager) {
     }
 
     suspend fun delete(id:String) = withContext(Dispatchers.Default){
-        val data = dbManager.getSettings().getString(KEY,DEFAULT_VALUE)
+        val data = loadDrawingData(settings = dbManager.getSettings())
         val savedDesigns = json.decodeFromString(SavedDesigns.serializer(),data)
         val newData = savedDesigns.copy(designs = savedDesigns.designs.filterNot { it.id == id })
-        dbManager.getSettings().putString(KEY,json.encodeToString(SavedDesigns.serializer(),newData))
+        saveDrawingData(json.encodeToString(SavedDesigns.serializer(),newData), settings = dbManager.getSettings())
     }
 
     suspend fun delete(design: SavedDesign) = withContext(Dispatchers.Default){

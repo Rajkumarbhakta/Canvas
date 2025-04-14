@@ -6,6 +6,7 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,6 +15,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -88,7 +90,9 @@ fun HomeScreen(navController: NavHostController,viewModel: HomeViewModel = koinV
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(items = allDesign.value.designs) {
-                        DesignListItem(it){
+                        DesignListItem(it, onDelete = {
+                            viewModel.deleteDesign(it.id)
+                        }){
                             val json = json.encodeToString(SavedDesign.serializer(),it)
                             navController.navigate(route = Draw(json))
                         }
@@ -103,12 +107,19 @@ fun HomeScreen(navController: NavHostController,viewModel: HomeViewModel = koinV
 
 
 @Composable
-fun DesignListItem(design: SavedDesign,onClick:()->Unit = {}){
+fun DesignListItem(design: SavedDesign,onDelete:()->Unit = {},onClick:()->Unit = {}){
     Card(modifier = Modifier.padding(8.dp), onClick = onClick) {
         Box(modifier = Modifier.height(200.dp).width(150.dp)){
             DrawingShow(state = design.state)
         }
-        Text(design.name)
+        Row {
+            Text(design.name)
+            IconButton(
+                onClick = onDelete
+            ) {
+                Icon(imageVector = Icons.Default.Delete, contentDescription = "delete")
+            }
+        }
     }
 }
 
@@ -119,6 +130,7 @@ fun DrawingShow(
 ){
     Canvas(
         modifier = Modifier
+            .fillMaxSize()
             .clipToBounds()
             .background(state.backgroundColor)
     ){
