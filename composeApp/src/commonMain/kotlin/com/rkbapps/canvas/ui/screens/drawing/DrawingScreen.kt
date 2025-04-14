@@ -34,15 +34,16 @@ import com.rkbapps.canvas.ui.screens.drawing.composables.EditDrawingNameDialog
 import com.rkbapps.canvas.ui.screens.drawing.composables.EraserItem
 import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyle
 import com.rkbapps.canvas.ui.screens.drawing.composables.ThicknessManagement
+import com.rkbapps.canvas.ui.screens.drawing.composables.UndoRedoItem
 import com.rkbapps.canvas.util.Log
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel = koinViewModel()){
+fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel = koinViewModel()) {
     val state = viewModel.state.collectAsStateWithLifecycle()
 
-    val drawingName = remember {mutableStateOf("Untitled Drawing")}
+    val drawingName = remember { mutableStateOf("Untitled Drawing") }
     val isEditDrawingNameDialogVisible = remember { mutableStateOf(false) }
 
     val isEraserSelected = remember { mutableStateOf(false) }
@@ -87,16 +88,17 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
             )
         }
     ) {
-        Column(Modifier.fillMaxSize().padding(it).padding(vertical = 10.dp),
+        Column(
+            Modifier.fillMaxSize().padding(it).padding(vertical = 10.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            if(isEditDrawingNameDialogVisible.value){
+            if (isEditDrawingNameDialogVisible.value) {
                 EditDrawingNameDialog(
                     initialName = drawingName.value,
                     onCanceled = {
                         isEditDrawingNameDialogVisible.value = false
                     }
-                ) {name->
+                ) { name ->
                     drawingName.value = name
                     isEditDrawingNameDialogVisible.value = false
                 }
@@ -110,13 +112,13 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                 backgroundColor = state.value.backgroundColor
             )
 
-            LazyRow (
+            LazyRow(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 item {
-                    BackgroundColorChangeItem{
+                    BackgroundColorChangeItem {
                         viewModel.onAction(DrawingAction.OnBackgroundColorChange(it))
                     }
                 }
@@ -124,7 +126,7 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                 item {
                     ColorItemList(
                         selectedColor = state.value.selectedColor,
-                    ){ color->
+                    ) { color ->
                         isEraserSelected.value = false
                         viewModel.onAction(DrawingAction.OnToggleEraser(false))
                         viewModel.onAction(DrawingAction.OnSelectColor(color))
@@ -143,10 +145,21 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                 item {
                     PaintingStyle(
                         selected = state.value.selectedPathEffect,
-                    ){
-                        Log.d("Path Effect",it)
+                    ) {
+                        Log.d("Path Effect", it)
                         viewModel.onAction(DrawingAction.OnPathEffectChange(it))
                     }
+                }
+
+                item {
+                    UndoRedoItem(
+                        onUndo = {
+                            viewModel.onAction(DrawingAction.OnUndo)
+                        },
+                        onRedo = {
+                            viewModel.onAction(DrawingAction.OnRedo)
+                        }
+                    )
                 }
             }
             ThicknessManagement(
@@ -154,11 +167,10 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
             ) {
                 viewModel.onAction(DrawingAction.OnThicknessChange(it))
             }
-
             Button(
                 modifier = Modifier.fillMaxWidth(0.6f).align(Alignment.CenterHorizontally),
                 onClick = {
-                    Log.d("Clear Canvas","Clicked")
+                    Log.d("Clear Canvas", "Clicked")
                     viewModel.onAction(DrawingAction.OnClearCanvasList)
                 }
             ) {

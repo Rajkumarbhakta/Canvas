@@ -14,5 +14,7 @@ data class DrawingState(
     val currentPath: PathData? = null,
     val paths : List<PathData> = emptyList(),
     val isEraserMode: Boolean = false,
-    val backgroundColor:Color = Color.White
+    val backgroundColor:Color = Color.White,
+    val undoStack: List<List<PathData>> = emptyList(),
+    val redoStack: List<List<PathData>> = emptyList()
 )

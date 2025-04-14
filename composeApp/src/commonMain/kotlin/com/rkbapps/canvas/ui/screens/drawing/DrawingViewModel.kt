@@ -28,6 +28,8 @@ class DrawingViewModel(
             is DrawingAction.OnPathEffectChange -> repository.onPathEffectChange(action.pathEffect)
             is DrawingAction.OnToggleEraser -> repository.onToggleEraser(action.isEraser)
             is DrawingAction.OnBackgroundColorChange -> repository.onBackgroundColorChange(action.color)
+            DrawingAction.OnRedo -> repository.onRedo()
+            DrawingAction.OnUndo -> repository.onUndo()
         }
     }
 

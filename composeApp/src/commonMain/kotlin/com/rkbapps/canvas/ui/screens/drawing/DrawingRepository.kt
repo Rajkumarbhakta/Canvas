@@ -22,6 +22,8 @@ sealed interface DrawingAction {
     data class OnPathEffectChange(val pathEffect: PaintingStyleType) : DrawingAction
     data class OnToggleEraser(val isEraser: Boolean) : DrawingAction
     data class OnBackgroundColorChange(val color: Color) : DrawingAction
+    data object OnUndo : DrawingAction
+    data object OnRedo : DrawingAction
 }
 
 class DrawingRepository {
@@ -41,7 +43,9 @@ class DrawingRepository {
         _state.update {
             it.copy(
                 currentPath = null,
-                paths = emptyList()
+                paths = emptyList(),
+                undoStack = _state.value.undoStack + listOf(_state.value.paths),
+                redoStack = emptyList()
             )
         }
     }
@@ -57,7 +61,9 @@ class DrawingRepository {
         _state.update {
             it.copy(
                 currentPath = null,
-                paths = it.paths + currentPathData
+                paths = it.paths + currentPathData,
+                undoStack = _state.value.undoStack + listOf(_state.value.paths),
+                redoStack = emptyList()
             )
         }
     }
@@ -80,11 +86,7 @@ class DrawingRepository {
     fun onDraw(offset: Offset) {
         val currentPathData = state.value.currentPath ?: return
         _state.update {
-            it.copy(
-                currentPath = currentPathData.copy(
-                    path = currentPathData.path + offset
-                )
-            )
+            it.copy(currentPath = currentPathData.copy(path = currentPathData.path + offset))
         }
     }
 
@@ -108,6 +110,30 @@ class DrawingRepository {
         _state.update {
             it.copy(
                 backgroundColor = color
+            )
+        }
+    }
+
+    fun onUndo(){
+        val undoStack = _state.value.undoStack
+        if (undoStack.isNotEmpty()) {
+            val previous = undoStack.last()
+            _state.value = _state.value.copy(
+                paths = previous,
+                undoStack = undoStack.dropLast(1),
+                redoStack = _state.value.redoStack + listOf(_state.value.paths)
+            )
+        }
+    }
+
+    fun onRedo(){
+        val redoStack = _state.value.redoStack
+        if (redoStack.isNotEmpty()) {
+            val next = redoStack.last()
+            _state.value = _state.value.copy(
+                paths = next,
+                redoStack = redoStack.dropLast(1),
+                undoStack = _state.value.undoStack + listOf(_state.value.paths)
             )
         }
     }

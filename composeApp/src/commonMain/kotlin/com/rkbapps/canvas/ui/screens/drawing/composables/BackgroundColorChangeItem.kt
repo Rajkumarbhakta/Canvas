@@ -38,7 +38,7 @@ fun BackgroundColorChangeItem(
     Row(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(10.dp))
-            .padding(8.dp)
+            .padding(horizontal = 8.dp, vertical = 8.dp)
             ,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
