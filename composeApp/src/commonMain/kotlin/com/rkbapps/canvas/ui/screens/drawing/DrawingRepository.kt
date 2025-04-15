@@ -171,6 +171,7 @@ class DrawingRepository(
     }
 
     suspend fun saveDesign(drawingState: DrawingState, name: String) {
+        Log.d("Save Design", "Called")
         _currentDesign.update {
             it.copy(name = name, state = drawingState)
         }

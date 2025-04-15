@@ -28,7 +28,6 @@ class HomeRepository (
             }
         }catch (e: Exception){
             val designs = dbOperations.getAll()
-            Log.d("HomeViewModel", "getAllDesign: ${json.encodeToString(SavedDesigns.serializer(),designs)}")
             _allDesign.value = designs
         }
     }
