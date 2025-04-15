@@ -1,5 +1,3 @@
-
-
 import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.compose.reload.ComposeHotRun
@@ -147,9 +145,12 @@ dependencies {
 compose.desktop {
     application {
         mainClass = "MainKt"
-
+        buildTypes.release.proguard {
+            version.set("7.4.0")
+        }
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            includeAllModules =true
             packageName = "Canvas"
             packageVersion = "1.0.0"
 

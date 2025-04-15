@@ -17,6 +17,7 @@ import kotlinx.browser.window
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalBrowserHistoryApi::class)
 fun main() {
     initKoin()
+    disableBrowserKeyDefaults()
     try {
         val body = document.body ?: return
         ComposeViewport(body) {
@@ -46,4 +47,23 @@ fun main() {
     }catch (e: Exception){
         e.printStackTrace()
     }
+}
+
+@OptIn(ExperimentalJsExport::class)
+fun disableBrowserKeyDefaults() {
+    js("""
+        window.addEventListener('keydown', function(e) {
+            const blockedKeys = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space", "PageUp", "PageDown", "Home", "End", "F5"];
+            
+            // Prevent default for blocked keys
+            if (blockedKeys.includes(e.key)) {
+                e.preventDefault();
+            }
+
+            // Prevent Ctrl+S / Cmd+S
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    """)
 }
