@@ -73,19 +73,14 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
 
     val isFullScreen = remember { mutableStateOf(false) }
 
-    val requester = FocusRequester()
+    val requester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {
         requester.requestFocus()
     }
 
     Scaffold(
-        modifier = Modifier
-            .pointerInput(key1 = true) {
-                detectTapGestures(onPress = {
-                    requester.requestFocus()
-                })
-            }.onKeyEvent {
+        modifier = Modifier.onKeyEvent {
                 if ((it.isCtrlPressed || it.isMetaPressed) && it.key == Key.S) {
                     viewModel.onAction(DrawingAction.SaveDesign(state.value, currentDesign.value.name))
                     true
@@ -96,7 +91,7 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
 
         topBar = {
             AnimatedVisibility(
-                visible = isFullScreen.value
+                visible = !isFullScreen.value
             ) {
                 TopAppBar(
                     title = {
@@ -239,7 +234,7 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                     Spacer(Modifier.width(16.dp))
                 }
             }
-            AnimatedVisibility(visible = isFullScreen.value) {
+            AnimatedVisibility(visible = !isFullScreen.value) {
                 ThicknessManagement(
                     value = state.value.selectedThickness
                 ) {
@@ -247,7 +242,7 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                 }
 
             }
-            AnimatedVisibility(visible = isFullScreen.value,
+            AnimatedVisibility(visible = !isFullScreen.value,
                 modifier = Modifier.fillMaxWidth(0.6f).align(Alignment.CenterHorizontally),
             ) {
                 Button(
