@@ -236,7 +236,6 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                     PaintingStyle(
                         selected = state.value.selectedPathEffect,
                     ) {
-                        Log.d("Path Effect", it)
                         viewModel.onAction(DrawingAction.OnPathEffectChange(it))
                     }
                 }
@@ -268,7 +267,6 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
             ) {
                 Button(
                     onClick = {
-                        Log.d("Clear Canvas", "Clicked")
                         viewModel.onAction(DrawingAction.OnClearCanvasList)
                     }
                 ) {
