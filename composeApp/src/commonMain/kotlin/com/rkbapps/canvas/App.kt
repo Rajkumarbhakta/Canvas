@@ -6,9 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.rkbapps.canvas.navigation.MainNavGraph
 import com.rkbapps.canvas.theme.AppTheme
-import com.rkbapps.canvas.ui.screens.drawing.DrawingScreen
 import org.koin.compose.KoinContext
-import org.koin.core.context.startKoin
 
 
 @Composable
