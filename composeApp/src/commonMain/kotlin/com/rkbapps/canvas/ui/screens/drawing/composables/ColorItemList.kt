@@ -34,6 +34,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.github.skydoves.colorpicker.compose.AlphaSlider
+import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.ColorPickerController
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
@@ -131,15 +133,10 @@ fun ColorPickerDialog(
     ) {
         Column (
             modifier = Modifier
-                .fillMaxWidth().background(Color.White, shape = RoundedCornerShape(8.dp))
+                .fillMaxWidth().background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(8.dp))
                 .padding(10.dp)
         ){
-            HsvColorPicker(
-                initialColor = controller.selectedColor.value,
-                modifier = Modifier.fillMaxWidth().height(300.dp).padding(10.dp),
-                controller = controller,
-                onColorChanged = onColorChanged
-            )
+            ColorPicker(controller, onColorChanged)
             Spacer(modifier = Modifier.height(10.dp))
             Row (modifier = Modifier.fillMaxWidth().padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -166,3 +163,4 @@ fun ColorPickerDialog(
         }
     }
 }
+
