@@ -103,12 +103,12 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = koin
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Row (modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            /*Row (modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 InstagramLogo()
                 FacebookLogo()
                 MessengerIcon()
                 GooglePhotosIcon()
-            }
+            }*/
 
             currentDeletableProject.value?.let {
                 DeleteConfirmationDialog(
