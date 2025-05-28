@@ -122,8 +122,6 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = koin
                 }
             }
 
-
-
             if (allDesign.value.designs.isNotEmpty()) {
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(200.dp),
