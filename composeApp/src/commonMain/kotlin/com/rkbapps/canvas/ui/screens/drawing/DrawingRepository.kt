@@ -172,12 +172,14 @@ class DrawingRepository(
 
     suspend fun saveDesign(drawingState: DrawingState, name: String) {
         _currentDesign.update {
-            it.copy(name = name, state = drawingState)
+            it.copy(name = name, state = drawingState.copy(
+                undoStack = listOf(),
+                redoStack = listOf()
+            ))
         }
         val design = currentDesign.value
 
         dbOperations.save(design)
-
     }
 
     fun updateDrawingName(name:String){
