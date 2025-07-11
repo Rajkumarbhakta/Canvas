@@ -1,6 +1,9 @@
+import com.android.ide.common.resources.GeneratedResourceSet
+import org.gradle.api.internal.tasks.compile.incremental.compilerapi.deps.GeneratedResource
 import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.compose.reload.ComposeHotRun
+import org.jetbrains.compose.resources.ResourcesExtension
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -23,12 +26,10 @@ kotlin {
             compileTaskProvider {
                 compilerOptions {
                     jvmTarget.set(JvmTarget.JVM_1_8)
-                    //https://jakewharton.com/gradle-toolchains-are-rarely-a-good-idea/#what-do-i-do
                     freeCompilerArgs.add("-Xjdk-release=${JavaVersion.VERSION_1_8}")
                 }
             }
         }
-        //https://www.jetbrains.com/help/kotlin-multiplatform-dev/compose-test.html
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
     }
@@ -112,6 +113,11 @@ kotlin {
     }
 }
 
+compose.resources{
+    generateResClass = ResourcesExtension.ResourceClassGeneration.Always
+    publicResClass = true
+}
+
 android {
     namespace = "com.rkbapps.canvas"
     compileSdk = 36
@@ -158,11 +164,12 @@ compose.desktop {
                 iconFile.set(project.file("desktopAppIcons/LinuxIcon.png"))
             }
             windows {
+                menu = true
                 iconFile.set(project.file("desktopAppIcons/WindowsIcon.ico"))
             }
             macOS {
                 iconFile.set(project.file("desktopAppIcons/MacosIcon.icns"))
-                bundleID = "com.rkbapps.canvas.desktopApp"
+                bundleID = "com.rkbapps.canvas"
             }
         }
     }
