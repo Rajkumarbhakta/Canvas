@@ -32,9 +32,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,8 +61,8 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = koinViewModel()) {
 
-    val allDesign = viewModel.allDesign.collectAsStateWithLifecycle()
-    val currentDeletableProject = remember { mutableStateOf<SavedDesign?>(null) }
+    val allDesign by viewModel.allDesign.collectAsStateWithLifecycle()
+    val currentDeletableProject = rememberSaveable { mutableStateOf<SavedDesign?>(null) }
 
 
 
@@ -95,20 +97,13 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = koin
                 }
             }
         }
-    ) {
+    ) { innerPadding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(it)
+            modifier = Modifier.fillMaxSize().padding(innerPadding)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            /*Row (modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                InstagramLogo()
-                FacebookLogo()
-                MessengerIcon()
-                GooglePhotosIcon()
-            }*/
 
             currentDeletableProject.value?.let {
                 DeleteConfirmationDialog(
@@ -122,14 +117,14 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = koin
                 }
             }
 
-            if (allDesign.value.designs.isNotEmpty()) {
+            if (allDesign.designs.isNotEmpty()) {
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(200.dp),
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(items = allDesign.value.designs.reversed()) {
+                    items(items = allDesign.designs.reversed()) {
                         DesignListItem(it, onDelete = {
                             currentDeletableProject.value = it
                         }) {

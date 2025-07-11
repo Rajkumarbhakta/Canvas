@@ -1,17 +1,9 @@
 package com.rkbapps.canvas.ui.screens.drawing
 
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rkbapps.canvas.model.DrawingState
-import com.rkbapps.canvas.model.PathData
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 
 
 class DrawingViewModel(
@@ -20,8 +12,9 @@ class DrawingViewModel(
 
     val state = repository.state
     val currentDesign = repository.currentDesign
+    val uiState = repository.uiState
 
-    fun updateDrawingName(name:String) =repository.updateDrawingName(name)
+    fun updateDrawingName(name: String) = repository.updateDrawingName(name)
 
     fun onAction(action: DrawingAction) {
         when (action) {
@@ -36,9 +29,16 @@ class DrawingViewModel(
             is DrawingAction.OnBackgroundColorChange -> repository.onBackgroundColorChange(action.color)
             DrawingAction.OnRedo -> repository.onRedo()
             DrawingAction.OnUndo -> repository.onUndo()
-            is DrawingAction.SaveDesign -> viewModelScope.launch {
-                repository.saveDesign(action.drawingState,action.name)
+            is DrawingAction.SaveDesign -> viewModelScope.launch(Dispatchers.Default) {
+                repository.saveDesign(action.drawingState, action.name)
             }
+
+            DrawingAction.OnCloseNameEditDialog -> repository.showHideNameEditorDialog(false)
+            DrawingAction.OnEnterFullScreen ->  repository.changeFullScreen(true)
+            DrawingAction.OnEraserSelected -> repository.changeEraserSelection(true)
+            DrawingAction.OnEraserUnselected -> repository.changeEraserSelection(false)
+            DrawingAction.OnExitFullScreen -> repository.changeFullScreen(false)
+            DrawingAction.OnOpenNameEditDialog -> repository.showHideNameEditorDialog(true)
         }
     }
 }

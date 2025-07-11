@@ -2,11 +2,9 @@ package com.rkbapps.canvas.ui.screens.drawing
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.animateValueAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.gestures.scrollBy
@@ -19,13 +17,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Button
@@ -37,7 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -45,15 +41,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.isCtrlPressed
 import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.input.key.onPreviewKeyEvent
-import androidx.compose.ui.input.key.type
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -65,25 +57,18 @@ import com.rkbapps.canvas.ui.screens.drawing.composables.EraserItem
 import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyle
 import com.rkbapps.canvas.ui.screens.drawing.composables.ThicknessManagement
 import com.rkbapps.canvas.ui.screens.drawing.composables.UndoRedoItem
-import com.rkbapps.canvas.util.Log
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel = koinViewModel()) {
-    val state = viewModel.state.collectAsStateWithLifecycle()
-    val currentDesign = viewModel.currentDesign.collectAsStateWithLifecycle()
-
-    val isEditDrawingNameDialogVisible = remember { mutableStateOf(false) }
-
-    val isEraserSelected = remember { mutableStateOf(false) }
-
-    val isFullScreen = remember { mutableStateOf(false) }
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val currentDesign by viewModel.currentDesign.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val scrollState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
-
 
     val requester = remember { FocusRequester() }
 
@@ -94,7 +79,7 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
     Scaffold(
         modifier = Modifier.onKeyEvent {
                 if ((it.isCtrlPressed || it.isMetaPressed) && it.key == Key.S) {
-                    viewModel.onAction(DrawingAction.SaveDesign(state.value, currentDesign.value.name))
+                    viewModel.onAction(DrawingAction.SaveDesign(state, currentDesign.name))
                     true
                 }
                 false
@@ -103,7 +88,7 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
 
         topBar = {
             AnimatedVisibility(
-                visible = !isFullScreen.value
+                visible = !uiState.isFullScreen
             ) {
                 TopAppBar(
                     title = {
@@ -111,9 +96,9 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            Text(currentDesign.value.name)
+                            Text(currentDesign.name)
                             IconButton(onClick = {
-                                isEditDrawingNameDialogVisible.value = true
+                                viewModel.onAction(DrawingAction.OnOpenNameEditDialog)
                             }) {
                                 Icon(Icons.Default.Edit, contentDescription = "edit name")
                             }
@@ -136,8 +121,8 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                     actions = {
                         IconButton(
                             onClick = {
-                                viewModel.onAction(DrawingAction.SaveDesign(state.value,
-                                    currentDesign.value.name
+                                viewModel.onAction(DrawingAction.SaveDesign(state,
+                                    currentDesign.name
                                 ))
                             }
                         ) {
@@ -157,35 +142,36 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
             ,
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            if (isEditDrawingNameDialogVisible.value) {
+            if (uiState.isEditDrawingNameDialogVisible) {
                 EditDrawingNameDialog(
-                    initialName = currentDesign.value.name,
+                    initialName = currentDesign.name,
                     onCanceled = {
-                        isEditDrawingNameDialogVisible.value = false
+                        viewModel.onAction(DrawingAction.OnCloseNameEditDialog)
                     }
                 ) { name ->
                     viewModel.updateDrawingName(name)
-                    isEditDrawingNameDialogVisible.value = false
+                    viewModel.onAction(DrawingAction.OnCloseNameEditDialog)
                 }
             }
 
             DrawingCanvas(
-                paths = state.value.paths,
-                currentPath = state.value.currentPath,
+                paths = state.paths,
+                currentPath = state.currentPath,
                 onAction = viewModel::onAction,
                 modifier = Modifier.fillMaxWidth().weight(1f),
-                backgroundColor = state.value.backgroundColor
+                backgroundColor = state.backgroundColor
             )
 
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
                 val rotation = animateFloatAsState(
-                    targetValue = if (isFullScreen.value) 0f else 180f,
+                    targetValue = if (uiState.isFullScreen) 0f else 180f,
                     label = "ArrowRotation"
                 )
                 Icon(imageVector = Icons.Default.KeyboardArrowUp,
                     contentDescription = "",
                     modifier = Modifier.rotate(rotation.value).clickable {
-                        isFullScreen.value = !isFullScreen.value
+                        if (uiState.isFullScreen) viewModel.onAction(DrawingAction.OnExitFullScreen)
+                        else viewModel.onAction(DrawingAction.OnEnterFullScreen)
                     }
                 )
             }
@@ -208,16 +194,16 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                     Spacer(Modifier.width(16.dp))
                 }
                 item {
-                    BackgroundColorChangeItem {
-                        viewModel.onAction(DrawingAction.OnBackgroundColorChange(it))
+                    BackgroundColorChangeItem {color ->
+                        viewModel.onAction(DrawingAction.OnBackgroundColorChange(color))
                     }
                 }
 
                 item {
                     ColorItemList(
-                        selectedColor = state.value.selectedColor,
+                        selectedColor = state.selectedColor,
                     ) { color ->
-                        isEraserSelected.value = false
+                        viewModel.onAction(DrawingAction.OnEraserUnselected)
                         viewModel.onAction(DrawingAction.OnToggleEraser(false))
                         viewModel.onAction(DrawingAction.OnSelectColor(color))
                     }
@@ -225,18 +211,18 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
 
                 item {
                     EraserItem(
-                        isEraserSelected = isEraserSelected.value
+                        isEraserSelected = uiState.isEraserSelected
                     ) {
-                        isEraserSelected.value = true
+                        viewModel.onAction(DrawingAction.OnEraserSelected)
                         viewModel.onAction(DrawingAction.OnToggleEraser(true))
                     }
                 }
 
                 item {
                     PaintingStyle(
-                        selected = state.value.selectedPathEffect,
-                    ) {
-                        viewModel.onAction(DrawingAction.OnPathEffectChange(it))
+                        selected = state.selectedPathEffect,
+                    ) {pathEffect ->
+                        viewModel.onAction(DrawingAction.OnPathEffectChange(pathEffect))
                     }
                 }
 
@@ -254,15 +240,15 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                     Spacer(Modifier.width(16.dp))
                 }
             }
-            AnimatedVisibility(visible = !isFullScreen.value) {
+            AnimatedVisibility(visible = !uiState.isFullScreen) {
                 ThicknessManagement(
-                    value = state.value.selectedThickness
-                ) {
-                    viewModel.onAction(DrawingAction.OnThicknessChange(it))
+                    value = state.selectedThickness
+                ) {thickness->
+                    viewModel.onAction(DrawingAction.OnThicknessChange(thickness))
                 }
 
             }
-            AnimatedVisibility(visible = !isFullScreen.value,
+            AnimatedVisibility(visible = !uiState.isFullScreen,
                 modifier = Modifier.fillMaxWidth(0.6f).align(Alignment.CenterHorizontally),
             ) {
                 Button(

@@ -22,21 +22,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 
-sealed interface DrawingAction {
-    data object OnNewPathStart : DrawingAction
-    data class OnDraw(val offset: Offset) : DrawingAction
-    data object OnPathEnd : DrawingAction
-    data class OnSelectColor(val color: Color) : DrawingAction
-    data object OnClearCanvasList : DrawingAction
-    data class OnThicknessChange(val thickness: Float) : DrawingAction
-    data class OnPathEffectChange(val pathEffect: PaintingStyleType) : DrawingAction
-    data class OnToggleEraser(val isEraser: Boolean) : DrawingAction
-    data class OnBackgroundColorChange(val color: Color) : DrawingAction
-    data object OnUndo : DrawingAction
-    data object OnRedo : DrawingAction
-    data class SaveDesign(val drawingState: DrawingState, val name: String) : DrawingAction
-}
-
 class DrawingRepository(
     private val dbOperations: DbOperations,
     saveStateHandle: SavedStateHandle
@@ -47,6 +32,10 @@ class DrawingRepository(
 
     private val _currentDesign = MutableStateFlow<SavedDesign>(SavedDesign(name = "Untitled drawing", state = DrawingState()))
     val currentDesign = _currentDesign.asStateFlow()
+
+
+    private val _uiState = MutableStateFlow(DrawingScreenState())
+    val uiState = _uiState.asStateFlow()
 
     init {
         val draw = saveStateHandle.toRoute<Draw>()
@@ -61,6 +50,28 @@ class DrawingRepository(
             }
         }
     }
+
+    fun showHideNameEditorDialog(value: Boolean){
+        _uiState.update {
+            it.copy(isEditDrawingNameDialogVisible = value)
+        }
+    }
+    fun changeFullScreen(value: Boolean){
+        _uiState.update {
+            it.copy(
+                isFullScreen = value
+            )
+        }
+    }
+
+    fun changeEraserSelection(value: Boolean){
+        _uiState.update {
+            it.copy(
+                isEraserSelected = value
+            )
+        }
+    }
+
 
 
     fun onThicknessChange(f: Float) {
