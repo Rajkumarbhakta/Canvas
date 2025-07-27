@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.Color
 import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyleType
+import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeType
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
@@ -16,6 +17,7 @@ data class DrawingState(
     val selectedColor: Color = Color.Blue,
     val selectedThickness: Float = 10f,
     val selectedPathEffect: PaintingStyleType = PaintingStyleType.STROKE,
+    val selectedShapeType: ShapeType = ShapeType.NONE,
     val currentPath: PathData? = null,
     val paths : List<PathData> = emptyList(),
     val isEraserMode: Boolean = false,
