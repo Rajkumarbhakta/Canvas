@@ -5,6 +5,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyleType
+import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeType
 import com.rkbapps.canvas.util.ColorSerializer
 import com.rkbapps.canvas.util.ListOffsetSerializer
 import com.rkbapps.canvas.util.OffsetSerializer
@@ -22,5 +23,8 @@ data class PathData(
     val pathEffect: PaintingStyleType = PaintingStyleType.STROKE,
     @Serializable(with = ListOffsetSerializer::class)
     val path: List<Offset> = emptyList(),
-    val isEraser: Boolean = false
+    val isEraser: Boolean = false,
+    val shapeType: ShapeType = ShapeType.NONE,
+    @Serializable(with = ListOffsetSerializer::class)
+    val shapePoints: List<Offset> = emptyList() // Start and end points for shapes
 )

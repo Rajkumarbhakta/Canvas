@@ -55,8 +55,11 @@ import com.rkbapps.canvas.ui.screens.drawing.composables.ColorItemList
 import com.rkbapps.canvas.ui.screens.drawing.composables.EditDrawingNameDialog
 import com.rkbapps.canvas.ui.screens.drawing.composables.EraserItem
 import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyle
+import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeSelector
+import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeType
 import com.rkbapps.canvas.ui.screens.drawing.composables.ThicknessManagement
 import com.rkbapps.canvas.ui.screens.drawing.composables.UndoRedoItem
+import com.rkbapps.canvas.ui.screens.drawing.composables.shapeOptions
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -224,6 +227,18 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                     ) {pathEffect ->
                         viewModel.onAction(DrawingAction.OnPathEffectChange(pathEffect))
                     }
+                }
+                
+                item {
+                    ShapeSelector(
+                        selectedShape = state.selectedShapeType,
+                        shapes = shapeOptions,
+                        onShapeSelected = { shapeType ->
+                            viewModel.onAction(DrawingAction.OnEraserUnselected)
+                            viewModel.onAction(DrawingAction.OnToggleEraser(false))
+                            viewModel.onAction(DrawingAction.OnShapeTypeChange(shapeType))
+                        }
+                    )
                 }
 
                 item {
