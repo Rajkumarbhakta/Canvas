@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 import com.rkbapps.canvas.model.DrawingState
 import com.rkbapps.canvas.navigation.Draw
 import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyleType
+import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeType
 
 sealed interface DrawingAction {
     data object OnNewPathStart : DrawingAction
@@ -14,6 +15,7 @@ sealed interface DrawingAction {
     data object OnClearCanvasList : DrawingAction
     data class OnThicknessChange(val thickness: Float) : DrawingAction
     data class OnPathEffectChange(val pathEffect: PaintingStyleType) : DrawingAction
+    data class OnShapeTypeChange(val shapeType: ShapeType) : DrawingAction
     data class OnToggleEraser(val isEraser: Boolean) : DrawingAction
     data class OnBackgroundColorChange(val color: Color) : DrawingAction
     data object OnUndo : DrawingAction

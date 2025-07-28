@@ -124,7 +124,7 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = koin
             searchFocusRequester.requestFocus()
         }
     }
-
+    
     Scaffold(
         topBar = {
             AnimatedVisibility(
@@ -263,10 +263,16 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = koin
         }
 
         Column(
+
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp)
+
+            modifier = Modifier.fillMaxSize().padding(innerPadding).padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+
         ) {
             // Results summary
             if (isSearchActive && searchQuery.isNotEmpty()) {
