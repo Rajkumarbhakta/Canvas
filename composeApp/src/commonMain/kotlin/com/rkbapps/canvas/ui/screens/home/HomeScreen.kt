@@ -64,8 +64,6 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = koin
     val allDesign by viewModel.allDesign.collectAsStateWithLifecycle()
     val currentDeletableProject = rememberSaveable { mutableStateOf<SavedDesign?>(null) }
 
-
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -99,8 +97,7 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = koin
         }
     ) { innerPadding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(innerPadding)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+            modifier = Modifier.fillMaxSize().padding(innerPadding).padding(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
