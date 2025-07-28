@@ -60,7 +60,7 @@ fun ShapeSelector(
                         Icon(
                             imageVector = shape.icon,
                             contentDescription = shape.title,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(20.dp)
                         )
                     },
                     title = {
@@ -85,27 +85,29 @@ fun ShapeSelectorItem(
     title: @Composable () -> Unit,
     onClick: () -> Unit
 ) {
-    Column(
+    Box(
         modifier = Modifier
-            .clip(RoundedCornerShape(8.dp))
-            .clickable { onClick() }
-            .background(
-                color = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
-                else Color.Transparent,
-                shape = RoundedCornerShape(8.dp)
-            )
+            .width(width = 70.dp)
+            .clip(shape = RoundedCornerShape(8.dp))
+            .background(color = MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(8.dp) )
             .border(
-                border = if (isSelected) BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
-                else BorderStroke(0.dp, Color.Transparent),
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
+                border = BorderStroke(
+                    width =if(isSelected) 2.dp else 0.dp,
+                    color = if(isSelected) MaterialTheme.colorScheme.onPrimaryContainer else Color.Transparent
+                )
             )
-            .padding(4.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            .clickable {
+                onClick()
+            },
+        contentAlignment = Alignment.Center
     ) {
-        icon()
-        Spacer(modifier = Modifier.height(2.dp))
-        title()
+        Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Spacer(Modifier.height(4.dp))
+            icon()
+            title()
+            Spacer(Modifier.height(4.dp))
+        }
     }
 }
 // Remove imports for horizontalScroll and rememberScrollState
