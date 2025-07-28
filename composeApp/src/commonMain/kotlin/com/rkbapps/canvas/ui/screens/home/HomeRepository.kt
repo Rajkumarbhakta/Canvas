@@ -107,7 +107,7 @@ class HomeRepository(
                     try {
                         val designs = dbOperations.getAll()
                         _allDesign.value = designs
-                    } catch (fallbackException) {
+                    } catch (fallbackException: Exception) {
                         Log.e("HomeRepository", "Fallback failed: ${fallbackException.message}")
                         _error.value = "Unable to load designs. Please try again."
                     }
@@ -130,7 +130,7 @@ class HomeRepository(
                 val designs = dbOperations.getAll()
                 _allDesign.value = designs
                 _error.value = null // Clear error if successful
-            } catch (fallbackException) {
+            } catch (fallbackException: Exception) {
                 Log.e("HomeRepository", "Final fallback failed: ${fallbackException.message}")
                 _error.value = "Unable to load designs. Please restart the app."
             }
