@@ -99,3 +99,7 @@ This project is licensed under the [MIT License](LICENSE).
 You are free to use, modify, and distribute this software for personal or commercial purposes, provided that you include the original copyright and license notice in any copies or substantial portions of the software.
 
 See the [LICENSE](LICENSE) file for full license text.
+
+<a href="https://github.com/Rajkumarbhakta/Canvas/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Rajkumarbhakta/Canvas" />
+</a>
