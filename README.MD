@@ -100,6 +100,8 @@ You are free to use, modify, and distribute this software for personal or commer
 
 See the [LICENSE](LICENSE) file for full license text.
 
+# Contributors
+
 <a href="https://github.com/Rajkumarbhakta/Canvas/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=Rajkumarbhakta/Canvas" />
 </a>
