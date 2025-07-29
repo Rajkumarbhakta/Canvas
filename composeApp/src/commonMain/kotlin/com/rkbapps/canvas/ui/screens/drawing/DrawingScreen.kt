@@ -55,8 +55,10 @@ import com.rkbapps.canvas.ui.screens.drawing.composables.ColorItemList
 import com.rkbapps.canvas.ui.screens.drawing.composables.EditDrawingNameDialog
 import com.rkbapps.canvas.ui.screens.drawing.composables.EraserItem
 import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyle
+import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeSelector
 import com.rkbapps.canvas.ui.screens.drawing.composables.ThicknessManagement
 import com.rkbapps.canvas.ui.screens.drawing.composables.UndoRedoItem
+import com.rkbapps.canvas.ui.screens.drawing.composables.shapeOptions
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -78,12 +80,21 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
 
     Scaffold(
         modifier = Modifier.onKeyEvent {
-                if ((it.isCtrlPressed || it.isMetaPressed) && it.key == Key.S) {
-                    viewModel.onAction(DrawingAction.SaveDesign(state, currentDesign.name))
-                    true
-                }
-                false
-            }.focusRequester(requester)
+            if ((it.isCtrlPressed || it.isMetaPressed) && it.key == Key.S) {
+                viewModel.onAction(DrawingAction.SaveDesign(state, currentDesign.name))
+                true
+            }
+            if ((it.isCtrlPressed || it.isMetaPressed) && it.key == Key.Z) {
+                viewModel.onAction(DrawingAction.OnUndo)
+                true
+            }
+            if ((it.isCtrlPressed || it.isMetaPressed) && it.key == Key.Y) {
+                viewModel.onAction(DrawingAction.OnRedo)
+                true
+            }
+
+            false
+        }.focusRequester(requester)
             .focusable(),
 
         topBar = {
@@ -121,12 +132,18 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                     actions = {
                         IconButton(
                             onClick = {
-                                viewModel.onAction(DrawingAction.SaveDesign(state,
-                                    currentDesign.name
-                                ))
+                                viewModel.onAction(
+                                    DrawingAction.SaveDesign(
+                                        state,
+                                        currentDesign.name
+                                    )
+                                )
                             }
                         ) {
-                            Icon(imageVector = Icons.Default.Save, contentDescription = "save drawing")
+                            Icon(
+                                imageVector = Icons.Default.Save,
+                                contentDescription = "save drawing"
+                            )
                         }
                     }
                 )
@@ -137,9 +154,7 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
             Modifier
                 .fillMaxSize()
                 .padding(it)
-                .padding(vertical = 10.dp)
-
-            ,
+                .padding(vertical = 10.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             if (uiState.isEditDrawingNameDialogVisible) {
@@ -162,12 +177,17 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                 backgroundColor = state.backgroundColor
             )
 
-            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
                 val rotation = animateFloatAsState(
                     targetValue = if (uiState.isFullScreen) 0f else 180f,
                     label = "ArrowRotation"
                 )
-                Icon(imageVector = Icons.Default.KeyboardArrowUp,
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowUp,
                     contentDescription = "",
                     modifier = Modifier.rotate(rotation.value).clickable {
                         if (uiState.isFullScreen) viewModel.onAction(DrawingAction.OnExitFullScreen)
@@ -194,7 +214,7 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                     Spacer(Modifier.width(16.dp))
                 }
                 item {
-                    BackgroundColorChangeItem {color ->
+                    BackgroundColorChangeItem { color ->
                         viewModel.onAction(DrawingAction.OnBackgroundColorChange(color))
                     }
                 }
@@ -221,9 +241,21 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                 item {
                     PaintingStyle(
                         selected = state.selectedPathEffect,
-                    ) {pathEffect ->
+                    ) { pathEffect ->
                         viewModel.onAction(DrawingAction.OnPathEffectChange(pathEffect))
                     }
+                }
+
+                item {
+                    ShapeSelector(
+                        selectedShape = state.selectedShapeType,
+                        shapes = shapeOptions,
+                        onShapeSelected = { shapeType ->
+                            viewModel.onAction(DrawingAction.OnEraserUnselected)
+                            viewModel.onAction(DrawingAction.OnToggleEraser(false))
+                            viewModel.onAction(DrawingAction.OnShapeTypeChange(shapeType))
+                        }
+                    )
                 }
 
                 item {
@@ -243,12 +275,13 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
             AnimatedVisibility(visible = !uiState.isFullScreen) {
                 ThicknessManagement(
                     value = state.selectedThickness
-                ) {thickness->
+                ) { thickness ->
                     viewModel.onAction(DrawingAction.OnThicknessChange(thickness))
                 }
 
             }
-            AnimatedVisibility(visible = !uiState.isFullScreen,
+            AnimatedVisibility(
+                visible = !uiState.isFullScreen,
                 modifier = Modifier.fillMaxWidth(0.6f).align(Alignment.CenterHorizontally),
             ) {
                 Button(

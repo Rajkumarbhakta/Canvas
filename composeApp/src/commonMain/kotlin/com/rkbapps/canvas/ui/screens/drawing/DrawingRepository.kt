@@ -10,6 +10,7 @@ import com.rkbapps.canvas.model.PathData
 import com.rkbapps.canvas.model.SavedDesign
 import com.rkbapps.canvas.navigation.Draw
 import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyleType
+import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeType
 import com.rkbapps.canvas.util.Log
 import com.rkbapps.canvas.util.json
 import kotlinx.coroutines.CoroutineScope
@@ -120,7 +121,9 @@ class DrawingRepository(
                     thickness = it.selectedThickness,
                     pathEffect = it.selectedPathEffect,
                     isEraser = it.isEraserMode,
-                    path = emptyList()
+                    path = emptyList(),
+                    shapeType = it.selectedShapeType,
+                    shapePoints = emptyList()
                 )
             )
         }
@@ -128,8 +131,25 @@ class DrawingRepository(
 
     fun onDraw(offset: Offset) {
         val currentPathData = state.value.currentPath ?: return
-        _state.update {
-            it.copy(currentPath = currentPathData.copy(path = currentPathData.path + offset))
+        
+        if (currentPathData.shapeType == ShapeType.NONE) {
+            // Regular drawing
+            _state.update {
+                it.copy(currentPath = currentPathData.copy(path = currentPathData.path + offset))
+            }
+        } else {
+            // Shape drawing - store start and current point
+            val shapePoints = if (currentPathData.shapePoints.isEmpty()) {
+                // First point (start)
+                listOf(offset, offset)
+            } else {
+                // Update end point
+                listOf(currentPathData.shapePoints.first(), offset)
+            }
+            
+            _state.update {
+                it.copy(currentPath = currentPathData.copy(shapePoints = shapePoints))
+            }
         }
     }
 
@@ -138,6 +158,19 @@ class DrawingRepository(
             it.copy(
                 selectedPathEffect = pathEffect
             )
+        }
+    }
+    
+    fun onShapeTypeChange(shapeType: ShapeType) {
+        _state.update {
+            it.copy(
+                selectedShapeType = shapeType,
+                isEraserMode = false
+            )
+        }
+        // Update UI state to unselect eraser when shape is selected
+        if (shapeType != ShapeType.NONE) {
+            changeEraserSelection(false)
         }
     }
 

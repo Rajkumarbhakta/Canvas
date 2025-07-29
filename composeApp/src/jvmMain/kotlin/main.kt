@@ -1,10 +1,19 @@
-import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.material.icons.Icons
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import canvas.composeapp.generated.resources.Res
 import canvas.composeapp.generated.resources.icon
 import java.awt.Dimension
@@ -31,7 +40,3 @@ fun main() {
         }
     }
 }
-
-@Preview
-@Composable
-fun AppPreview() { App() }

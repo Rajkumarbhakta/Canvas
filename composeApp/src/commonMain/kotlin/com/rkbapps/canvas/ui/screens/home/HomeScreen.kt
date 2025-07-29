@@ -29,23 +29,23 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun HomeScreen(navController: NavHostController,themeMode:String,onThemeChange: (String) -> Unit, viewModel: HomeViewModel = koinViewModel()) {
     val allDesign by viewModel.allDesign.collectAsStateWithLifecycle()
-    val currentDeletableProject = remember { mutableStateOf<SavedDesign?>(null) }
-    val expanded = remember { mutableStateOf(false) }
-    val themeOptions = listOf("Light", "Dark", "System")
-    val selectedTheme = remember { mutableStateOf("System") }
-    val nextTheme = when (themeMode) {
-        "System" -> "Dark"
-        "Dark" -> "Light"
-        "Light" -> "System"
-        else -> "System"
-    }
+val currentDeletableProject = rememberSaveable { mutableStateOf<SavedDesign?>(null) }
+val expanded = remember { mutableStateOf(false) }
+val themeOptions = listOf("Light", "Dark", "System")
+val selectedTheme = remember { mutableStateOf("System") }
+val nextTheme = when (themeMode) {
+    "System" -> "Dark"
+    "Dark" -> "Light"
+    "Light" -> "System"
+    else -> "System"
+}
 
-    val icon = when (themeMode) {
-        "System" -> Icons.Default.SettingsBrightness // or any meaningful "system" icon
-        "Dark" -> Icons.Default.DarkMode
-        "Light" -> Icons.Default.LightMode
-        else -> Icons.Default.SettingsBrightness
-    }
+val icon = when (themeMode) {
+    "System" -> Icons.Default.SettingsBrightness // or any meaningful "system" icon
+    "Dark" -> Icons.Default.DarkMode
+    "Light" -> Icons.Default.LightMode
+    else -> Icons.Default.SettingsBrightness
+}
     Scaffold(
         topBar = {
             TopAppBar(
