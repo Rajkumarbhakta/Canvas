@@ -2,40 +2,15 @@ package com.rkbapps.canvas.ui.screens.home
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Brush
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,27 +18,35 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastForEach
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.rkbapps.canvas.model.DrawingState
 import com.rkbapps.canvas.model.SavedDesign
 import com.rkbapps.canvas.navigation.Draw
-import com.rkbapps.canvas.ui.composables.CircularIndicator
-import com.rkbapps.canvas.ui.composables.FacebookLogo
-import com.rkbapps.canvas.ui.composables.GooglePhotosIcon
-import com.rkbapps.canvas.ui.composables.InstagramLogo
-import com.rkbapps.canvas.ui.composables.MessengerIcon
 import com.rkbapps.canvas.ui.composables.drawPath
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = koinViewModel()) {
-
+fun HomeScreen(navController: NavHostController,themeMode:String,onThemeChange: (String) -> Unit, viewModel: HomeViewModel = koinViewModel()) {
     val allDesign by viewModel.allDesign.collectAsStateWithLifecycle()
-    val currentDeletableProject = rememberSaveable { mutableStateOf<SavedDesign?>(null) }
+val currentDeletableProject = rememberSaveable { mutableStateOf<SavedDesign?>(null) }
+val expanded = remember { mutableStateOf(false) }
+val themeOptions = listOf("Light", "Dark", "System")
+val selectedTheme = remember { mutableStateOf("System") }
+val nextTheme = when (themeMode) {
+    "System" -> "Dark"
+    "Dark" -> "Light"
+    "Light" -> "System"
+    else -> "System"
+}
 
+val icon = when (themeMode) {
+    "System" -> Icons.Default.SettingsBrightness // or any meaningful "system" icon
+    "Dark" -> Icons.Default.DarkMode
+    "Light" -> Icons.Default.LightMode
+    else -> Icons.Default.SettingsBrightness
+}
     Scaffold(
         topBar = {
             TopAppBar(
@@ -77,6 +60,16 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = koin
                         }
                     ) {
                         Icon(imageVector = Icons.Default.Refresh, contentDescription = "refresh")
+                    }
+                    IconButton(
+                        onClick = {
+                            onThemeChange(nextTheme)
+                        }
+                    ) {
+                        Icon(
+                            imageVector = icon,
+                            contentDescription = "Toggle Theme"
+                        )
                     }
                 }
             )
@@ -97,7 +90,10 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = koin
         }
     ) { innerPadding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(innerPadding).padding(horizontal = 16.dp, vertical = 8.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -136,29 +132,33 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = koin
     }
 }
 
-
-
-
-
 @Composable
 fun DesignListItem(design: SavedDesign, onDelete: () -> Unit = {}, onClick: () -> Unit = {}) {
     Card(modifier = Modifier.padding(8.dp), onClick = onClick) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
         ) {
             Box(
                 modifier = Modifier
-                    .height(200.dp).fillMaxWidth()
+                    .height(200.dp)
+                    .fillMaxWidth()
                     .clip(shape = RoundedCornerShape(16.dp))
                     .align(Alignment.CenterHorizontally)
             ) {
                 DrawingShow(
                     state = design.state,
-                    modifier = Modifier.height(200.dp).fillMaxWidth().clipToBounds()
+                    modifier = Modifier
+                        .height(200.dp)
+                        .fillMaxWidth()
+                        .clipToBounds()
                 )
             }
             Row(
-                modifier = Modifier.fillMaxWidth().padding(start = 4.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 4.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -180,7 +180,6 @@ fun DesignListItem(design: SavedDesign, onDelete: () -> Unit = {}, onClick: () -
     }
 }
 
-
 @Composable
 fun DrawingShow(
     state: DrawingState,
@@ -189,7 +188,7 @@ fun DrawingShow(
     Canvas(
         modifier = modifier.background(state.backgroundColor)
     ) {
-        state.paths.fastForEach {
+        state.paths.forEach {
             drawPath(
                 it.path,
                 it.color,
@@ -212,9 +211,8 @@ fun DrawingShow(
     }
 }
 
-
 @Composable
-fun DeleteConfirmationDialog(projectName:String,onCancel:()-> Unit,onDone: () -> Unit){
+fun DeleteConfirmationDialog(projectName: String, onCancel: () -> Unit, onDone: () -> Unit) {
     AlertDialog(
         onDismissRequest = {
             onCancel()
@@ -236,6 +234,5 @@ fun DeleteConfirmationDialog(projectName:String,onCancel:()-> Unit,onDone: () ->
             }
         }
     )
-
-
 }
+
