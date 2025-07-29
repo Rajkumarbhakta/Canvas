@@ -21,15 +21,34 @@ Unleash your inner artist with **Paint & Draw**, the ultimate lightweight and us
 - **Save & Share:** Export your creations as images and share them easily.
 - **Dark Mode Support:** Draw comfortably in any lighting condition.
 - **Offline Functionality:** Create art anytime, even without an internet connection.
+- **SQLite Database:** Fast and reliable local storage for all your drawings with proper database structure.
 
 # Tech Stack
 
 - **Kotlin** – Kotlin is a modern, statically typed, cross-platform programming language developed by JetBrains.
 - **Compose Multiplatform** – Compose Multiplatform is a declarative framework for building beautiful shared UIs across Android, iOS, desktop, and web – powered by Kotlin Multiplatform.
 - **Coroutines** – Asynchronous programming for smooth UI interactions
-- **Multiplatform Settings** – Local database for storing user drawings 
+- **SQLite Database** – Cross-platform SQLite database for efficient local storage of drawings
 - **Material Design** – UI/UX guidelines and components
 
+## Database Implementation
+
+Canvas uses SQLite database for storing drawings across all platforms:
+
+- **Android**: Uses `SQLiteOpenHelper` with Android's built-in SQLite
+- **Desktop**: Uses SQLite JDBC driver for Windows, Mac, and Linux
+- **iOS**: Uses SQLite3 C API through Kotlin/Native
+- **Web**: Uses `localStorage` as fallback (IndexedDB for larger datasets)
+
+### Database Schema
+```sql
+CREATE TABLE drawings (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    time TEXT NOT NULL,
+    state TEXT NOT NULL -- Serialized DrawingState
+);
+```
 
 # Supported Platforms
 
@@ -74,10 +93,33 @@ To run the desktop application:
 - Start with **hot reload**: `./gradlew :composeApp:runHot`
 - Run desktop UI tests: `./gradlew :composeApp:jvmTest`
 
+The database file is stored at: `%USERPROFILE%\canvas_database.db` (Windows) or `~/canvas_database.db` (Mac/Linux)
+
 ## Web
 
 Access the app directly in your browser: [Canvas Web Version](https://me.rkbapps.in/canvas_build/)
 
+# Development
+
+## Database Location
+
+- **Desktop**: `%USERPROFILE%\canvas_database.db` (Windows) or `~/canvas_database.db` (Mac/Linux)
+- **Android**: Internal app storage
+- **iOS**: App documents directory
+- **Web**: Browser localStorage
+
+## Building
+
+```bash
+# Build for all platforms
+./gradlew build
+
+# Run desktop version
+./gradlew :composeApp:run
+
+# Build Android APK
+./gradlew :composeApp:assembleDebug
+```
 
 # Contribution
 

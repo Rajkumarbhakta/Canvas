@@ -1,0 +1,19 @@
+CREATE TABLE drawings (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    time TEXT NOT NULL,
+    state TEXT NOT NULL -- Serialized DrawingState (JSON or similar)
+);
+
+insertDrawing:
+INSERT INTO drawings(id, name, time, state)
+VALUES (?, ?, ?, ?);
+
+selectAllDrawings:
+SELECT * FROM drawings;
+
+selectDrawingById:
+SELECT * FROM drawings WHERE id = ?;
+
+deleteDrawingById:
+DELETE FROM drawings WHERE id = ?; 

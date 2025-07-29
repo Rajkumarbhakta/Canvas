@@ -1,6 +1,7 @@
 package com.rkbapps.canvas.di.modules
 
-import com.rkbapps.canvas.db.DbOperations
+import com.rkbapps.canvas.db.SqliteDatabase
+import com.rkbapps.canvas.db.SqliteDatabaseOperations
 import com.rkbapps.canvas.ui.screens.drawing.DrawingRepository
 import com.rkbapps.canvas.ui.screens.drawing.DrawingViewModel
 import com.rkbapps.canvas.ui.screens.home.HomeRepository
@@ -15,7 +16,8 @@ import org.koin.dsl.module
 expect val platformModule: Module
 
 val dbModule = module {
-    single { DbOperations(get()) }
+    single { SqliteDatabase() }
+    single { SqliteDatabaseOperations(get()) }
 }
 
 val provideRepositories = module {

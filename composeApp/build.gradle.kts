@@ -104,10 +104,10 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
+            implementation("org.xerial:sqlite-jdbc:3.44.1.0")
         }
 
         nativeMain.dependencies {
-
         }
 
     }
