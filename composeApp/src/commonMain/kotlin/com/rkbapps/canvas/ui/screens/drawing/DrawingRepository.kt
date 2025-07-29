@@ -4,7 +4,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
-import com.rkbapps.canvas.db.DbOperations
+import com.rkbapps.canvas.db.SqliteDatabaseOperations
 import com.rkbapps.canvas.model.DrawingState
 import com.rkbapps.canvas.model.PathData
 import com.rkbapps.canvas.model.SavedDesign
@@ -24,7 +24,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 
 class DrawingRepository(
-    private val dbOperations: DbOperations,
+    private val dbOperations: SqliteDatabaseOperations,
     saveStateHandle: SavedStateHandle
 ) {
 
@@ -146,7 +146,7 @@ class DrawingRepository(
                 // Update end point
                 listOf(currentPathData.shapePoints.first(), offset)
             }
-            
+
             _state.update {
                 it.copy(currentPath = currentPathData.copy(shapePoints = shapePoints))
             }
@@ -233,7 +233,4 @@ class DrawingRepository(
             )
         }
     }
-
-
-
 }
