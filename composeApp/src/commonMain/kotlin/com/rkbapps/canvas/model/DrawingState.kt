@@ -1,28 +1,15 @@
-package com.rkbapps.canvas.model
+package com.rkbapps.canvas.ui.screens.drawing
 
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.Stable
-import androidx.compose.ui.graphics.Color
-import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyleType
 import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeType
-import kotlinx.serialization.Contextual
-import kotlinx.serialization.Serializable
 
-
-@Immutable
-@Stable
-@Serializable
 data class DrawingState(
-    @Contextual
-    val selectedColor: Color = Color.Blue,
-    val selectedThickness: Float = 10f,
-    val selectedPathEffect: PaintingStyleType = PaintingStyleType.STROKE,
-    val selectedShapeType: ShapeType = ShapeType.NONE,
+    val paths: List<PathData> = emptyList(),
     val currentPath: PathData? = null,
-    val paths : List<PathData> = emptyList(),
-    val isEraserMode: Boolean = false,
-    @Contextual
-    val backgroundColor:Color = Color.White,
-    val undoStack: List<List<PathData>> = emptyList(),
-    val redoStack: List<List<PathData>> = emptyList()
+    val selectedColor: Long = 0xFF000000,
+    val selectedThickness: Float = 5f,
+    val selectedPathEffect: Any? = null,
+    val backgroundColor: Long = 0xFFFFFFFF,
+
+    // 👇 NEW FIELD
+    val selectedShapeType: ShapeType = ShapeType.NONE
 )
