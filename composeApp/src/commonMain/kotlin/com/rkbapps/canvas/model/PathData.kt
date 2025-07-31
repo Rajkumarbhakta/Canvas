@@ -1,30 +1,19 @@
 package com.rkbapps.canvas.model
 
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyleType
 import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeType
-import com.rkbapps.canvas.util.ColorSerializer
-import com.rkbapps.canvas.util.ListOffsetSerializer
-import com.rkbapps.canvas.util.OffsetSerializer
-import kotlinx.serialization.Contextual
-import kotlinx.serialization.Serializable
 
-@Stable
-@Immutable
-@Serializable
+/**
+ * Represents a single stroke/shape drawn on the canvas
+ */
 data class PathData(
-    val id: String,
-    @Contextual
-    val color: Color,
-    val thickness: Float = 10f,
-    val pathEffect: PaintingStyleType = PaintingStyleType.STROKE,
-    @Serializable(with = ListOffsetSerializer::class)
-    val path: List<Offset> = emptyList(),
-    val isEraser: Boolean = false,
-    val shapeType: ShapeType = ShapeType.NONE,
-    @Serializable(with = ListOffsetSerializer::class)
-    val shapePoints: List<Offset> = emptyList() // Start and end points for shapes
+    val path: List<Offset> = emptyList(),      // For freehand path
+    val color: Color = Color.Black,            // Stroke/Fill color
+    val thickness: Float = 5f,                 // Stroke thickness
+    val pathEffect: PaintingStyleType = PaintingStyleType.STROKE, // Stroke style
+    val isEraser: Boolean = false,             // Eraser flag
+    val shapeType: ShapeType = ShapeType.NONE, // Shape type (if shape drawing)
+    val shapePoints: List<Offset> = emptyList() // Points for shapes (start & end)
 )

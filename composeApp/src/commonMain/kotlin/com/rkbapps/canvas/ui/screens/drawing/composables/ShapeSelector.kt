@@ -11,12 +11,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -31,12 +27,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/**
+ * Data class representing a selectable shape option
+ */
 data class ShapeOption(
     val type: ShapeType,
     val icon: ImageVector,
     val title: String
 )
 
+/**
+ * Shape Selector Component
+ */
 @Composable
 fun ShapeSelector(
     selectedShape: ShapeType = ShapeType.NONE,
@@ -45,11 +47,13 @@ fun ShapeSelector(
 ) {
     Box(
         modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(10.dp))
+            .background(
+                color = MaterialTheme.colorScheme.primaryContainer,
+                shape = RoundedCornerShape(10.dp)
+            )
             .padding(vertical = 4.dp, horizontal = 8.dp)
     ) {
         Row(
-            modifier = Modifier,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -78,6 +82,9 @@ fun ShapeSelector(
     }
 }
 
+/**
+ * Individual Shape Selector Item
+ */
 @Composable
 fun ShapeSelectorItem(
     isSelected: Boolean = false,
@@ -87,22 +94,26 @@ fun ShapeSelectorItem(
 ) {
     Box(
         modifier = Modifier
-            .width(width = 70.dp)
-            .clip(shape = RoundedCornerShape(8.dp))
-            .background(color = MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(8.dp) )
+            .width(70.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(
+                color = MaterialTheme.colorScheme.surfaceVariant,
+                shape = RoundedCornerShape(8.dp)
+            )
             .border(
                 shape = RoundedCornerShape(8.dp),
                 border = BorderStroke(
-                    width =if(isSelected) 2.dp else 0.dp,
-                    color = if(isSelected) MaterialTheme.colorScheme.onPrimaryContainer else Color.Transparent
+                    width = if (isSelected) 2.dp else 0.dp,
+                    color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else Color.Transparent
                 )
             )
-            .clickable {
-                onClick()
-            },
+            .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
-        Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Spacer(Modifier.height(4.dp))
             icon()
             title()
@@ -110,4 +121,3 @@ fun ShapeSelectorItem(
         }
     }
 }
-// Remove imports for horizontalScroll and rememberScrollState
