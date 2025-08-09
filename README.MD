@@ -59,10 +59,10 @@ Canvas/
 │     ├── macos/
 │     └── web/          
 ├── iosApp/ 
-│     ├── iosApp.xcodeproj
+│     ├── iosApp.xcodeproj/
 │     │     ├── project.xcworkspace/
 │     │     └── project.pbxproj
-│     └── iosApp 
+│     └── iosApp/ 
 │            ├── Assets.xcassets/
 │            ├── Preview Content/Preview Assets.xcassets/
 │            ├── Info.plist
