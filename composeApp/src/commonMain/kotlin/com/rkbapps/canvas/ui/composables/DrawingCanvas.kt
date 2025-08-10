@@ -1,443 +1,310 @@
-package com.rkbapps.canvas.ui.composables
+package com.rkbapps.canvas.ui.screens.drawing
 
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.util.fastForEach
-import com.rkbapps.canvas.model.PathData
-import com.rkbapps.canvas.ui.screens.drawing.DrawingAction
-import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyleType
-import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeType
-import kotlin.math.abs
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.isMetaPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
+import com.rkbapps.canvas.ui.composables.DrawingCanvas
+import com.rkbapps.canvas.ui.screens.drawing.composables.BackgroundColorChangeItem
+import com.rkbapps.canvas.ui.screens.drawing.composables.ColorItemList
+import com.rkbapps.canvas.ui.screens.drawing.composables.EditDrawingNameDialog
+import com.rkbapps.canvas.ui.screens.drawing.composables.EraserItem
+import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyle
+import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeSelector
+import com.rkbapps.canvas.ui.screens.drawing.composables.ThicknessManagement
+import com.rkbapps.canvas.ui.screens.drawing.composables.UndoRedoItem
+import com.rkbapps.canvas.ui.screens.drawing.composables.shapeOptions
+import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DrawingCanvas(
-    paths: List<PathData>,
-    currentPath: PathData?,
-    backgroundColor:Color,
-    onAction: (DrawingAction) -> Unit,
-    modifier: Modifier = Modifier
-){
-    Canvas(
-        modifier = modifier
-            .clipToBounds()
-            .background(backgroundColor)
-            .pointerInput(true) {
-                detectDragGestures (
-                    onDragStart = {
-                        onAction(DrawingAction.OnNewPathStart)
+fun DrawingScreen(
+    navController: NavHostController,
+    viewModel: DrawingViewModel = koinViewModel()
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val currentDesign by viewModel.currentDesign.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    val scrollState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+
+    val requester = remember { FocusRequester() }
+
+    // Auto-focus for keyboard shortcuts (Ctrl+S, Ctrl+Z, Ctrl+Y)
+    LaunchedEffect(Unit) {
+        requester.requestFocus()
+    }
+
+    Scaffold(
+        modifier = Modifier
+            .onKeyEvent {
+                when {
+                    (it.isCtrlPressed || it.isMetaPressed) && it.key == Key.S -> {
+                        viewModel.onAction(DrawingAction.SaveDesign(state, currentDesign.name))
+                        true
+                    }
+
+                    (it.isCtrlPressed || it.isMetaPressed) && it.key == Key.Z -> {
+                        viewModel.onAction(DrawingAction.OnUndo)
+                        true
+                    }
+
+                    (it.isCtrlPressed || it.isMetaPressed) && it.key == Key.Y -> {
+                        viewModel.onAction(DrawingAction.OnRedo)
+                        true
+                    }
+
+                    else -> false
+                }
+            }
+            .focusRequester(requester)
+            .focusable(),
+
+        topBar = {
+            AnimatedVisibility(visible = !uiState.isFullScreen) {
+                TopAppBar(
+                    title = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text(currentDesign.name)
+                            IconButton(onClick = {
+                                viewModel.onAction(DrawingAction.OnOpenNameEditDialog)
+                            }) {
+                                Icon(Icons.Default.Edit, contentDescription = "edit name")
+                            }
+                        }
                     },
-                    onDragEnd = {
-                        onAction(DrawingAction.OnPathEnd)
+                    navigationIcon = {
+                        IconButton(
+                            onClick = {
+                                viewModel.onAction(DrawingAction.OnClearCanvasList)
+                                navController.navigateUp()
+                            }
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(20.dp),
+                                imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                                contentDescription = "back"
+                            )
+                        }
                     },
-                    onDrag = { change, dragAmount ->
-                        onAction(DrawingAction.OnDraw(change.position))
-                    },
-                    onDragCancel = {
-                        onAction(DrawingAction.OnPathEnd)
+                    actions = {
+                        IconButton(
+                            onClick = {
+                                viewModel.onAction(
+                                    DrawingAction.SaveDesign(state, currentDesign.name)
+                                )
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Save,
+                                contentDescription = "save drawing"
+                            )
+                        }
                     }
                 )
             }
-    ){
-        paths.fastForEach {
-            drawPath(
-                it.path,
-                it.color,
-                it.thickness,
-                it.pathEffect,
-                isEraser = it.isEraser,
-                backgroundColor,
-                it.shapeType,
-                it.shapePoints
-            )
         }
-        currentPath?.let {
-            drawPath(
-                it.path,
-                it.color,
-                it.thickness,
-                it.pathEffect,
-                isEraser = it.isEraser,
-                backgroundColor,
-                it.shapeType,
-                it.shapePoints
-            )
-        }
-    }
-
-}
-
-internal fun DrawScope.drawPath(
-    path: List<Offset>,
-    color:Color,
-    thickness: Float = 10f,
-    pathEffect: PaintingStyleType,
-    isEraser: Boolean = false,
-    backgroundColor:Color = Color.White,
-    shapeType: ShapeType = ShapeType.NONE,
-    shapePoints: List<Offset> = emptyList()
-){
-    // If it's a shape and we have shape points, draw the shape
-    if (shapeType != ShapeType.NONE && shapePoints.size >= 2) {
-        drawShape(shapePoints, color, thickness, pathEffect, shapeType)
-        return
-    }
-    
-    // Otherwise draw a regular path
-    val smoothPath = Path().apply {
-        if (path.isNotEmpty()){
-            moveTo(path.first().x,path.first().y)
-
-            val smoothness = 5
-            for(i in 1..path.lastIndex){
-                val from = path[i-1]
-                val to = path[i]
-                val dx = abs(from.x-to.y)
-                val dy = abs(from.y-to.y)
-                if (dy>=smoothness || dx>=smoothness){
-                    quadraticTo(
-                        x1 = (from.x+to.x)/2f,
-                        y1 = (from.y+to.y)/2f,
-                        x2= to.x ,
-                        y2 = to.y
-
-                    )
+    ) { paddingValues ->
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(vertical = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            // Rename Drawing Dialog
+            if (uiState.isEditDrawingNameDialogVisible) {
+                EditDrawingNameDialog(
+                    initialName = currentDesign.name,
+                    onCanceled = {
+                        viewModel.onAction(DrawingAction.OnCloseNameEditDialog)
+                    }
+                ) { name ->
+                    viewModel.updateDrawingName(name)
+                    viewModel.onAction(DrawingAction.OnCloseNameEditDialog)
                 }
             }
 
-        }
-    }
+            // Drawing Canvas
+            DrawingCanvas(
+                paths = state.paths,
+                currentPath = state.currentPath,
+                onAction = viewModel::onAction,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                backgroundColor = state.backgroundColor
+            )
 
-    if (isEraser){
-        drawPath(
-            path = smoothPath,
-            color = backgroundColor,
-            style = Stroke(
-                width = thickness,
-                cap = StrokeCap.Round,
-                join = StrokeJoin.Round
-            ),
-            blendMode = BlendMode.Src
-        )
-    }else{
-        drawPath(
-            path = smoothPath,
-            color = color,
-            style = when(pathEffect){
-                PaintingStyleType.DOT -> {
-                    Stroke(
-                        width = thickness,
-                        cap = StrokeCap.Round,
-                        join = StrokeJoin.Round,
-                        pathEffect = PathEffect.dashPathEffect(floatArrayOf(2f, 15f), 0f)
-                    )
-                }
-                PaintingStyleType.STROKE -> {
-                    Stroke(
-                        width = thickness,
-                        cap = StrokeCap.Round,
-                        join = StrokeJoin.Round
-                    )
-                }
-                PaintingStyleType.FILL -> {
-                    Fill
-                }
+            // Expand/Collapse Toolbar Button
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                val rotation = animateFloatAsState(
+                    targetValue = if (uiState.isFullScreen) 0f else 180f,
+                    label = "ArrowRotation"
+                )
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowUp,
+                    contentDescription = "",
+                    modifier = Modifier
+                        .rotate(rotation.value)
+                        .clickable {
+                            if (uiState.isFullScreen) viewModel.onAction(DrawingAction.OnExitFullScreen)
+                            else viewModel.onAction(DrawingAction.OnEnterFullScreen)
+                        }
+                )
             }
-        )
-    }
-}
 
-// Function to draw different shapes
-internal fun DrawScope.drawShape(
-    points: List<Offset>,
-    color: Color,
-    thickness: Float,
-    pathEffect: PaintingStyleType,
-    shapeType: ShapeType
-) {
-    if (points.size < 2) return
-    
-    val start = points[0]
-    val end = points[1]
-    
-    val style = when(pathEffect) {
-        PaintingStyleType.DOT -> {
-            Stroke(
-                width = thickness,
-                cap = StrokeCap.Round,
-                join = StrokeJoin.Round,
-                pathEffect = PathEffect.dashPathEffect(floatArrayOf(2f, 15f), 0f)
-            )
-        }
-        PaintingStyleType.STROKE -> {
-            Stroke(
-                width = thickness,
-                cap = StrokeCap.Round,
-                join = StrokeJoin.Round
-            )
-        }
-        PaintingStyleType.FILL -> {
-            Fill
-        }
-    }
-    
-    val shapePath = Path()
-    
-    when (shapeType) {
-        ShapeType.LINE -> {
-            // Draw a line
-            drawLine(
-                color = color,
-                start = start,
-                end = end,
-                strokeWidth = thickness,
-                cap = StrokeCap.Round
-            )
-        }
-        ShapeType.RECTANGLE -> {
-            // Draw a rectangle
-            shapePath.apply {
-                moveTo(start.x, start.y)
-                lineTo(end.x, start.y)
-                lineTo(end.x, end.y)
-                lineTo(start.x, end.y)
-                close()
-            }
-            drawPath(shapePath, color, style = style)
-        }
-        ShapeType.SQUARE -> {
-            // Draw a square
-            val size = maxOf(kotlin.math.abs(end.x - start.x), kotlin.math.abs(end.y - start.y))
-            val endX = if (end.x >= start.x) start.x + size else start.x - size
-            val endY = if (end.y >= start.y) start.y + size else start.y - size
-            
-            shapePath.apply {
-                moveTo(start.x, start.y)
-                lineTo(endX, start.y)
-                lineTo(endX, endY)
-                lineTo(start.x, endY)
-                close()
-            }
-            drawPath(shapePath, color, style = style)
-        }
-        ShapeType.CIRCLE -> {
-            // Draw a circle
-            val radius = kotlin.math.sqrt(
-                (end.x - start.x) * (end.x - start.x) + 
-                (end.y - start.y) * (end.y - start.y)
-            )
-            drawCircle(color, radius, start, style = style)
-        }
-        ShapeType.OVAL -> {
-            // Draw an oval
-            val width = kotlin.math.abs(end.x - start.x) * 2
-            val height = kotlin.math.abs(end.y - start.y) * 2
-            drawOval(
-                color = color,
-                topLeft = Offset(start.x - width/2, start.y - height/2),
-                size = androidx.compose.ui.geometry.Size(width, height),
-                style = style
-            )
-        }
-        ShapeType.TRIANGLE -> {
-            // Draw a triangle
-            shapePath.apply {
-                moveTo(start.x, end.y)
-                lineTo((start.x + end.x) / 2, start.y)
-                lineTo(end.x, end.y)
-                close()
-            }
-            drawPath(shapePath, color, style = style)
-        }
-        ShapeType.ARROW_RIGHT -> {
-            // Draw right arrow
-            val arrowLength = end.x - start.x
-            val arrowHeight = kotlin.math.abs(end.y - start.y) / 3
-            
-            // Draw the line
-            drawLine(
-                color = color,
-                start = start,
-                end = Offset(end.x - arrowHeight, start.y),
-                strokeWidth = thickness,
-                cap = StrokeCap.Round
-            )
-            
-            // Draw the arrowhead
-            shapePath.apply {
-                moveTo(end.x, start.y)
-                lineTo(end.x - arrowHeight, start.y - arrowHeight)
-                lineTo(end.x - arrowHeight, start.y + arrowHeight)
-                close()
-            }
-            drawPath(shapePath, color, style = style)
-        }
-        ShapeType.ARROW_LEFT -> {
-            // Draw left arrow
-            val arrowLength = start.x - end.x
-            val arrowHeight = kotlin.math.abs(end.y - start.y) / 3
-            
-            // Draw the line
-            drawLine(
-                color = color,
-                start = start,
-                end = Offset(end.x + arrowHeight, start.y),
-                strokeWidth = thickness,
-                cap = StrokeCap.Round
-            )
-            
-            // Draw the arrowhead
-            shapePath.apply {
-                moveTo(end.x, start.y)
-                lineTo(end.x + arrowHeight, start.y - arrowHeight)
-                lineTo(end.x + arrowHeight, start.y + arrowHeight)
-                close()
-            }
-            drawPath(shapePath, color, style = style)
-        }
-        ShapeType.ARROW_UP -> {
-            // Draw up arrow
-            val arrowLength = start.y - end.y
-            val arrowWidth = kotlin.math.abs(end.x - start.x) / 3
-            
-            // Draw the line
-            drawLine(
-                color = color,
-                start = start,
-                end = Offset(start.x, end.y + arrowWidth),
-                strokeWidth = thickness,
-                cap = StrokeCap.Round
-            )
-            
-            // Draw the arrowhead
-            shapePath.apply {
-                moveTo(start.x, end.y)
-                lineTo(start.x - arrowWidth, end.y + arrowWidth)
-                lineTo(start.x + arrowWidth, end.y + arrowWidth)
-                close()
-            }
-            drawPath(shapePath, color, style = style)
-        }
-        ShapeType.ARROW_DOWN -> {
-            // Draw down arrow
-            val arrowLength = end.y - start.y
-            val arrowWidth = kotlin.math.abs(end.x - start.x) / 3
-            
-            // Draw the line
-            drawLine(
-                color = color,
-                start = start,
-                end = Offset(start.x, end.y - arrowWidth),
-                strokeWidth = thickness,
-                cap = StrokeCap.Round
-            )
-            
-            // Draw the arrowhead
-            shapePath.apply {
-                moveTo(start.x, end.y)
-                lineTo(start.x - arrowWidth, end.y - arrowWidth)
-                lineTo(start.x + arrowWidth, end.y - arrowWidth)
-                close()
-            }
-            drawPath(shapePath, color, style = style)
-        }
-        ShapeType.STAR -> {
-            // Draw a star (5-pointed)
-            val radius = kotlin.math.sqrt(
-                (end.x - start.x) * (end.x - start.x) + 
-                (end.y - start.y) * (end.y - start.y)
-            )
-            val innerRadius = radius * 0.4f
-            
-            shapePath.apply {
-                val centerX = start.x
-                val centerY = start.y
-                
-                for (i in 0 until 10) {
-                    val angle = kotlin.math.PI / 2 + i * kotlin.math.PI / 5
-                    val r = if (i % 2 == 0) radius else innerRadius
-                    val x = centerX + (r * kotlin.math.cos(angle)).toFloat()
-                    val y = centerY - (r * kotlin.math.sin(angle)).toFloat()
-                    
-                    if (i == 0) {
-                        moveTo(x, y)
-                    } else {
-                        lineTo(x, y)
+            // Toolbar Row
+            LazyRow(
+                modifier = Modifier.fillMaxWidth().draggable(
+                    orientation = Orientation.Horizontal,
+                    state = rememberDraggableState { delta ->
+                        coroutineScope.launch {
+                            scrollState.scrollBy(-delta)
+                        }
+                    }
+                ),
+                state = scrollState,
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                item { Spacer(Modifier.width(16.dp)) }
+
+                // Background Color Picker
+                item {
+                    BackgroundColorChangeItem { color ->
+                        viewModel.onAction(DrawingAction.OnBackgroundColorChange(color))
                     }
                 }
-                close()
-            }
-            drawPath(shapePath, color, style = style)
-        }
-        ShapeType.PENTAGON -> {
-            // Draw a pentagon
-            val radius = kotlin.math.sqrt(
-                (end.x - start.x) * (end.x - start.x) + 
-                (end.y - start.y) * (end.y - start.y)
-            )
-            
-            shapePath.apply {
-                val centerX = start.x
-                val centerY = start.y
-                
-                for (i in 0 until 5) {
-                    val angle = kotlin.math.PI / 2 + i * 2 * kotlin.math.PI / 5
-                    val x = centerX + (radius * kotlin.math.cos(angle)).toFloat()
-                    val y = centerY - (radius * kotlin.math.sin(angle)).toFloat()
-                    
-                    if (i == 0) {
-                        moveTo(x, y)
-                    } else {
-                        lineTo(x, y)
+
+                // Color Palette
+                item {
+                    ColorItemList(
+                        selectedColor = state.selectedColor,
+                    ) { color ->
+                        viewModel.onAction(DrawingAction.OnEraserUnselected)
+                        viewModel.onAction(DrawingAction.OnToggleEraser(false))
+                        viewModel.onAction(DrawingAction.OnSelectColor(color))
                     }
                 }
-                close()
-            }
-            drawPath(shapePath, color, style = style)
-        }
-        ShapeType.HEXAGON -> {
-            // Draw a hexagon
-            val radius = kotlin.math.sqrt(
-                (end.x - start.x) * (end.x - start.x) + 
-                (end.y - start.y) * (end.y - start.y)
-            )
-            
-            shapePath.apply {
-                val centerX = start.x
-                val centerY = start.y
-                
-                for (i in 0 until 6) {
-                    val angle = i * 2 * kotlin.math.PI / 6
-                    val x = centerX + (radius * kotlin.math.cos(angle)).toFloat()
-                    val y = centerY + (radius * kotlin.math.sin(angle)).toFloat()
-                    
-                    if (i == 0) {
-                        moveTo(x, y)
-                    } else {
-                        lineTo(x, y)
+
+                // Eraser Tool
+                item {
+                    EraserItem(
+                        isEraserSelected = uiState.isEraserSelected
+                    ) {
+                        viewModel.onAction(DrawingAction.OnEraserSelected)
+                        viewModel.onAction(DrawingAction.OnToggleEraser(true))
                     }
                 }
-                close()
+
+                // Painting Style (Stroke, Dot, Fill)
+                item {
+                    PaintingStyle(
+                        selected = state.selectedPathEffect,
+                    ) { pathEffect ->
+                        viewModel.onAction(DrawingAction.OnPathEffectChange(pathEffect))
+                    }
+                }
+
+                // Shape Selector ✅ FIXED
+                item {
+                    ShapeSelector(
+                        selectedShape = state.selectedShapeType,
+                        shapes = shapeOptions,
+                        onShapeSelected = { shapeType ->
+                            viewModel.onAction(DrawingAction.OnEraserUnselected)
+                            viewModel.onAction(DrawingAction.OnToggleEraser(false))
+                            viewModel.onAction(DrawingAction.OnShapeTypeChange(shapeType))
+                        }
+                    )
+                }
+
+                // Undo/Redo
+                item {
+                    UndoRedoItem(
+                        onUndo = { viewModel.onAction(DrawingAction.OnUndo) },
+                        onRedo = { viewModel.onAction(DrawingAction.OnRedo) }
+                    )
+                }
+
+                item { Spacer(Modifier.width(16.dp)) }
             }
-            drawPath(shapePath, color, style = style)
+
+            // Thickness Slider
+            AnimatedVisibility(visible = !uiState.isFullScreen) {
+                ThicknessManagement(
+                    value = state.selectedThickness
+                ) { thickness ->
+                    viewModel.onAction(DrawingAction.OnThicknessChange(thickness))
+                }
+            }
+
+            // Clear Canvas Button
+            AnimatedVisibility(
+                visible = !uiState.isFullScreen,
+                modifier = Modifier.fillMaxWidth(0.6f).align(Alignment.CenterHorizontally),
+            ) {
+                Button(
+                    onClick = { viewModel.onAction(DrawingAction.OnClearCanvasList) }
+                ) {
+                    Text("Clear Canvas")
+                }
+            }
         }
-        else -> { /* Do nothing for NONE */ }
     }
 }
-
-//dashPathEffect(floatArrayOf(2f, 25f), 0f)
-
