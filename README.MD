@@ -30,6 +30,56 @@ Unleash your inner artist with **Paint & Draw**, the ultimate lightweight and us
 - **Multiplatform Settings** – Local database for storing user drawings 
 - **Material Design** – UI/UX guidelines and components
 
+# 📁Project Structure
+
+```bash
+Canvas/            
+├── composeApp/                    
+│        ├── desktopAppIcons/
+│        │     ├── LinuxIcon.png
+│        │     ├── MacosIcon.icns
+│        │     └── WindowsIcon.ico
+│        ├── src/
+│        │     ├── androidMain/
+│        │     ├── commonMain/
+│        │     ├── commonTest/kotlin/com/rkbapps/canvas/
+│        │     ├── iosMain/kotlin/
+│        │     ├── jvmMain/kotlin/
+│        │     ├── nativeMain/kotlin/com/rkbapps/canvas/
+│        │     └── wasmJsMain/    
+│        └── build.gradle.kts                    
+├── gradle/
+│       ├── wrapper/
+│       │     ├── gradle-wrapper.jar
+│       │     └── gradle-wrapper.properties
+│       └── libs.versions.toml          
+├── icons/
+│     ├── android/
+│     ├── ios/
+│     ├── macos/
+│     └── web/          
+├── iosApp/ 
+│     ├── iosApp.xcodeproj/
+│     │     ├── project.xcworkspace/
+│     │     └── project.pbxproj
+│     └── iosApp/ 
+│            ├── Assets.xcassets/
+│            ├── Preview Content/Preview Assets.xcassets/
+│            ├── Info.plist
+│            └── iosApp.swift                              
+├── .gitignore                      
+├── CODE_OF_CONDUCT.md              
+├── LICENSE                
+├── README.MD                      
+├── build.gradle.kts                                            
+├── gradle.properties                             
+├── gradlew
+├── gradlew.bat               
+└── settings.gradle.kts               
+          
+
+```
+
 
 # Supported Platforms
 
