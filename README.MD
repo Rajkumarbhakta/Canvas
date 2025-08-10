@@ -70,12 +70,8 @@ Canvas/
 ├── .gitignore                      
 ├── CODE_OF_CONDUCT.md              
 ├── LICENSE                
-├── README.MD                   
-├── CONTRIBUTING.md                          
-├── LICENSE    
-├── build.gradle.kts             
-├── README.md                  
-├── build.gradle.kts               
+├── README.MD                      
+├── build.gradle.kts                                            
 ├── gradle.properties                             
 ├── gradlew
 ├── gradlew.bat               
