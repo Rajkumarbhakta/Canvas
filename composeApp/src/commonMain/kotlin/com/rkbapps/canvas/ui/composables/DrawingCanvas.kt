@@ -196,7 +196,7 @@ internal fun DrawScope.drawShape(
     }
     
     val shapePath = Path()
-    
+
     when (shapeType) {
         ShapeType.LINE -> {
             // Draw a line
@@ -224,7 +224,7 @@ internal fun DrawScope.drawShape(
             val size = maxOf(kotlin.math.abs(end.x - start.x), kotlin.math.abs(end.y - start.y))
             val endX = if (end.x >= start.x) start.x + size else start.x - size
             val endY = if (end.y >= start.y) start.y + size else start.y - size
-            
+
             shapePath.apply {
                 moveTo(start.x, start.y)
                 lineTo(endX, start.y)
@@ -237,8 +237,8 @@ internal fun DrawScope.drawShape(
         ShapeType.CIRCLE -> {
             // Draw a circle
             val radius = kotlin.math.sqrt(
-                (end.x - start.x) * (end.x - start.x) + 
-                (end.y - start.y) * (end.y - start.y)
+                (end.x - start.x) * (end.x - start.x) +
+                        (end.y - start.y) * (end.y - start.y)
             )
             drawCircle(color, radius, start, style = style)
         }
@@ -267,7 +267,7 @@ internal fun DrawScope.drawShape(
             // Draw right arrow
             val arrowLength = end.x - start.x
             val arrowHeight = kotlin.math.abs(end.y - start.y) / 3
-            
+
             // Draw the line
             drawLine(
                 color = color,
@@ -276,7 +276,7 @@ internal fun DrawScope.drawShape(
                 strokeWidth = thickness,
                 cap = StrokeCap.Round
             )
-            
+
             // Draw the arrowhead
             shapePath.apply {
                 moveTo(end.x, start.y)
@@ -290,7 +290,7 @@ internal fun DrawScope.drawShape(
             // Draw left arrow
             val arrowLength = start.x - end.x
             val arrowHeight = kotlin.math.abs(end.y - start.y) / 3
-            
+
             // Draw the line
             drawLine(
                 color = color,
@@ -299,7 +299,7 @@ internal fun DrawScope.drawShape(
                 strokeWidth = thickness,
                 cap = StrokeCap.Round
             )
-            
+
             // Draw the arrowhead
             shapePath.apply {
                 moveTo(end.x, start.y)
@@ -313,7 +313,7 @@ internal fun DrawScope.drawShape(
             // Draw up arrow
             val arrowLength = start.y - end.y
             val arrowWidth = kotlin.math.abs(end.x - start.x) / 3
-            
+
             // Draw the line
             drawLine(
                 color = color,
@@ -322,7 +322,7 @@ internal fun DrawScope.drawShape(
                 strokeWidth = thickness,
                 cap = StrokeCap.Round
             )
-            
+
             // Draw the arrowhead
             shapePath.apply {
                 moveTo(start.x, end.y)
@@ -336,7 +336,7 @@ internal fun DrawScope.drawShape(
             // Draw down arrow
             val arrowLength = end.y - start.y
             val arrowWidth = kotlin.math.abs(end.x - start.x) / 3
-            
+
             // Draw the line
             drawLine(
                 color = color,
@@ -345,7 +345,7 @@ internal fun DrawScope.drawShape(
                 strokeWidth = thickness,
                 cap = StrokeCap.Round
             )
-            
+
             // Draw the arrowhead
             shapePath.apply {
                 moveTo(start.x, end.y)
@@ -358,21 +358,21 @@ internal fun DrawScope.drawShape(
         ShapeType.STAR -> {
             // Draw a star (5-pointed)
             val radius = kotlin.math.sqrt(
-                (end.x - start.x) * (end.x - start.x) + 
-                (end.y - start.y) * (end.y - start.y)
+                (end.x - start.x) * (end.x - start.x) +
+                        (end.y - start.y) * (end.y - start.y)
             )
             val innerRadius = radius * 0.4f
-            
+
             shapePath.apply {
                 val centerX = start.x
                 val centerY = start.y
-                
+
                 for (i in 0 until 10) {
                     val angle = kotlin.math.PI / 2 + i * kotlin.math.PI / 5
                     val r = if (i % 2 == 0) radius else innerRadius
                     val x = centerX + (r * kotlin.math.cos(angle)).toFloat()
                     val y = centerY - (r * kotlin.math.sin(angle)).toFloat()
-                    
+
                     if (i == 0) {
                         moveTo(x, y)
                     } else {
@@ -386,19 +386,19 @@ internal fun DrawScope.drawShape(
         ShapeType.PENTAGON -> {
             // Draw a pentagon
             val radius = kotlin.math.sqrt(
-                (end.x - start.x) * (end.x - start.x) + 
-                (end.y - start.y) * (end.y - start.y)
+                (end.x - start.x) * (end.x - start.x) +
+                        (end.y - start.y) * (end.y - start.y)
             )
-            
+
             shapePath.apply {
                 val centerX = start.x
                 val centerY = start.y
-                
+
                 for (i in 0 until 5) {
                     val angle = kotlin.math.PI / 2 + i * 2 * kotlin.math.PI / 5
                     val x = centerX + (radius * kotlin.math.cos(angle)).toFloat()
                     val y = centerY - (radius * kotlin.math.sin(angle)).toFloat()
-                    
+
                     if (i == 0) {
                         moveTo(x, y)
                     } else {
@@ -412,19 +412,19 @@ internal fun DrawScope.drawShape(
         ShapeType.HEXAGON -> {
             // Draw a hexagon
             val radius = kotlin.math.sqrt(
-                (end.x - start.x) * (end.x - start.x) + 
-                (end.y - start.y) * (end.y - start.y)
+                (end.x - start.x) * (end.x - start.x) +
+                        (end.y - start.y) * (end.y - start.y)
             )
-            
+
             shapePath.apply {
                 val centerX = start.x
                 val centerY = start.y
-                
+
                 for (i in 0 until 6) {
                     val angle = i * 2 * kotlin.math.PI / 6
                     val x = centerX + (radius * kotlin.math.cos(angle)).toFloat()
                     val y = centerY + (radius * kotlin.math.sin(angle)).toFloat()
-                    
+
                     if (i == 0) {
                         moveTo(x, y)
                     } else {

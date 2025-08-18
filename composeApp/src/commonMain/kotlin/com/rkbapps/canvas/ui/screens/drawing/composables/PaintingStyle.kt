@@ -7,9 +7,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.FlowColumn
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,15 +19,21 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HorizontalRule
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.RadioButtonChecked
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 
 enum class PaintingStyleType{
@@ -67,24 +72,48 @@ fun PaintingStyle(
     selected:PaintingStyleType = PaintingStyleType.STROKE,
     onSelected:(PaintingStyleType)->Unit = {}
 ){
-    Row(
+    val current = paintingStyles.find { it.type == selected } ?: paintingStyles.first()
+    var expanded by remember{ mutableStateOf(false) }
+    Box(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(10.dp))
-            .padding(vertical = 4.dp, horizontal = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        paintingStyles.forEach {
-            PaintingStyleItem(
-                isSelected = selected==it.type,
-                icon = {
-                    Icon(imageVector = it.icon, contentDescription = it.title, modifier = Modifier.size(20.dp))
-                },
-                title = {
-                    Text(it.title, style = MaterialTheme.typography.labelSmall)
-                }
+            .padding(vertical = 4.dp, horizontal = 8.dp)
+    ){
+        PaintingStyleItem(
+            isSelected = true,
+            icon = {
+                Icon(imageVector = current.icon, contentDescription = current.title, modifier = Modifier.size(20.dp))
+            },
+            title = {
+                Text(current.title, style = MaterialTheme.typography.labelSmall)
+            },
+            onClick = { expanded = true }
+        )
+        DropdownMenu(
+            expanded,
+            onDismissRequest = {expanded = false},
+            offset = DpOffset(x = (-10).dp, y = 0.dp)
+        ){
+            FlowColumn(
+                modifier = Modifier
+                    .background(color = MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(10.dp))
+                    .padding(vertical = 4.dp, horizontal = 8.dp),
+                verticalArrangement  = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                onSelected(it.type)
+                paintingStyles.forEach {
+                    PaintingStyleItem(
+                        isSelected = selected==it.type,
+                        icon = {
+                            Icon(imageVector = it.icon, contentDescription = it.title, modifier = Modifier.size(20.dp))
+                        },
+                        title = {
+                            Text(it.title, style = MaterialTheme.typography.labelSmall)
+                        }
+                    ) {
+                        onSelected(it.type)
+                    }
+                }
             }
         }
     }
