@@ -96,6 +96,7 @@ fun PaintingStyle(
         ){
             FlowColumn(
                 modifier = Modifier
+                    .padding(10.dp)
                     .background(color = MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(10.dp))
                     .padding(vertical = 4.dp, horizontal = 8.dp),
                 verticalArrangement  = Arrangement.spacedBy(8.dp),
