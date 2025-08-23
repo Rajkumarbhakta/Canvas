@@ -12,8 +12,30 @@ The simplest way to express your creativity – just tap, draw, and create!
 
 Unleash your inner artist with **Paint & Draw**, the ultimate lightweight and user-friendly drawing app for everyone — from beginners to pros. Whether you want to doodle for fun, sketch ideas, or create digital art masterpieces, this app gives you the tools to make it happen in seconds.
 
+---
 
-# ✨Features
+<details>
+<summary><strong>📋Table of Contents</strong></summary>
+
+- [✨ Features](#features)
+- [🛠 Tech Stack](#-tech-stack)
+- [📁 Project Structure](#-project-structure)
+- [Supported Platforms](#supported-platforms)
+- [Releases](#releases)
+  - [Android App](#android-app)
+  - [iOS App](#ios-app)
+  - [Desktop](#desktop)
+  - [Web](#web)
+- [Contribution](#contribution)
+- [Licence](#licence)
+- [Contributors](#contributors)
+
+</details>
+
+---
+
+## ✨ Features
+
 - **Simple & Clean Interface:** Start drawing instantly with a distraction-free design.
 - **Customizable Brushes & Colors:** Select from various brush types, sizes, and a full-color palette.
 - **Intuitive Canvas:** Draw, erase, and edit with precision on a responsive canvas.
@@ -22,7 +44,7 @@ Unleash your inner artist with **Paint & Draw**, the ultimate lightweight and us
 - **Dark Mode Support:** Draw comfortably in any lighting condition.
 - **Offline Functionality:** Create art anytime, even without an internet connection.
 
-# Tech Stack
+## 🛠 Tech Stack
 
 - **Kotlin** – Kotlin is a modern, statically typed, cross-platform programming language developed by JetBrains.
 - **Compose Multiplatform** – Compose Multiplatform is a declarative framework for building beautiful shared UIs across Android, iOS, desktop, and web – powered by Kotlin Multiplatform.
@@ -30,7 +52,7 @@ Unleash your inner artist with **Paint & Draw**, the ultimate lightweight and us
 - **Multiplatform Settings** – Local database for storing user drawings 
 - **Material Design** – UI/UX guidelines and components
 
-# 📁Project Structure
+## 📁 Project Structure
 
 ```bash
 Canvas/            
@@ -81,7 +103,7 @@ Canvas/
 ```
 
 
-# Supported Platforms
+## Supported Platforms
 
 
 <p align="center">
@@ -97,14 +119,16 @@ Canvas/
     <b>Android</b> &nbsp; | &nbsp; <b>iOS</b> &nbsp; | &nbsp; <b>Desktop (Windows, Mac, Linux)</b> &nbsp; | &nbsp; <b>Web</b>
 </p>
 
+---
 
-# Releases
 
-## Android App
+## Releases
+
+### Android App
 
 [![Get it on Google Play](https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png)](https://play.google.com/store/apps/details?id=com.rkbapps.canvas)
 
-## iOS App
+### iOS App
 
 To run the application on an iPhone device or simulator:
 
@@ -116,7 +140,7 @@ To run iOS simulator UI tests:
 ./gradlew :composeApp:iosSimulatorArm64Test
 ```
 
-## Desktop
+### Desktop
 
 To run the desktop application:
 
@@ -124,12 +148,13 @@ To run the desktop application:
 - Start with **hot reload**: `./gradlew :composeApp:runHot`
 - Run desktop UI tests: `./gradlew :composeApp:jvmTest`
 
-## Web
+### Web
 
 Access the app directly in your browser: [Canvas Web Version](https://me.rkbapps.in/canvas_build/)
 
+---
 
-# Contribution
+## Contribution
 
 We welcome contributions from the community! If you'd like to help improve Canvas, please follow these steps:
 
@@ -143,15 +168,17 @@ Please review our [Code of Conduct](CODE_OF_CONDUCT.md) before getting started.
 
 Thank you for helping make Canvas better!
 
-# Licence
+## Licence
 
 This project is licensed under the [MIT License](LICENSE).  
 You are free to use, modify, and distribute this software for personal or commercial purposes, provided that you include the original copyright and license notice in any copies or substantial portions of the software.
 
 See the [LICENSE](LICENSE) file for full license text.
 
-# Contributors
+## Contributors
 
 <a href="https://github.com/Rajkumarbhakta/Canvas/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=Rajkumarbhakta/Canvas" />
 </a>
+
+---
