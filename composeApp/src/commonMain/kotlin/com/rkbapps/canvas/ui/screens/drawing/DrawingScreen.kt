@@ -155,7 +155,8 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                 .fillMaxSize()
                 .padding(it)
                 .padding(vertical = 10.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (uiState.isEditDrawingNameDialogVisible) {
                 EditDrawingNameDialog(
@@ -197,7 +198,9 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
             }
 
             LazyRow(
-                modifier = Modifier.fillMaxWidth().draggable(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .draggable(
                     orientation = Orientation.Horizontal,
                     state = rememberDraggableState { delta ->
                         coroutineScope.launch {
