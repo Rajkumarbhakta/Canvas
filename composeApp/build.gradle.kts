@@ -83,6 +83,8 @@ kotlin {
 
             implementation(libs.multiplatform.settings)
             implementation(libs.multiplatform.settings.coroutines)
+            //To detect screen type for larger displays
+            implementation(libs.material3.window.size.class1)
         }
 
         commonTest.dependencies {

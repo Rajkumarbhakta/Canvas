@@ -23,6 +23,8 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -41,12 +43,16 @@ import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.ColorPickerController
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.rkbapps.canvas.util.Constants
+import com.rkbapps.canvas.util.getWindowSize
 
 @Composable
 fun ColorItemList(
     selectedColor:Color,
     onColorItemClick:(Color)->Unit
 ){
+    val windowSize = getWindowSize()
+    val widthSize = windowSize.widthSizeClass
+    val heightSize = windowSize.heightSizeClass
     var expanded by remember { mutableStateOf(false) }
     val colorPickerController = rememberColorPickerController()
     remember{ mutableStateOf(false) }
@@ -58,37 +64,65 @@ fun ColorItemList(
             onDone = onColorItemClick
         )
     }
-    Box(
-        modifier = Modifier
-            .size(50.dp)
-            .background(
-                color = MaterialTheme.colorScheme.primaryContainer,
-                shape = RoundedCornerShape(10.dp))
-    ){
-        Box(
-            modifier = Modifier
-                .padding(10.dp)
-                .size(35.dp)
-                .clip(CircleShape)
-                .background(
-                    color =selectedColor,
-                )
-                .clickable {
-                    expanded = true
+    when{
+        ( widthSize==WindowWidthSizeClass.Compact || heightSize==WindowHeightSizeClass.Compact) -> {
+            Box(
+                modifier = Modifier
+                    .size(50.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        shape = RoundedCornerShape(10.dp))
+            ){
+                Box(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .size(35.dp)
+                        .clip(CircleShape)
+                        .background(
+                            color =selectedColor,
+                        )
+                        .clickable {
+                            expanded = true
+                        }
+                ){}
+                DropdownMenu(
+                    expanded= expanded,
+                    onDismissRequest = {expanded = false},
+                    offset = DpOffset(x = 0.dp, y = (0).dp),
+                    modifier = Modifier.padding(10.dp)
+                ){
+                    FlowRow(modifier = Modifier
+                        .fillMaxWidth()
+                        .background(color = MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(10.dp))
+                        .padding(15.dp),
+                        horizontalArrangement = Arrangement.spacedBy(18.dp),
+                        verticalArrangement = Arrangement.spacedBy(18.dp)
+                    ) {
+                        Constants.colors.forEach {
+                            ColorItems(
+                                color = it,
+                                isSelected = it == selectedColor,
+                                onClick = onColorItemClick
+                            )
+                        }
+                        ColorItems(
+                            color = if(colorPickerController.selectedColor.value == Color.Transparent) Color.White else colorPickerController.selectedColor.value,
+                            isSelected = colorPickerController.selectedColor.value == selectedColor,
+                            imageVector = Icons.Outlined.Palette
+                        ){
+                            isColorPickerDialogVisible.value = true
+                        }
+                    }
                 }
-        ){}
-        DropdownMenu(
-            expanded= expanded,
-            onDismissRequest = {expanded = false},
-            offset = DpOffset(x = 0.dp, y = (0).dp),
-            modifier = Modifier.padding(10.dp)
-        ){
-            FlowRow(modifier = Modifier
+            }
+        }
+        else->{
+            Row(modifier = Modifier
                 .fillMaxWidth()
                 .background(color = MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(10.dp))
                 .padding(15.dp),
                 horizontalArrangement = Arrangement.spacedBy(18.dp),
-                verticalArrangement = Arrangement.spacedBy(18.dp)
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Constants.colors.forEach {
                     ColorItems(
@@ -107,6 +141,7 @@ fun ColorItemList(
             }
         }
     }
+
 }
 
 

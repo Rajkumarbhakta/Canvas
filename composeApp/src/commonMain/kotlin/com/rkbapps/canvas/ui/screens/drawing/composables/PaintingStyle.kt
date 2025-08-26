@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowColumn
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,6 +24,8 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.rkbapps.canvas.util.getWindowSize
 
 enum class PaintingStyleType{
     STROKE,
@@ -72,34 +76,65 @@ fun PaintingStyle(
     selected:PaintingStyleType = PaintingStyleType.STROKE,
     onSelected:(PaintingStyleType)->Unit = {}
 ){
+    val windowSizeClass = getWindowSize()
+    val widthSize = windowSizeClass.widthSizeClass
+    val heightSize = windowSizeClass.heightSizeClass
     val current = paintingStyles.find { it.type == selected } ?: paintingStyles.first()
     var expanded by remember{ mutableStateOf(false) }
-    Box(
-        modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(10.dp))
-            .padding(vertical = 4.dp, horizontal = 8.dp)
-    ){
-        PaintingStyleItem(
-            isSelected = true,
-            icon = {
-                Icon(imageVector = current.icon, contentDescription = current.title, modifier = Modifier.size(20.dp))
-            },
-            title = {
-                Text(current.title, style = MaterialTheme.typography.labelSmall)
-            },
-            onClick = { expanded = true }
-        )
-        DropdownMenu(
-            expanded,
-            onDismissRequest = {expanded = false},
-            offset = DpOffset(x = (-10).dp, y = 0.dp)
-        ){
-            FlowColumn(
+    when{
+        (widthSize == WindowWidthSizeClass.Compact || heightSize == WindowHeightSizeClass.Compact) ->{
+            Box(
+                modifier = Modifier
+                    .background(color = MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(10.dp))
+                    .padding(vertical = 4.dp, horizontal = 8.dp)
+            ){
+                PaintingStyleItem(
+                    isSelected = true,
+                    icon = {
+                        Icon(imageVector = current.icon, contentDescription = current.title, modifier = Modifier.size(20.dp))
+                    },
+                    title = {
+                        Text(current.title, style = MaterialTheme.typography.labelSmall)
+                    },
+                    onClick = { expanded = true }
+                )
+                DropdownMenu(
+                    expanded,
+                    onDismissRequest = {expanded = false},
+                    offset = DpOffset(x = (-10).dp, y = 0.dp)
+                ){
+                    FlowColumn(
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .background(color = MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(10.dp))
+                            .padding(vertical = 4.dp, horizontal = 8.dp),
+                        verticalArrangement  = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        paintingStyles.forEach {
+                            PaintingStyleItem(
+                                isSelected = selected==it.type,
+                                icon = {
+                                    Icon(imageVector = it.icon, contentDescription = it.title, modifier = Modifier.size(20.dp))
+                                },
+                                title = {
+                                    Text(it.title, style = MaterialTheme.typography.labelSmall)
+                                }
+                            ) {
+                                onSelected(it.type)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else -> {
+            Row(
                 modifier = Modifier
                     .padding(10.dp)
                     .background(color = MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(10.dp))
                     .padding(vertical = 4.dp, horizontal = 8.dp),
-                verticalArrangement  = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 paintingStyles.forEach {
@@ -118,6 +153,7 @@ fun PaintingStyle(
             }
         }
     }
+
 }
 
 @Composable

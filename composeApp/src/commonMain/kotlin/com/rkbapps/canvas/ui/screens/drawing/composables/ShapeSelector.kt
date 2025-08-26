@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,6 +20,8 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,6 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.rkbapps.canvas.util.getWindowSize
 
 data class ShapeOption(
     val type: ShapeType,
@@ -46,43 +50,79 @@ fun ShapeSelector(
     shapes: List<ShapeOption>,
     onShapeSelected: (ShapeType) -> Unit
 ) {
+    val windowSize = getWindowSize()
+    val widthSize = windowSize.widthSizeClass
+    val heightSize = windowSize.heightSizeClass
     val current = shapes.find { it.type==selectedShape }?: shapes.first()
     var expanded by remember{ mutableStateOf(false) }
-    Box(
-        modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(10.dp))
-            .padding(vertical = 4.dp, horizontal = 8.dp)
-    ) {
-        ShapeSelectorItem(
-            isSelected = true,
-            icon = {
-                Icon(
-                    imageVector = current.icon,
-                    contentDescription = current.title,
-                    modifier = Modifier.size(20.dp)
+    when{
+        (widthSize == WindowWidthSizeClass.Compact || heightSize == WindowHeightSizeClass.Compact)->{
+            Box(
+                modifier = Modifier
+                    .background(color = MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(10.dp))
+                    .padding(vertical = 4.dp, horizontal = 8.dp)
+            ) {
+                ShapeSelectorItem(
+                    isSelected = true,
+                    icon = {
+                        Icon(
+                            imageVector = current.icon,
+                            contentDescription = current.title,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    },
+                    title = {
+                        Text(
+                            text = current.title,
+                            style = MaterialTheme.typography.labelSmall,
+                            textAlign = TextAlign.Center,
+                            fontSize = 10.sp
+                        )
+                    },
+                    onClick = {
+                        expanded = true
+                    }
                 )
-            },
-            title = {
-                Text(
-                    text = current.title,
-                    style = MaterialTheme.typography.labelSmall,
-                    textAlign = TextAlign.Center,
-                    fontSize = 10.sp
-                )
-            },
-            onClick = {
-                expanded = true
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                    offset = DpOffset(x = 0.dp,y=0.dp)
+                ){
+                    FlowRow(
+                        modifier = Modifier.padding(start = 15.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        shapes.forEach { shape ->
+                            ShapeSelectorItem(
+                                isSelected = selectedShape == shape.type,
+                                icon = {
+                                    Icon(
+                                        imageVector = shape.icon,
+                                        contentDescription = shape.title,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                },
+                                title = {
+                                    Text(
+                                        text = shape.title,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        textAlign = TextAlign.Center,
+                                        fontSize = 10.sp
+                                    )
+                                },
+                                onClick = { onShapeSelected(shape.type) }
+                            )
+                        }
+                    }
+                }
             }
-        )
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            offset = DpOffset(x = 0.dp,y=0.dp)
-        ){
-            FlowRow(
+        }
+        else ->{
+            Row(
                 modifier = Modifier.padding(start = 15.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 shapes.forEach { shape ->
                     ShapeSelectorItem(
