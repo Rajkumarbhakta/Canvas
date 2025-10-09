@@ -21,7 +21,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 class DrawingRepository(
     private val dbOperations: DbOperations,
@@ -31,6 +32,7 @@ class DrawingRepository(
     private val _state = MutableStateFlow(DrawingState())
     val state = _state.asStateFlow()
 
+    @OptIn(ExperimentalTime::class)
     private val _currentDesign = MutableStateFlow<SavedDesign>(SavedDesign(name = "Untitled drawing", state = DrawingState()))
     val currentDesign = _currentDesign.asStateFlow()
 
@@ -112,6 +114,7 @@ class DrawingRepository(
         }
     }
 
+    @OptIn(ExperimentalTime::class)
     fun onNewPathStart() {
         _state.update {
             it.copy(
@@ -214,6 +217,7 @@ class DrawingRepository(
         }
     }
 
+    @OptIn(ExperimentalTime::class)
     suspend fun saveDesign(drawingState: DrawingState, name: String) {
         _currentDesign.update {
             it.copy(name = name, state = drawingState.copy(
@@ -226,6 +230,7 @@ class DrawingRepository(
         dbOperations.save(design)
     }
 
+    @OptIn(ExperimentalTime::class)
     fun updateDrawingName(name:String){
         _currentDesign.update {
             it.copy(

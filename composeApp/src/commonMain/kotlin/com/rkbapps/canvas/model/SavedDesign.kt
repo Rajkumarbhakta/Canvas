@@ -1,14 +1,14 @@
 package com.rkbapps.canvas.model
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Clock.System
-import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 @Serializable
-data class SavedDesign(
-    val id:String = System.now().toString(),
+data class SavedDesign @OptIn(ExperimentalTime::class) constructor(
+    val id:String = Clock.System.now().toString(),
     val name:String,
-    val time: Instant = System.now(),
+    val time: Instant = Clock.System.now(),
     val state: DrawingState
 )

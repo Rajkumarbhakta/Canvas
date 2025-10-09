@@ -1,9 +1,5 @@
-import com.android.ide.common.resources.GeneratedResourceSet
-import org.gradle.api.internal.tasks.compile.incremental.compilerapi.deps.GeneratedResource
-import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.compose.reload.ComposeHotRun
-import org.jetbrains.compose.resources.ResourcesExtension
+import org.jetbrains.compose.reload.gradle.ComposeHotRun
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -25,8 +21,8 @@ kotlin {
         compilations.all {
             compileTaskProvider {
                 compilerOptions {
-                    jvmTarget.set(JvmTarget.JVM_1_8)
-                    freeCompilerArgs.add("-Xjdk-release=${JavaVersion.VERSION_1_8}")
+                    jvmTarget.set(JvmTarget.JVM_17)
+                    freeCompilerArgs.add("-Xjdk-release=${JavaVersion.VERSION_17}")
                 }
             }
         }
@@ -87,8 +83,8 @@ kotlin {
 
         commonTest.dependencies {
             implementation(kotlin("test"))
-            @OptIn(ExperimentalComposeLibrary::class)
-            implementation(compose.uiTest)
+//            @OptIn(ExperimentalComposeLibrary::class)
+//            implementation(compose.uiTest)
             implementation(libs.kotlinx.coroutines.test)
         }
 
@@ -113,10 +109,10 @@ kotlin {
     }
 }
 
-compose.resources{
-    generateResClass = ResourcesExtension.ResourceClassGeneration.Always
-    publicResClass = true
-}
+//compose.resources{
+//    generateResClass = ResourcesExtension.ResourceClassGeneration.Always
+//    publicResClass = true
+//}
 
 android {
     namespace = "com.rkbapps.canvas"
