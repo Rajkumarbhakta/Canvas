@@ -16,18 +16,8 @@ import androidx.compose.runtime.mutableStateOf
 
 @Composable
 internal fun App(navController: NavHostController = rememberNavController()) {
-    var themeMode by rememberSaveable { mutableStateOf("System" as String) }
-
-    val darkTheme = when (themeMode) {
-        "Light" -> false
-        "Dark" -> true
-        else -> isSystemInDarkTheme()
-    }
-
-    AppTheme(darkTheme = darkTheme) {
-        KoinContext {
-            MainNavGraph(navController = navController, themeMode = themeMode, onThemeChange = { themeMode = it })
-        }
+    AppTheme(darkTheme = false) {
+        MainNavGraph(navController = navController,)
     }
 }
 

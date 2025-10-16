@@ -90,14 +90,13 @@ internal fun AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val systemIsDark = darkTheme
-    val isDarkState = remember(systemIsDark) { mutableStateOf(systemIsDark) }
+    val isDarkState = remember(darkTheme) { mutableStateOf(darkTheme) }
     CompositionLocalProvider(
         LocalThemeIsDark provides isDarkState
     ) {
         val isDark by isDarkState
         SystemAppearance(!isDark)
-        MaterialTheme(
+        MaterialTheme (
             colorScheme = if (isDark) DarkColorScheme else LightColorScheme,
             content = { Surface(content = content) },
             typography = typography()

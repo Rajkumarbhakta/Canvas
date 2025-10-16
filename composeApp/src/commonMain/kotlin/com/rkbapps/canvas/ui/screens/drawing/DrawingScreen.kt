@@ -21,15 +21,24 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,6 +59,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.rkbapps.canvas.ui.composables.DrawingCanvas
+import com.rkbapps.canvas.ui.composables.MinimalDropdownMenu
 import com.rkbapps.canvas.ui.screens.drawing.composables.BackgroundColorChangeItem
 import com.rkbapps.canvas.ui.screens.drawing.composables.ColorItemList
 import com.rkbapps.canvas.ui.screens.drawing.composables.EditDrawingNameDialog
@@ -103,17 +113,7 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
             ) {
                 TopAppBar(
                     title = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            Text(currentDesign.name)
-                            IconButton(onClick = {
-                                viewModel.onAction(DrawingAction.OnOpenNameEditDialog)
-                            }) {
-                                Icon(Icons.Default.Edit, contentDescription = "edit name")
-                            }
-                        }
+                        Text(currentDesign.name)
                     },
                     navigationIcon = {
                         IconButton(
@@ -130,19 +130,34 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                         }
                     },
                     actions = {
-                        IconButton(
-                            onClick = {
-                                viewModel.onAction(
-                                    DrawingAction.SaveDesign(
-                                        state,
-                                        currentDesign.name
-                                    )
-                                )
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Save,
-                                contentDescription = "save drawing"
+                        MinimalDropdownMenu{
+                            DropdownMenuItem(
+                                leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null) },
+                                text = { Text("Edit name") },
+                                onClick = {
+                                    viewModel.onAction(DrawingAction.OnOpenNameEditDialog)
+                                }
+                            )
+                            DropdownMenuItem(
+                                leadingIcon = { Icon(Icons.Default.Save, contentDescription = null) },
+                                text = { Text("Save") },
+                                onClick = {
+                                    viewModel.onAction(DrawingAction.SaveDesign(state, currentDesign.name))
+                                }
+                            )
+                            DropdownMenuItem(
+                                leadingIcon = { Icon(Icons.Default.Share, contentDescription = null) },
+                                text = { Text("Export") },
+                                onClick = {
+
+                                }
+                            )
+                            DropdownMenuItem(
+                                leadingIcon = { Icon(Icons.Default.Cancel, contentDescription = null) },
+                                text = { Text("Clear") },
+                                onClick = {
+                                    viewModel.onAction(DrawingAction.OnClearCanvasList)
+                                }
                             )
                         }
                     }
