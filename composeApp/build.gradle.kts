@@ -51,22 +51,25 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.foundation)
+            implementation(libs.compose.material3)
+            implementation(libs.compose.components.resources)
+            implementation(libs.compose.tooling.preview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
-            implementation(libs.sketch.compose)
-            implementation(libs.sketch.http)
             implementation(libs.viewmodel.compose)
             implementation(libs.kotlinx.datetime)
-            implementation(libs.colorpicker.compose)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
+            //image loading
+            implementation(libs.coil)
+            implementation(libs.coil.network.ktor)
+            // adaptive
             implementation(libs.material3.window.size)
+            //color picker
+            implementation(libs.colorpicker.compose)
             //icons
             implementation(libs.material.icons.extended)
             //koin
@@ -76,7 +79,7 @@ kotlin {
             implementation(libs.koin.compose.viewmodel.navigation)
             //navigation compose
             implementation(libs.androidx.navigation.compose)
-
+            // multiplatform settings
             implementation(libs.multiplatform.settings)
             implementation(libs.multiplatform.settings.coroutines)
         }
@@ -89,7 +92,7 @@ kotlin {
         }
 
         androidMain.dependencies {
-            implementation(compose.uiTooling)
+            implementation(libs.compose.ui.tooling)
             implementation(libs.androidx.activityCompose)
             implementation(libs.kotlinx.coroutines.android)
             //koin dependency injection
@@ -119,7 +122,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 23
         targetSdk = 36
 
         applicationId = "com.rkbapps.canvas"

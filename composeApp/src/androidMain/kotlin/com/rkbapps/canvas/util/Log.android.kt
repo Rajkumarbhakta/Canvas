@@ -1,6 +1,5 @@
 package com.rkbapps.canvas.util
 
-import com.github.panpf.sketch.core.BuildConfig
 
 
 actual fun logD(tag: String, message: Any) {
