@@ -1,5 +1,6 @@
 package com.rkbapps.canvas.ui.screens.drawing.composables
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,14 +15,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -64,13 +71,6 @@ fun ColorItemList(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Constants.colors.forEach {
-            ColorItems(
-                color = it,
-                isSelected = it == selectedColor,
-                onClick = onColorItemClick
-            )
-        }
         ColorItems(
             color = if(colorPickerController.selectedColor.value == Color.Transparent) Color.White else colorPickerController.selectedColor.value,
             isSelected = colorPickerController.selectedColor.value == selectedColor,
@@ -86,6 +86,7 @@ fun ColorItemList(
 fun ColorItems(
     color:Color,
     isSelected: Boolean,
+    showCheck:Boolean = false,
     imageVector: ImageVector?=null,
     onClick: (color:Color) -> Unit = {}
 ){
@@ -97,7 +98,7 @@ fun ColorItems(
             onClick(color)
         }
         .border(
-            width = if (isSelected) 2.dp else 1.dp,
+            width = if (isSelected) 3.dp else 1.dp,
             color = if (isSelected) {
                 if(isSystemInDarkTheme() || color == Color.Black){
                     Color.White
@@ -114,6 +115,13 @@ fun ColorItems(
                 imageVector,
                 contentDescription = "color picker"
             )
+        }
+        if (showCheck){
+            AnimatedVisibility(
+                visible = isSelected
+            ){
+                Icon(Icons.Default.Check, contentDescription = "selected",)
+            }
         }
     }
 }
@@ -137,6 +145,24 @@ fun ColorPickerDialog(
         ){
             ColorPicker(controller, onColorChanged)
             Spacer(modifier = Modifier.height(10.dp))
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(7),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ){
+                items(items = Constants.colors){
+                    ColorItems(
+                        color = it,
+                        isSelected = it == controller.selectedColor.value,
+                        showCheck = true,
+                        onClick = { color ->
+                            controller.selectByColor(color,true)
+                            onDone(color)
+                        }
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(10.dp))
             Row (modifier = Modifier.fillMaxWidth().padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -150,7 +176,7 @@ fun ColorPickerDialog(
                 ) {
                     Text("Done")
                 }
-                Button(
+                OutlinedButton(
                     modifier = Modifier.weight(1f),
                     onClick = {
                         isColorPickerVisible.value = false

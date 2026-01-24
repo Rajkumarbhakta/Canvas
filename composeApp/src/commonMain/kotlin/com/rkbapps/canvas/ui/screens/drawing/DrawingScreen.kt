@@ -40,6 +40,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -55,6 +57,7 @@ import androidx.compose.ui.input.key.isCtrlPressed
 import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -69,6 +72,7 @@ import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeSelector
 import com.rkbapps.canvas.ui.screens.drawing.composables.ThicknessManagement
 import com.rkbapps.canvas.ui.screens.drawing.composables.UndoRedoItem
 import com.rkbapps.canvas.ui.screens.drawing.composables.shapeOptions
+import com.rkbapps.canvas.util.getWindowSize
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -81,6 +85,8 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
 
     val scrollState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
+
+    val windowSize = getWindowSize()
 
     val requester = remember { FocusRequester() }
 
@@ -248,8 +254,13 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                     EraserItem(
                         isEraserSelected = uiState.isEraserSelected
                     ) {
-                        viewModel.onAction(DrawingAction.OnEraserSelected)
-                        viewModel.onAction(DrawingAction.OnToggleEraser(true))
+                        if (uiState.isEraserSelected){
+                            viewModel.onAction(DrawingAction.OnEraserUnselected)
+                            viewModel.onAction(DrawingAction.OnToggleEraser(false))
+                        }else{
+                            viewModel.onAction(DrawingAction.OnEraserSelected)
+                            viewModel.onAction(DrawingAction.OnToggleEraser(true))
+                        }
                     }
                 }
 
@@ -264,7 +275,6 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                 item {
                     ShapeSelector(
                         selectedShape = state.selectedShapeType,
-                        shapes = shapeOptions,
                         onShapeSelected = { shapeType ->
                             viewModel.onAction(DrawingAction.OnEraserUnselected)
                             viewModel.onAction(DrawingAction.OnToggleEraser(false))
@@ -286,6 +296,7 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                 item {
                     Spacer(Modifier.width(16.dp))
                 }
+
             }
             AnimatedVisibility(visible = !uiState.isFullScreen) {
                 ThicknessManagement(

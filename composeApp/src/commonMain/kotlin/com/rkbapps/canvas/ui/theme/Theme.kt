@@ -1,4 +1,4 @@
-package com.rkbapps.canvas.theme
+package com.rkbapps.canvas.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -95,7 +95,6 @@ internal fun AppTheme(
         LocalThemeIsDark provides isDarkState
     ) {
         val isDark by isDarkState
-        SystemAppearance(!isDark)
         MaterialTheme (
             colorScheme = if (isDark) DarkColorScheme else LightColorScheme,
             content = { Surface(content = content) },
@@ -104,5 +103,4 @@ internal fun AppTheme(
     }
 }
 
-@Composable
-internal expect fun SystemAppearance(isDark: Boolean)
+
