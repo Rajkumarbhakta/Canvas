@@ -9,6 +9,7 @@ import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeType
 import com.rkbapps.canvas.util.ColorSerializer
 import com.rkbapps.canvas.util.ListOffsetSerializer
 import com.rkbapps.canvas.util.OffsetSerializer
+import com.rkbapps.canvas.util.SafeOffsetListSerializer
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
@@ -21,10 +22,10 @@ data class PathData(
     val color: Color,
     val thickness: Float = 10f,
     val pathEffect: PaintingStyleType = PaintingStyleType.STROKE,
-    @Serializable(with = ListOffsetSerializer::class)
+    @Serializable(with = SafeOffsetListSerializer::class)
     val path: List<Offset> = emptyList(),
     val isEraser: Boolean = false,
     val shapeType: ShapeType = ShapeType.NONE,
-    @Serializable(with = ListOffsetSerializer::class)
+    @Serializable(with = SafeOffsetListSerializer::class)
     val shapePoints: List<Offset> = emptyList() // Start and end points for shapes
 )
