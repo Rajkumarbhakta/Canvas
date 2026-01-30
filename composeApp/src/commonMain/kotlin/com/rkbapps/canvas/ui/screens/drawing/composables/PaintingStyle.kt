@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,9 +19,11 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.HorizontalRule
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.RadioButtonChecked
+import androidx.compose.material.icons.filled.Waves
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -40,14 +41,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import canvas.composeapp.generated.resources.Res
-import canvas.composeapp.generated.resources.ink_erase
 import canvas.composeapp.generated.resources.outline_stylus_brush
 import org.jetbrains.compose.resources.vectorResource
 
 enum class PaintingStyleType{
     STROKE,
     DOT,
-    FILL
+    FILL,
+    SCALLOP,
+    PENCIL,
 }
 
 data class PaintingStyle(
@@ -71,7 +73,17 @@ private val paintingStyles = listOf(
         title = "Fill",
         icon = Icons.Default.RadioButtonChecked,
         type = PaintingStyleType.FILL
-    )
+    ),
+    PaintingStyle(
+        title = "Scallop",
+        icon = Icons.Default.Waves,
+        type = PaintingStyleType.SCALLOP
+    ),
+    PaintingStyle(
+        title = "Pencil",
+        icon = Icons.Default.Edit,
+        type = PaintingStyleType.PENCIL
+    ),
 )
 
 
@@ -193,17 +205,7 @@ fun PaintingStyleDialog(
                 }
             }
 
-
         }
-
-
-
-
-
-
     }
-
-
-
 }
 

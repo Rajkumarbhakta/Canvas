@@ -86,8 +86,6 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
     val scrollState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
-    val windowSize = getWindowSize()
-
     val requester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {
@@ -151,13 +149,13 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                                     viewModel.onAction(DrawingAction.SaveDesign(state, currentDesign.name))
                                 }
                             )
-                            DropdownMenuItem(
-                                leadingIcon = { Icon(Icons.Default.Share, contentDescription = null) },
-                                text = { Text("Export") },
-                                onClick = {
-
-                                }
-                            )
+//                            DropdownMenuItem(
+//                                leadingIcon = { Icon(Icons.Default.Share, contentDescription = null) },
+//                                text = { Text("Export") },
+//                                onClick = {
+//
+//                                }
+//                            )
                             DropdownMenuItem(
                                 leadingIcon = { Icon(Icons.Default.Cancel, contentDescription = null) },
                                 text = { Text("Clear") },

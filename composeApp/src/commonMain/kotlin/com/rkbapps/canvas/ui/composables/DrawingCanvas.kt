@@ -11,9 +11,11 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.StampedPathEffectStyle
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
@@ -101,7 +103,6 @@ internal fun DrawScope.drawPath(
     val smoothPath = Path().apply {
         if (path.isNotEmpty()){
             moveTo(path.first().x,path.first().y)
-
             val smoothness = 5
             for(i in 1..path.lastIndex){
                 val from = path[i-1]
@@ -118,7 +119,6 @@ internal fun DrawScope.drawPath(
                     )
                 }
             }
-
         }
     }
 
@@ -134,32 +134,79 @@ internal fun DrawScope.drawPath(
             blendMode = BlendMode.Src
         )
     }else{
+        when(pathEffect){
+            PaintingStyleType.PENCIL->{
+                drawPath(
+                    path = smoothPath,
+                    color = color.copy(alpha = 0.15f),
+                    style = Stroke(width = thickness * 2f, cap = StrokeCap.Round)
+                )
+            }
+            else->{}
+        }
         drawPath(
             path = smoothPath,
             color = color,
-            style = when(pathEffect){
-                PaintingStyleType.DOT -> {
-                    Stroke(
-                        width = thickness,
-                        cap = StrokeCap.Round,
-                        join = StrokeJoin.Round,
-                        pathEffect = PathEffect.dashPathEffect(floatArrayOf(2f, 15f), 0f)
-                    )
-                }
-                PaintingStyleType.STROKE -> {
-                    Stroke(
-                        width = thickness,
-                        cap = StrokeCap.Round,
-                        join = StrokeJoin.Round
-                    )
-                }
-                PaintingStyleType.FILL -> {
-                    Fill
-                }
-            }
+            style = getDrawStyle(thickness,pathEffect)
         )
     }
 }
+
+
+internal fun getDrawStyle(thickness: Float,style: PaintingStyleType): DrawStyle {
+    return when(style){
+        PaintingStyleType.DOT -> {
+
+            val dotLength = thickness          // size of each dot
+            val gapLength = thickness * 2.5f   // space between dots
+
+            Stroke(
+                width = thickness,
+                cap = StrokeCap.Round,
+                join = StrokeJoin.Round,
+                pathEffect = PathEffect.dashPathEffect(floatArrayOf(dotLength,gapLength), 0f)
+            )
+        }
+        PaintingStyleType.STROKE -> {
+            Stroke(
+                width = thickness,
+                cap = StrokeCap.Round,
+                join = StrokeJoin.Round
+            )
+        }
+        PaintingStyleType.FILL -> {
+            Fill
+        }
+        PaintingStyleType.SCALLOP -> {
+            Stroke(
+                width = thickness,
+                pathEffect = scallopEffect(thickness)
+            )
+        }
+        PaintingStyleType.PENCIL -> {
+            Stroke(width = thickness * 0.6f, cap = StrokeCap.Round)
+        }
+    }
+}
+
+
+fun scallopEffect(thickness: Float): PathEffect {
+    val wavePath = Path().apply {
+        moveTo(0f, 0f)
+        quadraticTo(
+            thickness, thickness,
+            thickness * 2, 0f
+        )
+    }
+
+    return PathEffect.stampedPathEffect(
+        shape = wavePath,
+        advance = thickness * 2,
+        phase = 0f,
+        style = StampedPathEffectStyle.Rotate
+    )
+}
+
 
 // Function to draw different shapes
 internal fun DrawScope.drawShape(
@@ -174,26 +221,7 @@ internal fun DrawScope.drawShape(
     val start = points[0]
     val end = points[1]
     
-    val style = when(pathEffect) {
-        PaintingStyleType.DOT -> {
-            Stroke(
-                width = thickness,
-                cap = StrokeCap.Round,
-                join = StrokeJoin.Round,
-                pathEffect = PathEffect.dashPathEffect(floatArrayOf(2f, 15f), 0f)
-            )
-        }
-        PaintingStyleType.STROKE -> {
-            Stroke(
-                width = thickness,
-                cap = StrokeCap.Round,
-                join = StrokeJoin.Round
-            )
-        }
-        PaintingStyleType.FILL -> {
-            Fill
-        }
-    }
+    val style = getDrawStyle(thickness,pathEffect)
     
     val shapePath = Path()
     
