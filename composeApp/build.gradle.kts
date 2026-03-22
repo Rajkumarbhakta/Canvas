@@ -10,17 +10,19 @@ plugins {
     alias(libs.plugins.multiplatform)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compose)
-    alias(libs.plugins.android.library)
+    // Using standard com.android.library instead of com.android.kotlin.multiplatform.library
+    // because the latter currently has issues with packaging Compose Multiplatform resources as assets for Android.
+    id("com.android.library")
     alias(libs.plugins.hotReload)
     alias(libs.plugins.kotlinx.serialization)
 }
 
 kotlin {
 
-    androidLibrary {
-        namespace = "com.rkbapps.canvas.shared"
-        compileSdk = 36
-        minSdk = 23
+    androidTarget {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+        }
     }
 
     jvm()
@@ -102,10 +104,23 @@ kotlin {
     }
 }
 
-//compose.resources{
-//    generateResClass = ResourcesExtension.ResourceClassGeneration.Always
-//    publicResClass = true
-//}
+android {
+    namespace = "com.rkbapps.canvas.shared"
+    compileSdk = 36
+
+    defaultConfig {
+        minSdk = 23
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}
+
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "canvas.composeapp.generated.resources"
+}
 
 
 compose.desktop {
