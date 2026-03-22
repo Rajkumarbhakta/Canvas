@@ -1,9 +1,5 @@
-import com.android.ide.common.resources.GeneratedResourceSet
-import org.gradle.api.internal.tasks.compile.incremental.compilerapi.deps.GeneratedResource
-import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.compose.reload.ComposeHotRun
-import org.jetbrains.compose.resources.ResourcesExtension
+import org.jetbrains.compose.reload.gradle.ComposeHotRun
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -14,24 +10,19 @@ plugins {
     alias(libs.plugins.multiplatform)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compose)
-    alias(libs.plugins.android.application)
+    // Using standard com.android.library instead of com.android.kotlin.multiplatform.library
+    // because the latter currently has issues with packaging Compose Multiplatform resources as assets for Android.
+    id("com.android.library")
     alias(libs.plugins.hotReload)
     alias(libs.plugins.kotlinx.serialization)
 }
 
 kotlin {
-//    jvmToolchain(17)
+
     androidTarget {
-        compilations.all {
-            compileTaskProvider {
-                compilerOptions {
-                    jvmTarget.set(JvmTarget.JVM_1_8)
-                    freeCompilerArgs.add("-Xjdk-release=${JavaVersion.VERSION_1_8}")
-                }
-            }
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
         }
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
     }
 
     jvm()
@@ -55,22 +46,24 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.foundation)
+            implementation(libs.compose.material3)
+            implementation(libs.compose.components.resources)
+            implementation(libs.compose.tooling.preview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
-            implementation(libs.sketch.compose)
-            implementation(libs.sketch.http)
             implementation(libs.viewmodel.compose)
             implementation(libs.kotlinx.datetime)
-            implementation(libs.colorpicker.compose)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
-            implementation(libs.kotlinx.datetime)
+            //image loading
+            implementation(libs.coil)
+            implementation(libs.coil.network.ktor)
+            // adaptive
             implementation(libs.material3.window.size)
+            //color picker
+            implementation(libs.colorpicker.compose)
             //icons
             implementation(libs.material.icons.extended)
             //koin
@@ -80,20 +73,20 @@ kotlin {
             implementation(libs.koin.compose.viewmodel.navigation)
             //navigation compose
             implementation(libs.androidx.navigation.compose)
-
+            // multiplatform settings
             implementation(libs.multiplatform.settings)
             implementation(libs.multiplatform.settings.coroutines)
         }
 
         commonTest.dependencies {
             implementation(kotlin("test"))
-            @OptIn(ExperimentalComposeLibrary::class)
-            implementation(compose.uiTest)
+//            @OptIn(ExperimentalComposeLibrary::class)
+//            implementation(compose.uiTest)
             implementation(libs.kotlinx.coroutines.test)
         }
 
         androidMain.dependencies {
-            implementation(compose.uiTooling)
+            implementation(libs.compose.ui.tooling)
             implementation(libs.androidx.activityCompose)
             implementation(libs.kotlinx.coroutines.android)
             //koin dependency injection
@@ -106,47 +99,29 @@ kotlin {
             implementation(libs.kotlinx.coroutines.swing)
         }
 
-        nativeMain.dependencies {
-
-        }
+        nativeMain.dependencies {}
 
     }
-}
-
-compose.resources{
-    generateResClass = ResourcesExtension.ResourceClassGeneration.Always
-    publicResClass = true
 }
 
 android {
-    namespace = "com.rkbapps.canvas"
+    namespace = "com.rkbapps.canvas.shared"
     compileSdk = 36
 
     defaultConfig {
-        minSdk = 21
-        targetSdk = 36
-
-        applicationId = "com.rkbapps.canvas"
-        versionCode = 2
-        versionName = "1.0.1"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        minSdk = 23
     }
-    buildTypes {
-        debug {
-
-        }
-        release {
-
-        }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
-//https://developer.android.com/develop/ui/compose/testing#setup
-dependencies {
-    androidTestImplementation(libs.androidx.uitest.junit4)
-    debugImplementation(libs.androidx.uitest.testManifest)
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "canvas.composeapp.generated.resources"
 }
+
 
 compose.desktop {
     application {

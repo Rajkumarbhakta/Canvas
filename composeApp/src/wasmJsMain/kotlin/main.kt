@@ -2,6 +2,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
 import androidx.navigation.ExperimentalBrowserHistoryApi
+import androidx.navigation.bindToBrowserNavigation
 import androidx.navigation.bindToNavigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
@@ -24,24 +25,7 @@ fun main() {
             val navController = rememberNavController()
             App(navController)
             LaunchedEffect(Unit) {
-                window.bindToNavigation(navController)
-//                { entry ->
-//                    val route = entry.destination.route.orEmpty()
-//                    when{
-//                        route.startsWith(Home.serializer().descriptor.serialName)->{
-//                            "#home"
-//                        }
-//                        route.startsWith(Draw.serializer().descriptor.serialName)->{
-//                            val args = entry.toRoute<Draw>()
-//                            val data:SavedDesign? = if(args.design!=null) json.decodeFromString(SavedDesign.serializer(),args.design) else null
-////                            "#draw/id=${data?.id}"
-//                            "#draw"
-//                        }
-//                        else->{
-//                            "#"
-//                        }
-//                    }
-//                }
+                navController.bindToBrowserNavigation()
             }
         }
     }catch (e: Exception){
@@ -49,7 +33,7 @@ fun main() {
     }
 }
 
-@OptIn(ExperimentalJsExport::class)
+@OptIn(ExperimentalJsExport::class, ExperimentalWasmJsInterop::class)
 fun disableBrowserKeyDefaults() {
     js("""
         window.addEventListener('keydown', function(e) {

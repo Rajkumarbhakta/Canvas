@@ -1,4 +1,4 @@
-package com.rkbapps.canvas.theme
+package com.rkbapps.canvas.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

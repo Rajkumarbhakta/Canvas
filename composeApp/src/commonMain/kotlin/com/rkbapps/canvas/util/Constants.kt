@@ -15,6 +15,8 @@ object Constants {
         Color.Magenta,
         Color.Yellow,
         Color.Gray,
+        Color.DarkGray,
+        Color.LightGray,
     )
 }
 

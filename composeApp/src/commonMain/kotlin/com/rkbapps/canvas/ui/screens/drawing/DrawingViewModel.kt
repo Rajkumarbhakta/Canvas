@@ -40,6 +40,8 @@ class DrawingViewModel(
             DrawingAction.OnEraserUnselected -> repository.changeEraserSelection(false)
             DrawingAction.OnExitFullScreen -> repository.changeFullScreen(false)
             DrawingAction.OnOpenNameEditDialog -> repository.showHideNameEditorDialog(true)
+            DrawingAction.OnShareDrawing -> repository.onShareDrawing()
+            DrawingAction.OnSaveAsImage -> repository.onSaveAsImage()
         }
     }
 }

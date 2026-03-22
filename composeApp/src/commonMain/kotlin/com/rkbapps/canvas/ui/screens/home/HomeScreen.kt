@@ -28,25 +28,13 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavHostController,themeMode:String,onThemeChange: (String) -> Unit, viewModel: HomeViewModel = koinViewModel()) {
+fun HomeScreen(
+    navController: NavHostController,
+    viewModel: HomeViewModel = koinViewModel()
+) {
     val allDesign by viewModel.allDesign.collectAsStateWithLifecycle()
-val currentDeletableProject = rememberSaveable { mutableStateOf<SavedDesign?>(null) }
-val expanded = remember { mutableStateOf(false) }
-val themeOptions = listOf("Light", "Dark", "System")
-val selectedTheme = remember { mutableStateOf("System") }
-val nextTheme = when (themeMode) {
-    "System" -> "Dark"
-    "Dark" -> "Light"
-    "Light" -> "System"
-    else -> "System"
-}
+    val currentDeletableProject = rememberSaveable { mutableStateOf<SavedDesign?>(null) }
 
-val icon = when (themeMode) {
-    "System" -> Icons.Default.SettingsBrightness // or any meaningful "system" icon
-    "Dark" -> Icons.Default.DarkMode
-    "Light" -> Icons.Default.LightMode
-    else -> Icons.Default.SettingsBrightness
-}
     Scaffold(
         topBar = {
             TopAppBar(
@@ -60,16 +48,6 @@ val icon = when (themeMode) {
                         }
                     ) {
                         Icon(imageVector = Icons.Default.Refresh, contentDescription = "refresh")
-                    }
-                    IconButton(
-                        onClick = {
-                            onThemeChange(nextTheme)
-                        }
-                    ) {
-                        Icon(
-                            imageVector = icon,
-                            contentDescription = "Toggle Theme"
-                        )
                     }
                 }
             )
@@ -142,7 +120,6 @@ fun DesignListItem(design: SavedDesign, onDelete: () -> Unit = {}, onClick: () -
         ) {
             Box(
                 modifier = Modifier
-                    .height(200.dp)
                     .fillMaxWidth()
                     .clip(shape = RoundedCornerShape(16.dp))
                     .align(Alignment.CenterHorizontally)
@@ -185,28 +162,30 @@ fun DrawingShow(
     state: DrawingState,
     modifier: Modifier = Modifier
 ) {
-    Canvas(
-        modifier = modifier.background(state.backgroundColor)
-    ) {
-        state.paths.forEach {
-            drawPath(
-                it.path,
-                it.color,
-                it.thickness,
-                it.pathEffect,
-                isEraser = it.isEraser,
-                state.backgroundColor
-            )
-        }
-        state.currentPath?.let {
-            drawPath(
-                it.path,
-                it.color,
-                it.thickness,
-                it.pathEffect,
-                isEraser = it.isEraser,
-                state.backgroundColor
-            )
+    Box(contentAlignment = Alignment.Center ){
+        Canvas(
+            modifier = modifier.background(state.backgroundColor)
+        ) {
+            state.paths.forEach {
+                drawPath(
+                    it.path,
+                    it.color,
+                    it.thickness,
+                    it.pathEffect,
+                    isEraser = it.isEraser,
+                    state.backgroundColor
+                )
+            }
+            state.currentPath?.let {
+                drawPath(
+                    it.path,
+                    it.color,
+                    it.thickness,
+                    it.pathEffect,
+                    isEraser = it.isEraser,
+                    state.backgroundColor
+                )
+            }
         }
     }
 }
@@ -224,7 +203,7 @@ fun DeleteConfirmationDialog(projectName: String, onCancel: () -> Unit, onDone: 
             Text("Are you sure you want to delete $projectName?")
         },
         confirmButton = {
-            Button(onClick = onDone) {
+            OutlinedButton(onClick = onDone) {
                 Text("Delete")
             }
         },

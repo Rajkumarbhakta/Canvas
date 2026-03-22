@@ -1,54 +1,72 @@
 [versions]
 
-kotlin = "2.1.20"
-compose = "1.8.0-beta02"
-agp = "8.9.1"
-androidx-activityCompose = "1.10.1"
-androidx-uiTest = "1.8.2"
-hotReload = "1.0.0-alpha04"
-androidx-lifecycle = "2.9.0-alpha05"
-koin = "4.0.3"
-coil = "3.1.0"
+kotlin = "2.3.0"
+compose = "1.10.3"
+material3 =  "1.9.0"
+agp = "9.0.0"
+androidx-activityCompose = "1.13.0"
+androidx-uiTest = "1.10.5"
+hotReload = "1.0.0"
+androidx-lifecycle = "2.10.0"
+koin = "4.2.0"
+coil = "3.4.0"
 multiplatformSettings = "1.3.0"
-sketchCompose = "4.0.5"
-viewModel = "2.8.4"
-dateTime = "0.6.2"
-colorPicker = "1.1.2"
+viewModel = "2.10.0"
+dateTime = "0.7.1"
+colorPicker = "1.1.3"
 kotlinx-coroutines = "1.10.2"
-kotlinx-serialization = "1.8.1"
-material3WindowSizeClass = "1.7.3"
-navigation-compose = "2.8.0-alpha11"
+kotlinx-serialization = "1.10.0"
+material3WindowSizeClass = "1.9.0"
+navigation-compose = "2.9.2"
 material-icons-extended = "1.7.3"
+coreKtx = "1.18.0"
 
 [libraries]
 
 androidx-activityCompose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
-androidx-uitest-testManifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-uiTest" }
-androidx-uitest-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidx-uiTest" }
+#compose
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose"}
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose"}
+compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3"}
+compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose"}
+compose-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "compose"}
+compose-ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "compose"}
+#lifecycle
 androidx-lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+viewmodel-compose = {module="org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "viewModel"}
+#navigation
 androidx-navigation-compose = {module="org.jetbrains.androidx.navigation:navigation-compose",version.ref="navigation-compose"}
+#testing
+androidx-uitest-testManifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-uiTest" }
+androidx-uitest-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidx-uiTest" }
+#coil compose
 coil = { module = "io.coil-kt.coil3:coil-compose-core", version.ref = "coil" }
 coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
+#mutiplatfrom settings for db
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformSettings" }
 multiplatform-settings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "multiplatformSettings" }
-sketch-compose = {module="io.github.panpf.sketch4:sketch-compose",version.ref = "sketchCompose"}
-sketch-http = {module="io.github.panpf.sketch4:sketch-http",version.ref = "sketchCompose"}
-viewmodel-compose = {module="org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "viewModel"}
+
+#kotlinx librearys
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "dateTime" }
-colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorPicker" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+#color-picker
+colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorPicker" }
+#adaptive
 material3-window-size = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "material3WindowSizeClass" }
+#koin
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-compose-viewmodel = {module="io.insert-koin:koin-compose-viewmodel",version.ref="koin"}
 koin-compose-viewmodel-navigation = {module="io.insert-koin:koin-compose-viewmodel-navigation",version.ref="koin"}
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
+#material icons
 material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "material-icons-extended" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 
 [plugins]
 
@@ -56,5 +74,7 @@ multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotl
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 hotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "hotReload" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

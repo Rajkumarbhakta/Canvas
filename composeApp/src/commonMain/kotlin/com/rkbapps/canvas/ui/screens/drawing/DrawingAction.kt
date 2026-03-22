@@ -31,4 +31,7 @@ sealed interface DrawingAction {
     data object OnEraserSelected: DrawingAction
     data object OnEraserUnselected: DrawingAction
 
+    data object OnShareDrawing: DrawingAction
+    data object OnSaveAsImage: DrawingAction
+
 }

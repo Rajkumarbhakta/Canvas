@@ -21,10 +21,14 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -50,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.rkbapps.canvas.ui.composables.DrawingCanvas
+import com.rkbapps.canvas.ui.composables.MinimalDropdownMenu
 import com.rkbapps.canvas.ui.screens.drawing.composables.BackgroundColorChangeItem
 import com.rkbapps.canvas.ui.screens.drawing.composables.ColorItemList
 import com.rkbapps.canvas.ui.screens.drawing.composables.EditDrawingNameDialog
@@ -58,7 +63,6 @@ import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyle
 import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeSelector
 import com.rkbapps.canvas.ui.screens.drawing.composables.ThicknessManagement
 import com.rkbapps.canvas.ui.screens.drawing.composables.UndoRedoItem
-import com.rkbapps.canvas.ui.screens.drawing.composables.shapeOptions
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -103,17 +107,7 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
             ) {
                 TopAppBar(
                     title = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            Text(currentDesign.name)
-                            IconButton(onClick = {
-                                viewModel.onAction(DrawingAction.OnOpenNameEditDialog)
-                            }) {
-                                Icon(Icons.Default.Edit, contentDescription = "edit name")
-                            }
-                        }
+                        Text(currentDesign.name)
                     },
                     navigationIcon = {
                         IconButton(
@@ -130,19 +124,41 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                         }
                     },
                     actions = {
-                        IconButton(
-                            onClick = {
-                                viewModel.onAction(
-                                    DrawingAction.SaveDesign(
-                                        state,
-                                        currentDesign.name
-                                    )
-                                )
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Save,
-                                contentDescription = "save drawing"
+                        MinimalDropdownMenu{
+                            DropdownMenuItem(
+                                leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null) },
+                                text = { Text("Edit name") },
+                                onClick = {
+                                    viewModel.onAction(DrawingAction.OnOpenNameEditDialog)
+                                }
+                            )
+                            DropdownMenuItem(
+                                leadingIcon = { Icon(Icons.Default.Save, contentDescription = null) },
+                                text = { Text("Save Project") },
+                                onClick = {
+                                    viewModel.onAction(DrawingAction.SaveDesign(state, currentDesign.name))
+                                }
+                            )
+                            DropdownMenuItem(
+                                leadingIcon = { Icon(Icons.Default.Download, contentDescription = null) },
+                                text = { Text("Save as Image") },
+                                onClick = {
+                                    viewModel.onAction(DrawingAction.OnSaveAsImage)
+                                }
+                            )
+                            DropdownMenuItem(
+                                leadingIcon = { Icon(Icons.Default.Share, contentDescription = null) },
+                                text = { Text("Share") },
+                                onClick = {
+                                    viewModel.onAction(DrawingAction.OnShareDrawing)
+                                }
+                            )
+                            DropdownMenuItem(
+                                leadingIcon = { Icon(Icons.Default.Cancel, contentDescription = null) },
+                                text = { Text("Clear") },
+                                onClick = {
+                                    viewModel.onAction(DrawingAction.OnClearCanvasList)
+                                }
                             )
                         }
                     }
@@ -233,8 +249,13 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                     EraserItem(
                         isEraserSelected = uiState.isEraserSelected
                     ) {
-                        viewModel.onAction(DrawingAction.OnEraserSelected)
-                        viewModel.onAction(DrawingAction.OnToggleEraser(true))
+                        if (uiState.isEraserSelected){
+                            viewModel.onAction(DrawingAction.OnEraserUnselected)
+                            viewModel.onAction(DrawingAction.OnToggleEraser(false))
+                        }else{
+                            viewModel.onAction(DrawingAction.OnEraserSelected)
+                            viewModel.onAction(DrawingAction.OnToggleEraser(true))
+                        }
                     }
                 }
 
@@ -249,7 +270,6 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                 item {
                     ShapeSelector(
                         selectedShape = state.selectedShapeType,
-                        shapes = shapeOptions,
                         onShapeSelected = { shapeType ->
                             viewModel.onAction(DrawingAction.OnEraserUnselected)
                             viewModel.onAction(DrawingAction.OnToggleEraser(false))
@@ -271,6 +291,7 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                 item {
                     Spacer(Modifier.width(16.dp))
                 }
+
             }
             AnimatedVisibility(visible = !uiState.isFullScreen) {
                 ThicknessManagement(
