@@ -83,7 +83,7 @@ fun DrawingCanvas(
 
 }
 
-internal fun DrawScope.drawPath(
+fun DrawScope.drawPath(
     path: List<Offset>,
     color:Color,
     thickness: Float = 10f,
@@ -107,7 +107,7 @@ internal fun DrawScope.drawPath(
             for(i in 1..path.lastIndex){
                 val from = path[i-1]
                 val to = path[i]
-                val dx = abs(from.x-to.y)
+                val dx = abs(from.x-to.x)
                 val dy = abs(from.y-to.y)
                 if (dy>=smoothness || dx>=smoothness){
                     quadraticTo(
@@ -153,7 +153,7 @@ internal fun DrawScope.drawPath(
 }
 
 
-internal fun getDrawStyle(thickness: Float,style: PaintingStyleType): DrawStyle {
+fun getDrawStyle(thickness: Float,style: PaintingStyleType): DrawStyle {
     return when(style){
         PaintingStyleType.DOT -> {
 
@@ -209,7 +209,7 @@ fun scallopEffect(thickness: Float): PathEffect {
 
 
 // Function to draw different shapes
-internal fun DrawScope.drawShape(
+fun DrawScope.drawShape(
     points: List<Offset>,
     color: Color,
     thickness: Float,

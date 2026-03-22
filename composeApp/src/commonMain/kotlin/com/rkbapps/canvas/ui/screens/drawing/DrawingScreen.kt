@@ -22,26 +22,19 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.MoreHoriz
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.windowsizeclass.WindowSizeClass
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -57,7 +50,6 @@ import androidx.compose.ui.input.key.isCtrlPressed
 import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -71,8 +63,6 @@ import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyle
 import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeSelector
 import com.rkbapps.canvas.ui.screens.drawing.composables.ThicknessManagement
 import com.rkbapps.canvas.ui.screens.drawing.composables.UndoRedoItem
-import com.rkbapps.canvas.ui.screens.drawing.composables.shapeOptions
-import com.rkbapps.canvas.util.getWindowSize
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -144,18 +134,25 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                             )
                             DropdownMenuItem(
                                 leadingIcon = { Icon(Icons.Default.Save, contentDescription = null) },
-                                text = { Text("Save") },
+                                text = { Text("Save Project") },
                                 onClick = {
                                     viewModel.onAction(DrawingAction.SaveDesign(state, currentDesign.name))
                                 }
                             )
-//                            DropdownMenuItem(
-//                                leadingIcon = { Icon(Icons.Default.Share, contentDescription = null) },
-//                                text = { Text("Export") },
-//                                onClick = {
-//
-//                                }
-//                            )
+                            DropdownMenuItem(
+                                leadingIcon = { Icon(Icons.Default.Download, contentDescription = null) },
+                                text = { Text("Save as Image") },
+                                onClick = {
+                                    viewModel.onAction(DrawingAction.OnSaveAsImage)
+                                }
+                            )
+                            DropdownMenuItem(
+                                leadingIcon = { Icon(Icons.Default.Share, contentDescription = null) },
+                                text = { Text("Share") },
+                                onClick = {
+                                    viewModel.onAction(DrawingAction.OnShareDrawing)
+                                }
+                            )
                             DropdownMenuItem(
                                 leadingIcon = { Icon(Icons.Default.Cancel, contentDescription = null) },
                                 text = { Text("Clear") },

@@ -11,6 +11,7 @@ import com.rkbapps.canvas.model.SavedDesign
 import com.rkbapps.canvas.navigation.Draw
 import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyleType
 import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeType
+import com.rkbapps.canvas.util.ImageSharer
 import com.rkbapps.canvas.util.Log
 import com.rkbapps.canvas.util.json
 import kotlinx.coroutines.CoroutineScope
@@ -26,6 +27,7 @@ import kotlin.time.ExperimentalTime
 
 class DrawingRepository(
     private val dbOperations: DbOperations,
+    private val imageSharer: ImageSharer,
     saveStateHandle: SavedStateHandle
 ) {
 
@@ -239,6 +241,12 @@ class DrawingRepository(
         }
     }
 
+    fun onShareDrawing() {
+        imageSharer.shareDrawing(state.value, currentDesign.value.name)
+    }
 
+    fun onSaveAsImage() {
+        imageSharer.saveDrawing(state.value, currentDesign.value.name)
+    }
 
 }
