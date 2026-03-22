@@ -55,7 +55,6 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
-            implementation(libs.kotlinx.datetime)
             //image loading
             implementation(libs.coil)
             implementation(libs.coil.network.ktor)

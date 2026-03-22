@@ -232,9 +232,7 @@ fun ShapeSelectorDialog(
         Column(
             modifier = Modifier.fillMaxWidth()
                 .clip(RoundedCornerShape(12.dp))
-                .background(
-                    color = Color.White
-                ).padding(16.dp)
+                .padding(16.dp)
         ) {
             Text("Choose Shape", style = MaterialTheme.typography.headlineSmall, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
             Spacer(Modifier.height(10.dp))
