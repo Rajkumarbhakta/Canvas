@@ -10,23 +10,17 @@ plugins {
     alias(libs.plugins.multiplatform)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compose)
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.hotReload)
     alias(libs.plugins.kotlinx.serialization)
 }
 
 kotlin {
-    androidTarget {
-        compilations.all {
-            compileTaskProvider {
-                compilerOptions {
-                    jvmTarget.set(JvmTarget.JVM_17)
-                    freeCompilerArgs.add("-Xjdk-release=${JavaVersion.VERSION_17}")
-                }
-            }
-        }
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
+
+    androidLibrary {
+        namespace = "com.rkbapps.canvas.shared"
+        compileSdk = 36
+        minSdk = 23
     }
 
     jvm()
@@ -104,9 +98,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.swing)
         }
 
-        nativeMain.dependencies {
-
-        }
+        nativeMain.dependencies {}
 
     }
 }
@@ -116,35 +108,6 @@ kotlin {
 //    publicResClass = true
 //}
 
-android {
-    namespace = "com.rkbapps.canvas"
-    compileSdk = 36
-
-    defaultConfig {
-        minSdk = 23
-        targetSdk = 36
-
-        applicationId = "com.rkbapps.canvas"
-        versionCode = 3
-        versionName = "1.1.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-    buildTypes {
-        debug {
-
-        }
-        release {
-
-        }
-    }
-}
-
-//https://developer.android.com/develop/ui/compose/testing#setup
-dependencies {
-    androidTestImplementation(libs.androidx.uitest.junit4)
-    debugImplementation(libs.androidx.uitest.testManifest)
-}
 
 compose.desktop {
     application {

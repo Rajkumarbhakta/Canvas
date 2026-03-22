@@ -34,4 +34,5 @@ plugins {
 }
 
 include(":composeApp")
+include(":androidApp")
 
