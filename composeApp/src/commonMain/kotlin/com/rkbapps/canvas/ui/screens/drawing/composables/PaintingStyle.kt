@@ -40,8 +40,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import canvas.composeapp.generated.resources.Res
-import canvas.composeapp.generated.resources.outline_stylus_brush
+import canvas.composeapp.generated.resources.*
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
 enum class PaintingStyleType{
@@ -53,34 +54,34 @@ enum class PaintingStyleType{
 }
 
 data class PaintingStyle(
-    val title:String,
+    val title:StringResource,
     val icon: ImageVector,
     val type:PaintingStyleType
 )
 
 private val paintingStyles = listOf(
     PaintingStyle(
-        title = "Stroke",
+        title = Res.string.brush_style_stroke,
         icon = Icons.Default.HorizontalRule,
         type = PaintingStyleType.STROKE
     ),
     PaintingStyle(
-        title = "Dot",
+        title = Res.string.brush_style_dot,
         icon = Icons.Default.MoreHoriz,
         type = PaintingStyleType.DOT
     ),
     PaintingStyle(
-        title = "Fill",
+        title = Res.string.brush_style_fill,
         icon = Icons.Default.RadioButtonChecked,
         type = PaintingStyleType.FILL
     ),
     PaintingStyle(
-        title = "Scallop",
+        title = Res.string.brush_style_scallop,
         icon = Icons.Default.Waves,
         type = PaintingStyleType.SCALLOP
     ),
     PaintingStyle(
-        title = "Pencil",
+        title = Res.string.brush_style_pencil,
         icon = Icons.Default.Edit,
         type = PaintingStyleType.PENCIL
     ),
@@ -122,7 +123,7 @@ fun PaintingStyle(
 
             },
             title = {
-                Text("Brush", style = MaterialTheme.typography.labelSmall)
+                Text(stringResource(Res.string.brush), style = MaterialTheme.typography.labelSmall)
             }
         ){
             isPaintingStyleDialogVisible = true
@@ -179,7 +180,7 @@ fun PaintingStyleDialog(
                 .clip(RoundedCornerShape(12.dp))
                 .padding(16.dp)
         ) {
-            Text("Choose Brush Style", style = MaterialTheme.typography.headlineSmall, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+            Text(stringResource(Res.string.choose_brush_style), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
             Spacer(Modifier.height(10.dp))
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
@@ -192,10 +193,10 @@ fun PaintingStyleDialog(
                     PaintingStyleItem(
                         isSelected = selected==it.type,
                         icon = {
-                            Icon(imageVector = it.icon, contentDescription = it.title, modifier = Modifier.size(20.dp))
+                            Icon(imageVector = it.icon, contentDescription = stringResource(it.title), modifier = Modifier.size(20.dp))
                         },
                         title = {
-                            Text(it.title, style = MaterialTheme.typography.labelSmall)
+                            Text(stringResource(it.title), style = MaterialTheme.typography.labelSmall)
                         }
                     ) {
                         onSelected(it.type)

@@ -36,6 +36,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import canvas.composeapp.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -107,7 +109,7 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
             ) {
                 TopAppBar(
                     title = {
-                        Text(currentDesign.name)
+                        Text(currentDesign.name.ifEmpty { stringResource(Res.string.untitled_drawing) })
                     },
                     navigationIcon = {
                         IconButton(
@@ -119,43 +121,42 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                             Icon(
                                 modifier = Modifier.size(20.dp),
                                 imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                                contentDescription = "back"
-                            )
+                                contentDescription = stringResource(Res.string.back)                            )
                         }
                     },
                     actions = {
                         MinimalDropdownMenu{
                             DropdownMenuItem(
                                 leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null) },
-                                text = { Text("Edit name") },
+                                text = { Text(stringResource(Res.string.edit_name)) },
                                 onClick = {
                                     viewModel.onAction(DrawingAction.OnOpenNameEditDialog)
                                 }
                             )
                             DropdownMenuItem(
                                 leadingIcon = { Icon(Icons.Default.Save, contentDescription = null) },
-                                text = { Text("Save Project") },
+                                text = { Text(stringResource(Res.string.save_project)) },
                                 onClick = {
                                     viewModel.onAction(DrawingAction.SaveDesign(state, currentDesign.name))
                                 }
                             )
                             DropdownMenuItem(
                                 leadingIcon = { Icon(Icons.Default.Download, contentDescription = null) },
-                                text = { Text("Save as Image") },
+                                text = { Text(stringResource(Res.string.save_as_image)) },
                                 onClick = {
                                     viewModel.onAction(DrawingAction.OnSaveAsImage)
                                 }
                             )
                             DropdownMenuItem(
                                 leadingIcon = { Icon(Icons.Default.Share, contentDescription = null) },
-                                text = { Text("Share") },
+                                text = { Text(stringResource(Res.string.share)) },
                                 onClick = {
                                     viewModel.onAction(DrawingAction.OnShareDrawing)
                                 }
                             )
                             DropdownMenuItem(
                                 leadingIcon = { Icon(Icons.Default.Cancel, contentDescription = null) },
-                                text = { Text("Clear") },
+                                text = { Text(stringResource(Res.string.clear)) },
                                 onClick = {
                                     viewModel.onAction(DrawingAction.OnClearCanvasList)
                                 }
@@ -310,7 +311,7 @@ fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel 
                         viewModel.onAction(DrawingAction.OnClearCanvasList)
                     }
                 ) {
-                    Text("Clear Canvas")
+                    Text(stringResource(Res.string.clear_canvas))
                 }
             }
 

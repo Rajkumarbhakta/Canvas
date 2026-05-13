@@ -30,6 +30,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import canvas.composeapp.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -113,14 +115,14 @@ fun ColorItems(
         imageVector?.let {
             Icon(
                 imageVector,
-                contentDescription = "color picker"
+                contentDescription = stringResource(Res.string.color_picker)
             )
         }
         if (showCheck){
             AnimatedVisibility(
                 visible = isSelected
             ){
-                Icon(Icons.Default.Check, contentDescription = "selected",)
+                Icon(Icons.Default.Check, contentDescription = stringResource(Res.string.selected),)
             }
         }
     }
@@ -174,7 +176,7 @@ fun ColorPickerDialog(
                         isColorPickerVisible.value = false
                     }
                 ) {
-                    Text("Done")
+                    Text(stringResource(Res.string.done))
                 }
                 OutlinedButton(
                     modifier = Modifier.weight(1f),
@@ -182,7 +184,7 @@ fun ColorPickerDialog(
                         isColorPickerVisible.value = false
                     }
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(Res.string.cancel))
                 }
             }
         }

@@ -35,7 +35,7 @@ class DrawingRepository(
     val state = _state.asStateFlow()
 
     @OptIn(ExperimentalTime::class)
-    private val _currentDesign = MutableStateFlow<SavedDesign>(SavedDesign(name = "Untitled drawing", state = DrawingState()))
+    private val _currentDesign = MutableStateFlow<SavedDesign>(SavedDesign(name = "", state = DrawingState()))
     val currentDesign = _currentDesign.asStateFlow()
 
 

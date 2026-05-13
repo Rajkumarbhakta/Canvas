@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.rkbapps.canvas.ui.screens.drawing.DrawingScreen
 import com.rkbapps.canvas.ui.screens.home.HomeScreen
+import com.rkbapps.canvas.ui.screens.settings.SettingsScreen
 
 @Composable
 fun MainNavGraph(
@@ -19,6 +20,11 @@ fun MainNavGraph(
         composable<Draw> {
             DrawingScreen(navController = navController)
         }
+
+        composable<Settings> {
+            SettingsScreen(navController = navController)
+        }
+
     }
 }
 

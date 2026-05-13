@@ -53,14 +53,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import canvas.composeapp.generated.resources.Res
-import canvas.composeapp.generated.resources.shapes
+import canvas.composeapp.generated.resources.*
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
 data class ShapeOption(
     val type: ShapeType,
     val icon: ImageVector,
-    val title: String
+    val title: StringResource
 )
 
 
@@ -68,67 +69,67 @@ val shapeOptions = listOf(
     ShapeOption(
         type = ShapeType.NONE,
         icon = Icons.Filled.Close,
-        title = "None"
+        title = Res.string.shape_none
     ),
     ShapeOption(
         type = ShapeType.LINE,
         icon = Icons.Filled.HorizontalRule,
-        title = "Line"
+        title = Res.string.shape_line
     ),
     ShapeOption(
         type = ShapeType.RECTANGLE,
         icon = Icons.Outlined.Rectangle,
-        title = "Rectangle"
+        title = Res.string.shape_rectangle
     ),
     ShapeOption(
         type = ShapeType.SQUARE,
         icon = Icons.Outlined.Square,
-        title = "Square"
+        title = Res.string.shape_square
     ),
     ShapeOption(
         type = ShapeType.CIRCLE,
         icon = Icons.Outlined.Circle,
-        title = "Circle"
+        title = Res.string.shape_circle
     ),
     ShapeOption(
         type = ShapeType.TRIANGLE,
         icon = Icons.Outlined.ChangeHistory,
-        title = "Triangle"
+        title = Res.string.shape_triangle
     ),
     ShapeOption(
         type = ShapeType.ARROW_LEFT,
         icon = Icons.AutoMirrored.Outlined.ArrowBack,
-        title = "Arrow Left"
+        title = Res.string.shape_arrow_left
     ),
     ShapeOption(
         type = ShapeType.ARROW_RIGHT,
         icon = Icons.AutoMirrored.Outlined.ArrowForward,
-        title = "Arrow Right"
+        title = Res.string.shape_arrow_right
     ),
     ShapeOption(
         type = ShapeType.ARROW_UP,
         icon = Icons.Outlined.ArrowUpward,
-        title = "Arrow Up"
+        title = Res.string.shape_arrow_up
     ),
     ShapeOption(
         type = ShapeType.ARROW_DOWN,
         icon = Icons.Outlined.ArrowDownward,
-        title = "Arrow Down"
+        title = Res.string.shape_arrow_down
     ),
     ShapeOption(
         type = ShapeType.STAR,
         icon = Icons.Outlined.Star,
-        title = "Star"
+        title = Res.string.shape_star
     ),
     ShapeOption(
         type = ShapeType.PENTAGON,
         icon = Icons.Outlined.Pentagon,
-        title = "Pentagon"
+        title = Res.string.shape_pentagon
     ),
     ShapeOption(
         type = ShapeType.HEXAGON,
         icon = Icons.Outlined.Hexagon,
-        title = "Hexagon"
+        title = Res.string.shape_hexagon
     )
 )
 
@@ -168,12 +169,12 @@ fun ShapeSelector(
                 icon = {
                     Icon(
                         imageVector = vectorResource(Res.drawable.shapes),
-                        contentDescription = "Shapes"
+                        contentDescription = stringResource(Res.string.shapes)
                     )
                 },
                 title = {
                     Text(
-                            text = "Shapes",
+                            text = stringResource(Res.string.shapes),
                             style = MaterialTheme.typography.labelSmall,
                             textAlign = TextAlign.Center,
                             fontSize = 10.sp
@@ -234,7 +235,7 @@ fun ShapeSelectorDialog(
                 .clip(RoundedCornerShape(12.dp))
                 .padding(16.dp)
         ) {
-            Text("Choose Shape", style = MaterialTheme.typography.headlineSmall, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+            Text(stringResource(Res.string.choose_shape), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
             Spacer(Modifier.height(10.dp))
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
@@ -249,13 +250,13 @@ fun ShapeSelectorDialog(
                         icon = {
                             Icon(
                                 imageVector = shape.icon,
-                                contentDescription = shape.title,
+                                contentDescription = stringResource(shape.title),
                                 modifier = Modifier.size(20.dp)
                             )
                         },
                         title = {
                             Text(
-                                text = shape.title,
+                                text = stringResource(shape.title),
                                 style = MaterialTheme.typography.labelSmall,
                                 textAlign = TextAlign.Center,
                                 fontSize = 10.sp

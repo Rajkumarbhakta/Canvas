@@ -14,6 +14,8 @@ import androidx.compose.material.icons.filled.Undo
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import canvas.composeapp.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,10 +36,10 @@ fun UndoRedoItem(
             PaintingStyleItem(
                 isSelected =  false,
                 icon = {
-                    Icon(imageVector = Icons.AutoMirrored.Filled.Undo, contentDescription = "Undo", modifier = Modifier.size(20.dp))
+                    Icon(imageVector = Icons.AutoMirrored.Filled.Undo, contentDescription = stringResource(Res.string.undo), modifier = Modifier.size(20.dp))
                 },
                 title = {
-                    Text("Undo", style = MaterialTheme.typography.labelSmall)
+                    Text(stringResource(Res.string.undo), style = MaterialTheme.typography.labelSmall)
                 }
             ) {
                 onUndo()
@@ -45,10 +47,10 @@ fun UndoRedoItem(
         PaintingStyleItem(
             isSelected =  false,
             icon = {
-                Icon(imageVector = Icons.AutoMirrored.Filled.Redo, contentDescription = "Redo", modifier = Modifier.size(20.dp))
+                Icon(imageVector = Icons.AutoMirrored.Filled.Redo, contentDescription = stringResource(Res.string.redo), modifier = Modifier.size(20.dp))
             },
             title = {
-                Text("Redo", style = MaterialTheme.typography.labelSmall)
+                Text(stringResource(Res.string.redo), style = MaterialTheme.typography.labelSmall)
             }
         ) {
             onRedo()

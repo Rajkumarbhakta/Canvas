@@ -10,6 +10,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import canvas.composeapp.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -23,6 +25,7 @@ import androidx.navigation.NavHostController
 import com.rkbapps.canvas.model.DrawingState
 import com.rkbapps.canvas.model.SavedDesign
 import com.rkbapps.canvas.navigation.Draw
+import com.rkbapps.canvas.navigation.Settings
 import com.rkbapps.canvas.ui.composables.drawPath
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -39,7 +42,7 @@ fun HomeScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text("My Designs")
+                    Text(stringResource(Res.string.my_designs))
                 },
                 actions = {
                     IconButton(
@@ -47,7 +50,14 @@ fun HomeScreen(
                             viewModel.getAllDesign()
                         }
                     ) {
-                        Icon(imageVector = Icons.Default.Refresh, contentDescription = "refresh")
+                        Icon(imageVector = Icons.Default.Refresh, contentDescription = stringResource(Res.string.refresh))
+                    }
+                    IconButton(
+                        onClick = {
+                                navController.navigate(route = Settings)
+                        }
+                    ) {
+                        Icon(imageVector = Icons.Default.Settings, contentDescription = stringResource(Res.string.settings))
                     }
                 }
             )
@@ -61,8 +71,8 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Icon(imageVector = Icons.Default.Brush, contentDescription = "new drawing")
-                    Text(text = "Draw")
+                    Icon(imageVector = Icons.Default.Brush, contentDescription = stringResource(Res.string.new_drawing))
+                    Text(text = stringResource(Res.string.draw))
                 }
             }
         }
@@ -104,7 +114,7 @@ fun HomeScreen(
                     }
                 }
             } else {
-                Text("No Designs")
+                Text(stringResource(Res.string.no_designs))
             }
         }
     }
@@ -148,7 +158,7 @@ fun DesignListItem(design: SavedDesign, onDelete: () -> Unit = {}, onClick: () -
                 IconButton(onClick = onDelete) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "delete",
+                        contentDescription = stringResource(Res.string.delete),
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -197,19 +207,19 @@ fun DeleteConfirmationDialog(projectName: String, onCancel: () -> Unit, onDone: 
             onCancel()
         },
         title = {
-            Text("Confirm Deletion")
+            Text(stringResource(Res.string.confirm_deletion))
         },
         text = {
-            Text("Are you sure you want to delete $projectName?")
+            Text(stringResource(Res.string.delete_confirmation, projectName))
         },
         confirmButton = {
             OutlinedButton(onClick = onDone) {
-                Text("Delete")
+                Text(stringResource(Res.string.delete))
             }
         },
         dismissButton = {
             Button(onClick = onCancel) {
-                Text("Cancel")
+                Text(stringResource(Res.string.cancel))
             }
         }
     )
