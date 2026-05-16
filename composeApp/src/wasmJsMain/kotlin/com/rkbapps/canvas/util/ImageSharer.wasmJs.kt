@@ -136,6 +136,7 @@ class ImageSharerWeb : ImageSharer {
         saveDrawing(drawingState, fileName)
     }
 
+    @OptIn(ExperimentalWasmJsInterop::class)
     override fun saveDrawing(drawingState: DrawingState, fileName: String) {
         try {
             val canvas = generateCanvas(drawingState)

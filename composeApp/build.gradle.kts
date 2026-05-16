@@ -76,6 +76,11 @@ kotlin {
             // multiplatform settings
             implementation(libs.multiplatform.settings)
             implementation(libs.multiplatform.settings.coroutines)
+            // datastore
+//            implementation(libs.datastore)
+//            implementation(libs.datastore.preferences)
+            implementation(libs.androidx.datastore.preferences.core)
+            implementation(libs.androidx.datastore.core.okio)
         }
 
         commonTest.dependencies {
@@ -100,6 +105,10 @@ kotlin {
         }
 
         nativeMain.dependencies {}
+
+        wasmJsMain.dependencies {
+            implementation("org.jetbrains.kotlinx:kotlinx-browser:0.3")
+        }
 
     }
 }

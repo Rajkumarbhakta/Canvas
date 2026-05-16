@@ -27,6 +27,8 @@ import com.rkbapps.canvas.model.SavedDesign
 import com.rkbapps.canvas.navigation.Draw
 import com.rkbapps.canvas.navigation.Settings
 import com.rkbapps.canvas.ui.composables.drawPath
+import com.rkbapps.canvas.util.Platforms
+import com.rkbapps.canvas.util.getPlatform
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,7 +56,9 @@ fun HomeScreen(
                     }
                     IconButton(
                         onClick = {
-                                navController.navigate(route = Settings)
+                                if (getPlatform()!= Platforms.WEB){
+                                    navController.navigate(route = Settings)
+                                }
                         }
                     ) {
                         Icon(imageVector = Icons.Default.Settings, contentDescription = stringResource(Res.string.settings))
