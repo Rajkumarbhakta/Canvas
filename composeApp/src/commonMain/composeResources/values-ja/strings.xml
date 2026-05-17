@@ -81,4 +81,7 @@
     <string name="korean">韓国語</string>
     <string name="hindi">ヒンディー語</string>
     <string name="bengali">ベンガル語</string>
+    <string name="please_wait">お待ちください</string>
+    <string name="migrating_data">データを移行しています</string>
+    <string name="no_designs_desc">描画ボタンをタップして、最初の作品を開始しましょう！</string>
 </resources>

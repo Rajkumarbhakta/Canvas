@@ -80,5 +80,8 @@
     <string name="japanese">Japanisch</string>
     <string name="korean">Koreanisch</string>
     <string name="hindi">Hindi</string>
-    <string name="bengali">Bengalisch</string>
-</resources>
+    <string name="bengali">Bengali</string>
+    <string name="please_wait">Bitte warten</string>
+    <string name="migrating_data">Daten werden migriert</string>
+    <string name="no_designs_desc">Tippen Sie auf die Schaltfläche Zeichnen, um Ihre erste Kreation zu starten!</string>
+    </resources>

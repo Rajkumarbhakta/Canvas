@@ -81,4 +81,7 @@
     <string name="korean">Coreano</string>
     <string name="hindi">Hindi</string>
     <string name="bengali">Bengali</string>
+    <string name="please_wait">Por favor, aguarde</string>
+    <string name="migrating_data">Migrando dados</string>
+    <string name="no_designs_desc">Toque no botão Desenhar para começar sua primeira criação!</string>
 </resources>

@@ -1,6 +1,8 @@
 package com.rkbapps.canvas
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -15,8 +17,10 @@ import io.ktor.util.Platform
 import org.koin.compose.viewmodel.koinViewModel
 
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun App(navController: NavHostController = rememberNavController()) {
+    val windowSizeClass = calculateWindowSizeClass()
     val darkTheme = if (getPlatform() == Platforms.WEB){
         isSystemInDarkTheme()
     }else{
@@ -27,6 +31,6 @@ fun App(navController: NavHostController = rememberNavController()) {
     }
 
     AppTheme(darkTheme = darkTheme) {
-        MainNavGraph(navController = navController,)
+        MainNavGraph(navController = navController, windowSizeClass = windowSizeClass)
     }
 }

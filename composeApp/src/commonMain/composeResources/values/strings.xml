@@ -81,5 +81,8 @@
     <string name="korean">Korean</string>
     <string name="hindi">Hindi</string>
     <string name="bengali">Bengali</string>
+    <string name="please_wait">Please wait</string>
+    <string name="migrating_data">Migrating data</string>
+    <string name="no_designs_desc">Tap the Draw button to start your first creation!</string>
 
 </resources>

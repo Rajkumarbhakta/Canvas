@@ -1,4 +1,5 @@
 package com.rkbapps.canvas.navigation
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -10,11 +11,13 @@ import com.rkbapps.canvas.ui.screens.settings.SettingsScreen
 @Composable
 fun MainNavGraph(
     navController: NavHostController,
+    windowSizeClass: WindowSizeClass
 ) {
     NavHost(navController = navController, startDestination = Home) {
         composable<Home> {
             HomeScreen(
                 navController = navController,
+                windowSizeClass = windowSizeClass
             )
         }
         composable<Draw> {

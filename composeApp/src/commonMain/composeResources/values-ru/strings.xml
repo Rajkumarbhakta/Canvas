@@ -73,4 +73,7 @@
     <string name="language">Язык</string>
     <string name="select_language">Выберите язык</string>
     <string name="language_description">Выберите предпочтительный язык для приложения. Если какой-либо контент приложения не поддерживает ваш язык, по умолчанию будет использоваться английский (en).</string>
+    <string name="please_wait">Пожалуйста, подождите</string>
+    <string name="migrating_data">Миграция данных</string>
+    <string name="no_designs_desc">Нажмите кнопку «Рисовать», чтобы начать свое первое творение!</string>
 </resources>

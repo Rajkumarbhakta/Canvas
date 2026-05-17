@@ -80,5 +80,8 @@
     <string name="japanese">일본어</string>
     <string name="korean">한국어</string>
     <string name="hindi">힌디어</string>
-    <string name="bengali">뱅갈어</string>
-</resources>
+    <string name="bengali">벵골어</string>
+    <string name="please_wait">잠시만 기다려 주세요</string>
+    <string name="migrating_data">데이터 마이그레이션 중</string>
+    <string name="no_designs_desc">그리기 버튼을 눌러 첫 번째 작품을 시작해 보세요!</string>
+    </resources>

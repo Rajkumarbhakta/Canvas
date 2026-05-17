@@ -81,4 +81,7 @@
     <string name="korean">कोरियाई</string>
     <string name="hindi">हिंदी</string>
     <string name="bengali">बंगाली</string>
+    <string name="please_wait">कृपया प्रतीक्षा करें</string>
+    <string name="migrating_data">डेटा माइग्रेट किया जा रहा है</string>
+    <string name="no_designs_desc">अपनी पहली रचना शुरू करने के लिए ड्रा बटन पर टैप करें!</string>
 </resources>
