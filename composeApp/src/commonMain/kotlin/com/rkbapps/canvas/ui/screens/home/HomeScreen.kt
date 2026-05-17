@@ -97,7 +97,7 @@ fun HomeScreen(
                         currentDeletableProject.value = null
                     }
                 ) {
-                    viewModel.deleteDesign(it.id)
+                    viewModel.deleteDesign(it.pId)
                     currentDeletableProject.value = null
                 }
             }

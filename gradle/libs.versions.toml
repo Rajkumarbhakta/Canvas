@@ -21,6 +21,9 @@ navigation-compose = "2.9.2"
 material-icons-extended = "1.7.3"
 coreKtx = "1.18.0"
 datastore = "1.2.1"
+room = "2.8.4"
+sqlite = "2.6.2"
+ksp = "2.3.8"
 
 [libraries]
 
@@ -73,6 +76,10 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 #datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-datastore-preferences-core = { group = "androidx.datastore", name = "datastore-preferences-core", version.ref = "datastore" }
 androidx-datastore-core-okio = { group = "androidx.datastore", name = "datastore-core-okio", version.ref = "datastore" }
+#room db
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 
 [plugins]
 
@@ -84,3 +91,5 @@ android-library = { id = "com.android.kotlin.multiplatform.library", version.ref
 hotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "hotReload" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+androidx-room = { id = "androidx.room", version.ref = "room" }

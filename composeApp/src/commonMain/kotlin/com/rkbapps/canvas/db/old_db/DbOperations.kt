@@ -1,4 +1,4 @@
-package com.rkbapps.canvas.db
+package com.rkbapps.canvas.db.old_db
 
 import com.rkbapps.canvas.model.SavedDesign
 import com.rkbapps.canvas.model.SavedDesigns

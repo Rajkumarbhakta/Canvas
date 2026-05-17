@@ -1,11 +1,9 @@
-package com.rkbapps.canvas.db
+package com.rkbapps.canvas.db.old_db
 
 import android.content.Context
-import com.rkbapps.canvas.model.DrawingState
 import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.SharedPreferencesSettings
-import kotlinx.coroutines.flow.Flow
 
 class DbManagerImpl(context: Context) : DbManager {
     private val sharedPref = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)

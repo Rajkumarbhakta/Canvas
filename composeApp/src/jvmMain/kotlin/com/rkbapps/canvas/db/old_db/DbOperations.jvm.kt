@@ -1,4 +1,4 @@
-package com.rkbapps.canvas.db
+package com.rkbapps.canvas.db.old_db
 
 
 import com.russhwolf.settings.Settings
@@ -14,7 +14,7 @@ actual fun saveDrawingData(json: String,settings: Settings) {
 
 actual fun loadDrawingData(settings: Settings): String {
     return try {
-        readTextFile()?:DbOperations.DEFAULT_VALUE
+        readTextFile()?: DbOperations.DEFAULT_VALUE
     }catch (e: Exception){
         DbOperations.DEFAULT_VALUE
     }

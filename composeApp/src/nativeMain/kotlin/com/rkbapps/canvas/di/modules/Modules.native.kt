@@ -5,18 +5,16 @@ import androidx.datastore.core.okio.OkioStorage
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.PreferencesSerializer
-import com.rkbapps.canvas.db.DbManager
-import com.rkbapps.canvas.db.DbManagerImpl
+import com.rkbapps.canvas.db.AppDatabase
+import com.rkbapps.canvas.db.old_db.DbManager
+import com.rkbapps.canvas.db.old_db.DbManagerImpl
 import com.rkbapps.canvas.db.PreferenceManager.Companion.DATASTORE_FILE_NAME
+import com.rkbapps.canvas.db.getDatabaseBuilder
 import com.rkbapps.canvas.util.ImageSharer
 import com.rkbapps.canvas.util.ImageSharerNative
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import okio.FileSystem
 import okio.Path.Companion.toPath
-import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import platform.Foundation.NSDocumentDirectory
@@ -44,7 +42,7 @@ actual val platformModule = module{
                     (requireNotNull(documentDirectory).path + "/$DATASTORE_FILE_NAME").toPath()
                 }
             ),
-            scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
         )
     }
+    single <AppDatabase>{ getDatabaseBuilder().build() }
 }

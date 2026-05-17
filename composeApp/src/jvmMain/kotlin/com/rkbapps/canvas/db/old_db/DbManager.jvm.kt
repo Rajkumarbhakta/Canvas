@@ -1,12 +1,11 @@
-package com.rkbapps.canvas.db
+package com.rkbapps.canvas.db.old_db
 
 import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.PreferencesSettings
 import com.russhwolf.settings.Settings
-import java.io.File
 import java.util.prefs.Preferences
 
-class DbManagerImpl: DbManager{
+class DbManagerImpl: DbManager {
 
     private val delegate: Preferences = Preferences.userRoot().node("canvas_settings")
     private val settings = PreferencesSettings(delegate)

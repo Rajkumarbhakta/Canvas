@@ -4,7 +4,9 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
-import com.rkbapps.canvas.db.DbOperations
+import com.rkbapps.canvas.db.dao.DrawingDao
+import com.rkbapps.canvas.db.utils.toDomain
+import com.rkbapps.canvas.db.utils.toEntity
 import com.rkbapps.canvas.model.DrawingState
 import com.rkbapps.canvas.model.PathData
 import com.rkbapps.canvas.model.SavedDesign
@@ -12,8 +14,6 @@ import com.rkbapps.canvas.navigation.Draw
 import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyleType
 import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeType
 import com.rkbapps.canvas.util.ImageSharer
-import com.rkbapps.canvas.util.Log
-import com.rkbapps.canvas.util.json
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -21,12 +21,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
 
 class DrawingRepository(
-    private val dbOperations: DbOperations,
+    private val drawingDao: DrawingDao,
     private val imageSharer: ImageSharer,
     saveStateHandle: SavedStateHandle
 ) {
@@ -34,7 +32,6 @@ class DrawingRepository(
     private val _state = MutableStateFlow(DrawingState())
     val state = _state.asStateFlow()
 
-    @OptIn(ExperimentalTime::class)
     private val _currentDesign = MutableStateFlow<SavedDesign>(SavedDesign(name = "", state = DrawingState()))
     val currentDesign = _currentDesign.asStateFlow()
 
@@ -47,8 +44,9 @@ class DrawingRepository(
         draw.id?.let {
             CoroutineScope(Dispatchers.Default).launch {
                 delay(200)
-                val design = dbOperations.getDesign(it)
-                if (design!=null){
+                val designWithPaths = drawingDao.getDesignWithPathsByStringId(it)
+                if (designWithPaths!=null){
+                    val design = designWithPaths.toDomain()
                     _currentDesign.update { design }
                     _state.update { design.state }
                 }
@@ -116,7 +114,6 @@ class DrawingRepository(
         }
     }
 
-    @OptIn(ExperimentalTime::class)
     fun onNewPathStart() {
         _state.update {
             it.copy(
@@ -219,20 +216,25 @@ class DrawingRepository(
         }
     }
 
-    @OptIn(ExperimentalTime::class)
     suspend fun saveDesign(drawingState: DrawingState, name: String) {
-        _currentDesign.update {
-            it.copy(name = name, state = drawingState.copy(
+        val current = _currentDesign.value.copy(
+            name = name, 
+            state = drawingState.copy(
                 undoStack = listOf(),
                 redoStack = listOf()
-            ))
+            )
+        )
+        
+        val designEntity = current.toEntity()
+        val pathEntities = current.state.paths.mapIndexed { index, pathData ->
+            pathData.toEntity(current.pId, index)
         }
-        val design = currentDesign.value
-
-        dbOperations.save(design)
+        
+        val newDbId = drawingDao.upsertDesignWithPaths(designEntity, pathEntities)
+        
+        _currentDesign.update { current.copy(pId = newDbId) }
     }
 
-    @OptIn(ExperimentalTime::class)
     fun updateDrawingName(name:String){
         _currentDesign.update {
             it.copy(

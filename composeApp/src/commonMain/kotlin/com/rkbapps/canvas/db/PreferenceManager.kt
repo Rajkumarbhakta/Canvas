@@ -26,6 +26,7 @@ class PreferenceManager(private val dataStore: DataStore<Preferences>?) {
         internal const val DATASTORE_FILE_NAME = "settings.preferences_pb"
         val IS_SYSTEM_THEME = booleanPreferencesKey("is_system_theme")
         val IS_DARK_THEME = booleanPreferencesKey("is_dark_theme")
+        val IS_MIGRATED_TO_ROOM = booleanPreferencesKey("is_migrated_to_room")
     }
 
 //    suspend fun <T> saveObject(key: Preferences.Key<String>, value: T) {

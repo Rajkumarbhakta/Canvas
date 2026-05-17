@@ -1,13 +1,11 @@
-package com.rkbapps.canvas.db
+package com.rkbapps.canvas.db.old_db
 
-import com.rkbapps.canvas.model.DrawingState
 import com.russhwolf.settings.Settings
-import kotlinx.coroutines.flow.Flow
 import platform.Foundation.NSUserDefaults
 import com.russhwolf.settings.NSUserDefaultsSettings
 import com.russhwolf.settings.ObservableSettings
 
-class DbManagerImpl: DbManager{
+class DbManagerImpl: DbManager {
 
     private val userDefaults = NSUserDefaults.standardUserDefaults
     private val settings = NSUserDefaultsSettings(userDefaults)

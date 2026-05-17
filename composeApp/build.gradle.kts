@@ -15,6 +15,8 @@ plugins {
     id("com.android.library")
     alias(libs.plugins.hotReload)
     alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.androidx.room)
 }
 
 kotlin {
@@ -26,12 +28,6 @@ kotlin {
     }
 
     jvm()
-
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser()
-        binaries.executable()
-    }
 
     listOf(
         iosX64(),
@@ -81,6 +77,10 @@ kotlin {
 //            implementation(libs.datastore.preferences)
             implementation(libs.androidx.datastore.preferences.core)
             implementation(libs.androidx.datastore.core.okio)
+
+            // Room
+            implementation(libs.androidx.room.runtime)
+            implementation(libs.androidx.sqlite.bundled)
         }
 
         commonTest.dependencies {
@@ -106,11 +106,20 @@ kotlin {
 
         nativeMain.dependencies {}
 
-        wasmJsMain.dependencies {
-            implementation("org.jetbrains.kotlinx:kotlinx-browser:0.3")
-        }
-
     }
+}
+
+dependencies {
+    add("kspCommonMainMetadata", libs.androidx.room.compiler)
+    add("kspAndroid", libs.androidx.room.compiler)
+    add("kspIosX64", libs.androidx.room.compiler)
+    add("kspIosArm64", libs.androidx.room.compiler)
+    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+    add("kspJvm", libs.androidx.room.compiler)
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 android {
