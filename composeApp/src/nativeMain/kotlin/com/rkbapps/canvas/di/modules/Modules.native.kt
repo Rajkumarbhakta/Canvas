@@ -5,6 +5,7 @@ import androidx.datastore.core.okio.OkioStorage
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.PreferencesSerializer
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.rkbapps.canvas.db.AppDatabase
 import com.rkbapps.canvas.db.old_db.DbManager
 import com.rkbapps.canvas.db.old_db.DbManagerImpl
@@ -12,7 +13,11 @@ import com.rkbapps.canvas.db.PreferenceManager.Companion.DATASTORE_FILE_NAME
 import com.rkbapps.canvas.db.getDatabaseBuilder
 import com.rkbapps.canvas.util.ImageSharer
 import com.rkbapps.canvas.util.ImageSharerNative
+import com.rkbapps.canvas.util.AppLocaleManager
+import com.rkbapps.canvas.util.AppLocalManagerNative
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import okio.FileSystem
 import okio.Path.Companion.toPath
 import org.koin.core.module.dsl.singleOf
@@ -23,16 +28,17 @@ import platform.Foundation.NSURL
 import platform.Foundation.NSUserDomainMask
 
 @OptIn(ExperimentalForeignApi::class)
-actual val platformModule = module{
+actual val platformModule = module {
     singleOf<DbManager>(::DbManagerImpl)
     singleOf<ImageSharer>(::ImageSharerNative)
+    single<AppLocaleManager> { AppLocalManagerNative() }
     single<DataStore<Preferences>?> {
         PreferenceDataStoreFactory.create(
             storage = OkioStorage(
                 fileSystem = FileSystem.SYSTEM,
                 serializer = PreferencesSerializer,
                 producePath = {
-                    val documentDirectory : NSURL? = NSFileManager.defaultManager.URLForDirectory(
+                    val documentDirectory: NSURL? = NSFileManager.defaultManager.URLForDirectory(
                         directory = NSDocumentDirectory,
                         inDomain = NSUserDomainMask,
                         appropriateForURL = null,
@@ -44,5 +50,8 @@ actual val platformModule = module{
             ),
         )
     }
-    single <AppDatabase>{ getDatabaseBuilder().build() }
+    single<AppDatabase> {
+        getDatabaseBuilder().setDriver(BundledSQLiteDriver())
+            .setQueryCoroutineContext(Dispatchers.IO).build()
+    }
 }

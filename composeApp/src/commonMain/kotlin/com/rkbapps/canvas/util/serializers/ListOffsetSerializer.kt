@@ -1,4 +1,4 @@
-package com.rkbapps.canvas.util
+package com.rkbapps.canvas.util.serializers
 
 import androidx.compose.ui.geometry.Offset
 import kotlinx.serialization.KSerializer

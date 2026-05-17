@@ -1,7 +1,6 @@
-package com.rkbapps.canvas.util
+package com.rkbapps.canvas.util.serializers
 
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor

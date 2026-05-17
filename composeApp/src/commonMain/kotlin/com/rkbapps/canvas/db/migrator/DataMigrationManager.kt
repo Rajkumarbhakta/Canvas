@@ -7,7 +7,7 @@ import com.rkbapps.canvas.db.old_db.DbOperations
 import com.rkbapps.canvas.db.old_db.loadDrawingData
 import com.rkbapps.canvas.db.utils.toEntity
 import com.rkbapps.canvas.model.SavedDesigns
-import com.rkbapps.canvas.util.json
+import com.rkbapps.canvas.util.serializers.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext

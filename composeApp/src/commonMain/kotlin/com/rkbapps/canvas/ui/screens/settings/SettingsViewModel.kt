@@ -31,4 +31,10 @@ class SettingsViewModel(
         }
     }
 
+    fun changeLanguage(languageCode: String) {
+        repository.changeLanguage(languageCode)
+    }
+
+    fun getLocale() = repository.getLocale()
+
 }

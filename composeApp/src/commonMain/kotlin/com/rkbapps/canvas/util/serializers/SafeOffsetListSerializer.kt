@@ -1,4 +1,4 @@
-package com.rkbapps.canvas.util
+package com.rkbapps.canvas.util.serializers
 
 
 import androidx.compose.ui.geometry.Offset
@@ -31,9 +31,7 @@ object SafeOffsetListSerializer : KSerializer<List<Offset>> {
     override fun deserialize(decoder: Decoder): List<Offset> {
         return when (decoder) {
             is JsonDecoder -> {
-                val element = decoder.decodeJsonElement()
-
-                when (element) {
+                when (val element = decoder.decodeJsonElement()) {
                     is JsonArray -> {
                         // 🔹 OLD FORMAT SUPPORT
                         element.mapNotNull {

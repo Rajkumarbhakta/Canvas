@@ -6,10 +6,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyleType
 import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeType
-import com.rkbapps.canvas.util.ColorSerializer
-import com.rkbapps.canvas.util.ListOffsetSerializer
-import com.rkbapps.canvas.util.OffsetSerializer
-import com.rkbapps.canvas.util.SafeOffsetListSerializer
+import com.rkbapps.canvas.util.serializers.SafeOffsetListSerializer
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 

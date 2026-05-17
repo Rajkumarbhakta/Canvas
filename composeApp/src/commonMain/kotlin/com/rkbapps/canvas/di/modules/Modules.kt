@@ -30,7 +30,7 @@ val dbModule = module {
 val provideRepositories = module {
     factoryOf(::DrawingRepository)
     factory { HomeRepository(get()) }
-    factory { SettingsRepository(get()) }
+    factory { SettingsRepository(get(),get()) }
 }
 
 val provideViewModels = module{

@@ -4,7 +4,7 @@ import com.rkbapps.canvas.model.SavedDesign
 import com.rkbapps.canvas.model.SavedDesigns
 import com.rkbapps.canvas.util.Platforms
 import com.rkbapps.canvas.util.getPlatform
-import com.rkbapps.canvas.util.json
+import com.rkbapps.canvas.util.serializers.json
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.Settings
