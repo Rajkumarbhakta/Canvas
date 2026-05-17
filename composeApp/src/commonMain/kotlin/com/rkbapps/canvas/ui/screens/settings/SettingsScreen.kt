@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -88,11 +90,22 @@ import canvas.composeapp.generated.resources.search_here
 import canvas.composeapp.generated.resources.select_language
 import canvas.composeapp.generated.resources.spanish
 import canvas.composeapp.generated.resources.settings
+import androidx.compose.material3.VerticalDivider
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import com.rkbapps.canvas.ui.screens.settings.resposive_composables.SettingScreenCompact
+import com.rkbapps.canvas.ui.screens.settings.resposive_composables.SettingsScreenLarge
+import com.rkbapps.canvas.util.Platforms
+import com.rkbapps.canvas.util.getWindowSize
 import com.rkbapps.canvas.util.appLanguages
+import com.rkbapps.canvas.util.getPlatform
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
+enum class SettingsCategory {
+    APPEARANCE, ABOUT
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -107,14 +120,17 @@ fun SettingsScreen(
 
     var isLanguageDialogOpen by remember { mutableStateOf(false) }
 
+    val windowSize = getWindowSize()
+    val isLargeScreen = windowSize.widthSizeClass == WindowWidthSizeClass.Expanded
+
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {Text(stringResource(Res.string.settings))},
+                title = { Text(stringResource(Res.string.settings)) },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }){
-                        Icon(Icons.AutoMirrored.Default.ArrowBack,"")
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.AutoMirrored.Default.ArrowBack, "")
                     }
                 }
             )
@@ -131,140 +147,28 @@ fun SettingsScreen(
                 ) { languageCode ->
                     viewModel.changeLanguage(languageCode)
                     isLanguageDialogOpen = false
+                    if (getPlatform()== Platforms.DESKTOP){
+                        navController.navigateUp()
+                    }
                 }
             }
         }
 
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            contentPadding = innerPadding,
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-
-            item(key="top header") {
-                ElevatedCard (
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.elevatedCardColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary,
-                    )
-                ) {
-                    Column(
-                        modifier = Modifier.padding(10.dp),
-                    ) {
-
-                        Text(stringResource(Res.string.app_name),
-                            style = MaterialTheme.typography.headlineLarge)
-                        Text("v${viewModel.appVersion}")
-
-                        Row(modifier = Modifier.padding(vertical = 10.dp)) {
-                            FilledIconButton(
-                                onClick={ uriHandler.openUri("https://github.com/Rajkumarbhakta/Canvas") },
-                                colors = IconButtonDefaults.filledIconButtonColors(
-                                    containerColor = MaterialTheme.colorScheme.onPrimary,
-                                    contentColor = MaterialTheme.colorScheme.primary
-                                )
-                            ) {
-                                Icon(
-                                    painter = painterResource(Res.drawable.github),
-                                    contentDescription = stringResource(Res.string.github),
-                                    modifier = Modifier.padding(2.dp)
-                                )
-                            }
-                            FilledIconButton(
-                                onClick = { uriHandler.openUri("mailto:contact@rkbapps.in") },
-                                colors = IconButtonDefaults.filledIconButtonColors(
-                                    containerColor = MaterialTheme.colorScheme.onPrimary,
-                                    contentColor = MaterialTheme.colorScheme.primary
-                                )
-                            ) {
-                                Icon(imageVector = Icons.Default.Mail, contentDescription = stringResource(Res.string.mail))
-                            }
-
-                        }
-
-                        HorizontalDivider()
-
-                        Spacer(Modifier.height(10.dp))
-
-                        Button(
-                            onClick = {
-                                uriHandler.openUri("https://github.com/Rajkumarbhakta/Canvas/issues")
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.onPrimary,
-                                contentColor = MaterialTheme.colorScheme.primary
-                            )
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(imageVector = Icons.Default.BugReport,"")
-                                Text(stringResource(Res.string.raise_a_issue))
-                            }
-                        }
-
-                        Button(
-                            onClick = {
-                                uriHandler.openUri("https://coff.ee/rajkumarbhakta")
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.onPrimary,
-                                contentColor = MaterialTheme.colorScheme.primary
-                            )
-                        ) {
-                            Row (verticalAlignment = Alignment.CenterVertically){
-                                Icon(imageVector = Icons.Default.Coffee,"")
-                                Text(stringResource(Res.string.buy_me_a_coffee))
-                            }
-                        }
-
-                    }
-                }
-            }
-
-            item(key="lang") {
-                LanguageItem(
-                    currentLanguageCode = viewModel.getLocale().code
-                ) {
-                    isLanguageDialogOpen = true
-                }
-            }
-
-            item(key="theme") {
-                TextWithSwitch(
-                    text = stringResource(Res.string.follow_system_theme),
-                    subText = stringResource(Res.string.follow_system_theme_desc),
-                    checked = isSystemTheme,
-                    icon = Icons.Default.BrightnessAuto
-                ) {
-                    viewModel.updateIsSystemTheme(it)
-                }
-            }
-            item(key="dark theme") {
-                AnimatedVisibility(!isSystemTheme) {
-                    TextWithSwitch(
-                        text = stringResource(Res.string.dark_theme),
-                        checked = isDarkTheme,
-                        icon = if (isDarkTheme) Icons.Default.DarkMode else Icons.Default.LightMode
-                    ) {
-                        viewModel.updateTheme(it)
-                    }
-                }
-            }
-
-            item(key="privacy policy") {
-                TextWithArrow(
-                    text = stringResource(Res.string.privacy_policy),
-                    subText = stringResource(Res.string.privacy_policy_desc),
-                    icon = Icons.Outlined.PrivacyTip
-                ) {
-                    uriHandler.openUri("https://sites.google.com/view/gdealz/home")
-                }
-            }
+        if (isLargeScreen) {
+            SettingsScreenLarge(
+                modifier = Modifier.fillMaxSize().padding(innerPadding),
+                viewModel = viewModel,
+                isSystemTheme = isSystemTheme,
+                isDarkTheme = isDarkTheme
+            ){ isLanguageDialogOpen = true }
+        } else {
+            SettingScreenCompact(
+                viewModel = viewModel,
+                isSystemTheme = isSystemTheme,
+                isDarkTheme = isDarkTheme,
+                innerPadding = innerPadding,
+            ){ isLanguageDialogOpen = true }
         }
-
     }
 
 
@@ -488,6 +392,92 @@ fun LanguageSelectionDialog(
             onClick = { onLanguageSelected(selectedLanguageCode) }
         ) {
             Text(stringResource(Res.string.confirm))
+        }
+    }
+}
+
+@Composable
+fun AppInfoHeader(
+    modifier: Modifier = Modifier,
+    appVersion: String,
+    onGithubClick: () -> Unit,
+    onMailClick: () -> Unit,
+    onIssueClick: () -> Unit,
+    onCoffeeClick: () -> Unit
+) {
+    ElevatedCard(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(10.dp),
+        ) {
+            Text(
+                stringResource(Res.string.app_name),
+                style = MaterialTheme.typography.headlineLarge
+            )
+            Text("v$appVersion")
+
+            Row(modifier = Modifier.padding(vertical = 10.dp)) {
+                FilledIconButton(
+                    onClick = onGithubClick,
+                    colors = IconButtonDefaults.filledIconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.onPrimary,
+                        contentColor = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.github),
+                        contentDescription = stringResource(Res.string.github),
+                        modifier = Modifier.padding(2.dp)
+                    )
+                }
+                FilledIconButton(
+                    onClick = onMailClick,
+                    colors = IconButtonDefaults.filledIconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.onPrimary,
+                        contentColor = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Mail,
+                        contentDescription = stringResource(Res.string.mail)
+                    )
+                }
+            }
+
+            HorizontalDivider()
+
+            Spacer(Modifier.height(10.dp))
+
+            Button(
+                onClick = onIssueClick,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.onPrimary,
+                    contentColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(imageVector = Icons.Default.BugReport, "")
+                    Text(stringResource(Res.string.raise_a_issue))
+                }
+            }
+
+            Button(
+                onClick = onCoffeeClick,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.onPrimary,
+                    contentColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(imageVector = Icons.Default.Coffee, "")
+                    Text(stringResource(Res.string.buy_me_a_coffee))
+                }
+            }
         }
     }
 }

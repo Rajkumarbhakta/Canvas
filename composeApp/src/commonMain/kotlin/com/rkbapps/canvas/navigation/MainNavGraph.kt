@@ -11,14 +11,10 @@ import com.rkbapps.canvas.ui.screens.settings.SettingsScreen
 @Composable
 fun MainNavGraph(
     navController: NavHostController,
-    windowSizeClass: WindowSizeClass
 ) {
     NavHost(navController = navController, startDestination = Home) {
         composable<Home> {
-            HomeScreen(
-                navController = navController,
-                windowSizeClass = windowSizeClass
-            )
+            HomeScreen(navController = navController)
         }
         composable<Draw> {
             DrawingScreen(navController = navController)

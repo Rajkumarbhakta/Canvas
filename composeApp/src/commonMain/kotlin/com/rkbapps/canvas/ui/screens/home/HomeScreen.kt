@@ -31,19 +31,18 @@ import com.rkbapps.canvas.navigation.Draw
 import com.rkbapps.canvas.navigation.Settings
 import com.rkbapps.canvas.util.Platforms
 import com.rkbapps.canvas.util.getPlatform
+import com.rkbapps.canvas.util.getWindowSize
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     navController: NavHostController,
-    windowSizeClass: WindowSizeClass,
     viewModel: HomeViewModel = koinViewModel()
 ) {
     val allDesign by viewModel.allDesign.collectAsStateWithLifecycle()
     val migrationStatus by viewModel.migrationState.collectAsStateWithLifecycle()
     val currentDeletableProject = rememberSaveable { mutableStateOf<SavedDesign?>(null) }
-
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val gridState = rememberLazyGridState()
     val isExpanded by remember {
@@ -51,6 +50,7 @@ fun HomeScreen(
             gridState.firstVisibleItemIndex == 0 && gridState.firstVisibleItemScrollOffset <= 0
         }
     }
+    val windowSizeClass: WindowSizeClass = getWindowSize()
 
     val columns = when (windowSizeClass.widthSizeClass) {
         WindowWidthSizeClass.Compact -> GridCells.Fixed(1)
