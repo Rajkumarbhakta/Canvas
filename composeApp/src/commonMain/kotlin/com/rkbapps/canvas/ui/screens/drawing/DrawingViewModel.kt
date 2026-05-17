@@ -3,6 +3,7 @@ package com.rkbapps.canvas.ui.screens.drawing
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 
 
@@ -30,10 +31,9 @@ class DrawingViewModel(
             is DrawingAction.OnBackgroundColorChange -> repository.onBackgroundColorChange(action.color)
             DrawingAction.OnRedo -> repository.onRedo()
             DrawingAction.OnUndo -> repository.onUndo()
-            is DrawingAction.SaveDesign -> viewModelScope.launch(Dispatchers.Default) {
+            is DrawingAction.SaveDesign -> viewModelScope.launch(Dispatchers.IO) {
                 repository.saveDesign(action.drawingState, action.name)
             }
-
             DrawingAction.OnCloseNameEditDialog -> repository.showHideNameEditorDialog(false)
             DrawingAction.OnEnterFullScreen ->  repository.changeFullScreen(true)
             DrawingAction.OnEraserSelected -> repository.changeEraserSelection(true)

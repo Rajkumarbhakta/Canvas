@@ -7,6 +7,7 @@
         android:name=".BaseApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="Canvas"
+        android:localeConfig="@xml/locales_config"
         android:theme="@android:style/Theme.Material.NoActionBar">
         <activity
             android:name=".MainActivity"

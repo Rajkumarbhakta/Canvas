@@ -16,9 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import canvas.composeapp.generated.resources.Res
-import canvas.composeapp.generated.resources.ink_erase
+import canvas.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun EraserItem(
@@ -36,11 +36,11 @@ fun EraserItem(
                 Icon(
                     modifier = Modifier.size(20.dp),
                     painter = painterResource(Res.drawable.ink_erase),
-                    contentDescription = "erase"
+                    contentDescription = stringResource(Res.string.erase)
                 )
             },
             title = {
-                Text("Erase", style = MaterialTheme.typography.labelSmall)
+                Text(stringResource(Res.string.erase), style = MaterialTheme.typography.labelSmall)
             }
         ) {
             onClick()

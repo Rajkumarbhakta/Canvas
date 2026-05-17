@@ -25,7 +25,6 @@ Unleash your inner artist with **Paint & Draw**, the ultimate lightweight and us
   - [Android App](#android-app)
   - [iOS App](#ios-app)
   - [Desktop](#desktop)
-  - [Web](#web)
 - [Contribution](#contribution)
 - [Licence](#licence)
 - [Contributors](#contributors)
@@ -43,13 +42,15 @@ Unleash your inner artist with **Paint & Draw**, the ultimate lightweight and us
 - **Save & Share:** Export your creations as images and share them easily.
 - **Dark Mode Support:** Draw comfortably in any lighting condition.
 - **Offline Functionality:** Create art anytime, even without an internet connection.
+- **Localization:** Translate the app to your preferred language.
 
 ## 🛠 Tech Stack
 
 - **Kotlin** – Kotlin is a modern, statically typed, cross-platform programming language developed by JetBrains.
 - **Compose Multiplatform** – Compose Multiplatform is a declarative framework for building beautiful shared UIs across Android, iOS, desktop, and web – powered by Kotlin Multiplatform.
 - **Coroutines** – Asynchronous programming for smooth UI interactions
-- **Multiplatform Settings** – Local database for storing user drawings 
+- **Data Store ( for KMP )** – Local storage for storing user preferences 
+- **Room DB ( for KMP )** – Local database for storing user drawings 
 - **Material Design** – UI/UX guidelines and components
 
 ## 📁 Project Structure
@@ -67,8 +68,7 @@ Canvas/
 │        │     ├── commonTest/kotlin/com/rkbapps/canvas/
 │        │     ├── iosMain/kotlin/
 │        │     ├── jvmMain/kotlin/
-│        │     ├── nativeMain/kotlin/com/rkbapps/canvas/
-│        │     └── wasmJsMain/    
+│        │     └── nativeMain/kotlin/com/rkbapps/canvas/
 │        └── build.gradle.kts                    
 ├── gradle/
 │       ├── wrapper/
@@ -112,11 +112,10 @@ Canvas/
     <img src="https://img.icons8.com/color/48/000000/windows-10.png" alt="Windows" title="Windows"/>
     <img src="https://img.icons8.com/color/48/000000/mac-logo.png" alt="Mac" title="Mac"/>
     <img src="https://img.icons8.com/color/48/000000/linux.png" alt="Linux" title="Linux"/>
-    <img src="https://img.icons8.com/color/48/000000/web.png" alt="Web" title="Web"/>
 </p>
 
 <p align="center">
-    <b>Android</b> &nbsp; | &nbsp; <b>iOS</b> &nbsp; | &nbsp; <b>Desktop (Windows, Mac, Linux)</b> &nbsp; | &nbsp; <b>Web</b>
+    <b>Android</b> &nbsp; | &nbsp; <b>iOS</b> &nbsp; | &nbsp; <b>Desktop (Windows, Mac, Linux)</b> &nbsp; 
 </p>
 
 ---
@@ -147,10 +146,6 @@ To run the desktop application:
 - Start the app: `./gradlew :composeApp:run`
 - Start with **hot reload**: `./gradlew :composeApp:runHot`
 - Run desktop UI tests: `./gradlew :composeApp:jvmTest`
-
-### Web
-
-Access the app directly in your browser: [Canvas Web Version](https://me.rkbapps.in/canvas_build/)
 
 ---
 

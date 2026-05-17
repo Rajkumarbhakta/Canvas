@@ -12,3 +12,7 @@ object Home
 @Serializable
 @SerialName("draw")
 data class Draw(val id: String? = null)
+
+@Serializable
+@SerialName("settings")
+object Settings

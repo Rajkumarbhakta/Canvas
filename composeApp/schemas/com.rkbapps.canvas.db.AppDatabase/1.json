@@ -1,0 +1,198 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "2a49b813796df1610b074141a94fd86a",
+    "entities": [
+      {
+        "tableName": "designs",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `stringId` TEXT NOT NULL, `name` TEXT NOT NULL, `time` INTEGER NOT NULL, `backgroundColor` INTEGER NOT NULL, `selectedColor` INTEGER NOT NULL, `selectedThickness` REAL NOT NULL, `selectedPathEffect` TEXT NOT NULL, `selectedShapeType` TEXT NOT NULL, `isEraserMode` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "stringId",
+            "columnName": "stringId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "time",
+            "columnName": "time",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "backgroundColor",
+            "columnName": "backgroundColor",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "selectedColor",
+            "columnName": "selectedColor",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "selectedThickness",
+            "columnName": "selectedThickness",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "selectedPathEffect",
+            "columnName": "selectedPathEffect",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "selectedShapeType",
+            "columnName": "selectedShapeType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isEraserMode",
+            "columnName": "isEraserMode",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_designs_stringId",
+            "unique": true,
+            "columnNames": [
+              "stringId"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_designs_stringId` ON `${TABLE_NAME}` (`stringId`)"
+          }
+        ]
+      },
+      {
+        "tableName": "paths",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pathInternalId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `designId` INTEGER NOT NULL, `strokeId` TEXT NOT NULL, `color` INTEGER NOT NULL, `thickness` REAL NOT NULL, `pathEffect` TEXT NOT NULL, `isEraser` INTEGER NOT NULL, `shapeType` TEXT NOT NULL, `pathPoints` BLOB NOT NULL, `shapePoints` BLOB NOT NULL, `orderIndex` INTEGER NOT NULL, FOREIGN KEY(`designId`) REFERENCES `designs`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "pathInternalId",
+            "columnName": "pathInternalId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "designId",
+            "columnName": "designId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "strokeId",
+            "columnName": "strokeId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "color",
+            "columnName": "color",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thickness",
+            "columnName": "thickness",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pathEffect",
+            "columnName": "pathEffect",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isEraser",
+            "columnName": "isEraser",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shapeType",
+            "columnName": "shapeType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pathPoints",
+            "columnName": "pathPoints",
+            "affinity": "BLOB",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shapePoints",
+            "columnName": "shapePoints",
+            "affinity": "BLOB",
+            "notNull": true
+          },
+          {
+            "fieldPath": "orderIndex",
+            "columnName": "orderIndex",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "pathInternalId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_paths_designId",
+            "unique": false,
+            "columnNames": [
+              "designId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_paths_designId` ON `${TABLE_NAME}` (`designId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "designs",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "designId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2a49b813796df1610b074141a94fd86a')"
+    ]
+  }
+}

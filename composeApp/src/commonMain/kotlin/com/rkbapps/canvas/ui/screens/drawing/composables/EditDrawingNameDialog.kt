@@ -5,6 +5,8 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import canvas.composeapp.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -23,7 +25,7 @@ fun EditDrawingNameDialog(
             onCanceled()
         },
         title = {
-            Text("Edit Drawing Name")
+            Text(stringResource(Res.string.edit_drawing_name))
         },
         text = {
             OutlinedTextField(
@@ -33,10 +35,10 @@ fun EditDrawingNameDialog(
                 },
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = {
-                    Text("Enter Drawing Name")
+                    Text(stringResource(Res.string.enter_drawing_name))
                 },
                 label = {
-                    Text("Name")
+                    Text(stringResource(Res.string.name))
                 }
 
             )
@@ -45,14 +47,14 @@ fun EditDrawingNameDialog(
             Button(onClick = {
                 onDone(name.value)
             }) {
-                Text("Done")
+                Text(stringResource(Res.string.done))
             }
         },
         dismissButton = {
             Button(onClick = {
                 onCanceled()
             }) {
-                Text("Cancel")
+                Text(stringResource(Res.string.cancel))
             }
         }
     )
