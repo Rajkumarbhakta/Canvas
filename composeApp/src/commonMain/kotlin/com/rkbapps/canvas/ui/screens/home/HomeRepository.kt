@@ -14,7 +14,7 @@ class HomeRepository (
     private val drawingDao: DrawingDao
 ) {
     val allDesign: Flow<SavedDesigns> = drawingDao.getAllDesigns().map { entities ->
-        SavedDesigns(entities.map { entity ->
+        val allDesigns = entities.map { entity ->
             SavedDesign(
                 pId = entity.id,
                 id = entity.stringId,
@@ -31,12 +31,8 @@ class HomeRepository (
                     paths = emptyList() // We don't load heavy paths for the list
                 )
             )
-        })
-    }
-
-    suspend fun getAllDesign(){
-        // Room Flow handles updates automatically, no need to manually trigger collect here 
-        // if the ViewModel is already collecting allDesign.
+        }
+        SavedDesigns(allDesigns)
     }
 
     suspend fun deleteDesign(id: Long){

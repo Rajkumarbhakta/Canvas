@@ -12,17 +12,17 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DrawingDao {
-    @Query("SELECT * FROM designs ORDER BY time DESC")
+    @Query("SELECT * FROM designs ORDER BY time ASC")
     fun getAllDesigns(): Flow<List<DesignEntity>>
 
     @Transaction
     @Query("SELECT * FROM designs WHERE stringId = :stringId")
     suspend fun getDesignWithPathsByStringId(stringId: String): DesignWithPaths?
 
-    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDesign(design: DesignEntity): Long
 
-    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPaths(paths: List<PathEntity>)
 
     @Query("DELETE FROM paths WHERE designId = :designId")

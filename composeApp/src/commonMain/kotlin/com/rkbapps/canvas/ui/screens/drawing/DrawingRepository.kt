@@ -16,6 +16,7 @@ import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeType
 import com.rkbapps.canvas.util.ImageSharer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,7 +33,7 @@ class DrawingRepository(
     private val _state = MutableStateFlow(DrawingState())
     val state = _state.asStateFlow()
 
-    private val _currentDesign = MutableStateFlow<SavedDesign>(SavedDesign(name = "", state = DrawingState()))
+    private val _currentDesign = MutableStateFlow<SavedDesign>(SavedDesign(name = "Untitled drawing", state = DrawingState()))
     val currentDesign = _currentDesign.asStateFlow()
 
 
@@ -42,7 +43,7 @@ class DrawingRepository(
     init {
         val draw = saveStateHandle.toRoute<Draw>()
         draw.id?.let {
-            CoroutineScope(Dispatchers.Default).launch {
+            CoroutineScope(Dispatchers.IO).launch {
                 delay(200)
                 val designWithPaths = drawingDao.getDesignWithPathsByStringId(it)
                 if (designWithPaths!=null){

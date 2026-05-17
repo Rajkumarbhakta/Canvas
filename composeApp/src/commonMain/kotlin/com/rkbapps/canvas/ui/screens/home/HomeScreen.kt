@@ -49,13 +49,6 @@ fun HomeScreen(
                 actions = {
                     IconButton(
                         onClick = {
-                            viewModel.getAllDesign()
-                        }
-                    ) {
-                        Icon(imageVector = Icons.Default.Refresh, contentDescription = stringResource(Res.string.refresh))
-                    }
-                    IconButton(
-                        onClick = {
                                 if (getPlatform()!= Platforms.WEB){
                                     navController.navigate(route = Settings)
                                 }

@@ -19,10 +19,6 @@ class HomeViewModel(
             dataMigrationManager.migrateIfRequired()
         }
     }
-
-    fun getAllDesign(){
-        // No-op as allDesign is a Flow now
-    }
     fun deleteDesign(id: Long){
         viewModelScope.launch {
             repository.deleteDesign(id)

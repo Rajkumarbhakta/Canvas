@@ -19,7 +19,7 @@ class DataMigrationManager(
 ) {
     suspend fun migrateIfRequired() = withContext(Dispatchers.Default) {
         val isMigrated = preferenceManager.getBooleanPreference(
-            PreferenceManager.Companion.IS_MIGRATED_TO_ROOM,
+            PreferenceManager.IS_MIGRATED_TO_ROOM,
             false
         ).first()
 

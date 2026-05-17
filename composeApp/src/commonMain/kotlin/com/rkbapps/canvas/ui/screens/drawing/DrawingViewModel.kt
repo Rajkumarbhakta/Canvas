@@ -33,7 +33,6 @@ class DrawingViewModel(
             is DrawingAction.SaveDesign -> viewModelScope.launch(Dispatchers.Default) {
                 repository.saveDesign(action.drawingState, action.name)
             }
-
             DrawingAction.OnCloseNameEditDialog -> repository.showHideNameEditorDialog(false)
             DrawingAction.OnEnterFullScreen ->  repository.changeFullScreen(true)
             DrawingAction.OnEraserSelected -> repository.changeEraserSelection(true)
