@@ -10,3 +10,6 @@ actual fun getPlatform(): Platforms = Platforms.DESKTOP
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 actual fun getWindowSize(): WindowSizeClass = calculateWindowSizeClass()
+actual fun getAppVersion(): String {
+    return "1.0.0"
+}

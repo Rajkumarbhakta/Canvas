@@ -16,8 +16,8 @@ android {
         applicationId = "com.rkbapps.canvas"
         minSdk = 23
         targetSdk = 36
-        versionCode = 4
-        versionName = "1.1.1"
+        versionCode = 5
+        versionName = "1.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -40,6 +40,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -58,7 +59,6 @@ dependencies {
     implementation(libs.compose.material3)
     androidTestImplementation(libs.androidx.uitest.junit4)
     debugImplementation(libs.androidx.uitest.testManifest)
-
 
 
     implementation(libs.kotlinx.coroutines.android)

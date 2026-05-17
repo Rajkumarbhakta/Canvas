@@ -2,6 +2,7 @@ package com.rkbapps.canvas.ui.screens.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rkbapps.canvas.util.getAppVersion
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -17,7 +18,7 @@ class SettingsViewModel(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
 
-    val appVersion = "1.1.1"
+    val appVersion = getAppVersion()
 
     fun updateIsSystemTheme(value: Boolean) {
         viewModelScope.launch {

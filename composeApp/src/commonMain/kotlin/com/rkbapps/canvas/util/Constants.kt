@@ -29,5 +29,7 @@ enum class Platforms{
 
 expect fun getPlatform(): Platforms
 
+expect fun getAppVersion(): String
+
 @Composable
 expect fun getWindowSize(): WindowSizeClass
