@@ -28,6 +28,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import canvas.composeapp.generated.resources.Res
+import canvas.composeapp.generated.resources.about
+import canvas.composeapp.generated.resources.appearance
 import canvas.composeapp.generated.resources.dark_theme
 import canvas.composeapp.generated.resources.follow_system_theme
 import canvas.composeapp.generated.resources.follow_system_theme_desc
@@ -64,13 +66,13 @@ fun SettingsScreenLarge(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             NavigationDrawerItem(
-                label = { Text("About") },
+                label = { Text(stringResource(Res.string.about)) },
                 selected = selectedCategory == SettingsCategory.ABOUT,
                 onClick = { selectedCategory = SettingsCategory.ABOUT },
                 icon = { Icon(Icons.Outlined.PrivacyTip, contentDescription = null) }
             )
             NavigationDrawerItem(
-                label = { Text("Appearance") },
+                label = { Text(stringResource(Res.string.appearance)) },
                 selected = selectedCategory == SettingsCategory.APPEARANCE,
                 onClick = { selectedCategory = SettingsCategory.APPEARANCE },
                 icon = { Icon(Icons.Default.Language, contentDescription = null) }

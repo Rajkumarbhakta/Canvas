@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Canvas</string>
     <string name="cyclone">Cyclone</string>
@@ -84,4 +85,7 @@
     <string name="please_wait">Bitte warten</string>
     <string name="migrating_data">Daten werden migriert</string>
     <string name="no_designs_desc">Tippen Sie auf die Schaltfläche Zeichnen, um Ihre erste Kreation zu starten!</string>
+    <string name="about">Über</string>
+    <string name="personalization">Personalisierung</string>
+    <string name="app_version">v%1$s</string>
     </resources>

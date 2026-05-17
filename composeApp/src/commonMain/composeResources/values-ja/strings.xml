@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Canvas</string>
     <string name="cyclone">Cyclone</string>
@@ -84,4 +85,7 @@
     <string name="please_wait">お待ちください</string>
     <string name="migrating_data">データを移行しています</string>
     <string name="no_designs_desc">描画ボタンをタップして、最初の作品を開始しましょう！</string>
+    <string name="about">概要</string>
+    <string name="personalization">パーソナライゼーション</string>
+    <string name="app_version">v%1$s</string>
 </resources>

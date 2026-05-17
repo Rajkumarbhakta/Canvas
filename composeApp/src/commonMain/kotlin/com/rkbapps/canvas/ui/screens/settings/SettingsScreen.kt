@@ -59,6 +59,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import canvas.composeapp.generated.resources.Res
 import canvas.composeapp.generated.resources.app_name
+import canvas.composeapp.generated.resources.app_version
+import canvas.composeapp.generated.resources.back
 import canvas.composeapp.generated.resources.bengali
 import canvas.composeapp.generated.resources.buy_me_a_coffee
 import canvas.composeapp.generated.resources.confirm
@@ -116,7 +118,7 @@ fun SettingsScreen(
                 title = { Text(stringResource(Res.string.settings)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Default.ArrowBack, "")
+                        Icon(Icons.AutoMirrored.Default.ArrowBack, stringResource(Res.string.back))
                     }
                 }
             )
@@ -231,7 +233,7 @@ fun TextWithArrow(
         IconButton(
             onClick = onClick
         ) {
-            Icon(Icons.AutoMirrored.Default.ArrowForward,"")
+            Icon(Icons.AutoMirrored.Default.ArrowForward, null)
         }
     }
 }
@@ -404,7 +406,7 @@ fun AppInfoHeader(
                 stringResource(Res.string.app_name),
                 style = MaterialTheme.typography.headlineLarge
             )
-            Text("v$appVersion")
+            Text(stringResource(Res.string.app_version, appVersion))
 
             Row(modifier = Modifier.padding(vertical = 10.dp)) {
                 FilledIconButton(
@@ -446,7 +448,7 @@ fun AppInfoHeader(
                 )
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(imageVector = Icons.Default.BugReport, "")
+                    Icon(imageVector = Icons.Default.BugReport, contentDescription = null)
                     Text(stringResource(Res.string.raise_a_issue))
                 }
             }
@@ -459,7 +461,7 @@ fun AppInfoHeader(
                 )
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(imageVector = Icons.Default.Coffee, "")
+                    Icon(imageVector = Icons.Default.Coffee, contentDescription = null)
                     Text(stringResource(Res.string.buy_me_a_coffee))
                 }
             }

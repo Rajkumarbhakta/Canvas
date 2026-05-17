@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Canvas</string>
     <string name="cyclone">Циклон</string>
@@ -76,4 +77,15 @@
     <string name="please_wait">Пожалуйста, подождите</string>
     <string name="migrating_data">Миграция данных</string>
     <string name="no_designs_desc">Нажмите кнопку «Рисовать», чтобы начать свое первое творение!</string>
+    <string name="about">О приложении</string>
+    <string name="personalization">Персонализация</string>
+    <string name="app_version">v%1$s</string>
+    <string name="korean">Корейский</string>
+    <string name="hindi">Хинди</string>
+    <string name="bengali">Бенгальский</string>
+    <string name="french">Французский</string>
+    <string name="portuguese">Португальский</string>
+    <string name="spanish">Испанский</string>
+    <string name="german">Немецкий</string>
+    <string name="japanese">Японский</string>
 </resources>

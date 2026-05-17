@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Canvas</string>
     <string name="cyclone">Cyclone</string>
@@ -84,4 +85,7 @@
     <string name="please_wait">অনুগ্রহ করে অপেক্ষা করুন</string>
     <string name="migrating_data">ডেটা মাইগ্রেট করা হচ্ছে</string>
     <string name="no_designs_desc">আপনার প্রথম সৃষ্টি শুরু করতে ড্র বোতামে ট্যাপ করুন!</string>
-</resources>
+    <string name="about">সম্পর্কে</string>
+    <string name="personalization">ব্যক্তিগতকরণ</string>
+    <string name="app_version">v%1$s</string>
+    </resources>
