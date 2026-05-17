@@ -1,6 +1,5 @@
 package com.rkbapps.canvas.ui.screens.settings
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -9,26 +8,20 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.BrightnessAuto
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Coffee
-import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Language
-import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Mail
-import androidx.compose.material.icons.outlined.PrivacyTip
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
@@ -47,6 +40,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -68,10 +62,7 @@ import canvas.composeapp.generated.resources.app_name
 import canvas.composeapp.generated.resources.bengali
 import canvas.composeapp.generated.resources.buy_me_a_coffee
 import canvas.composeapp.generated.resources.confirm
-import canvas.composeapp.generated.resources.dark_theme
 import canvas.composeapp.generated.resources.english
-import canvas.composeapp.generated.resources.follow_system_theme
-import canvas.composeapp.generated.resources.follow_system_theme_desc
 import canvas.composeapp.generated.resources.french
 import canvas.composeapp.generated.resources.german
 import canvas.composeapp.generated.resources.github
@@ -82,23 +73,18 @@ import canvas.composeapp.generated.resources.language
 import canvas.composeapp.generated.resources.language_description
 import canvas.composeapp.generated.resources.mail
 import canvas.composeapp.generated.resources.portuguese
-import canvas.composeapp.generated.resources.privacy_policy
-import canvas.composeapp.generated.resources.privacy_policy_desc
 import canvas.composeapp.generated.resources.raise_a_issue
 import canvas.composeapp.generated.resources.russian
 import canvas.composeapp.generated.resources.search_here
 import canvas.composeapp.generated.resources.select_language
-import canvas.composeapp.generated.resources.spanish
 import canvas.composeapp.generated.resources.settings
-import androidx.compose.material3.VerticalDivider
-import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import canvas.composeapp.generated.resources.spanish
 import com.rkbapps.canvas.ui.screens.settings.resposive_composables.SettingScreenCompact
 import com.rkbapps.canvas.ui.screens.settings.resposive_composables.SettingsScreenLarge
 import com.rkbapps.canvas.util.Platforms
-import com.rkbapps.canvas.util.getWindowSize
 import com.rkbapps.canvas.util.appLanguages
 import com.rkbapps.canvas.util.getPlatform
+import com.rkbapps.canvas.util.getWindowSize
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -174,7 +160,6 @@ fun SettingsScreen(
 
 }
 
-//
 
 
 @Composable

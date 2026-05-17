@@ -51,64 +51,113 @@ fun HomeScreen(
         }
     }
     val windowSizeClass: WindowSizeClass = getWindowSize()
+    val isLargeScreen = windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact
 
-    val columns = when (windowSizeClass.widthSizeClass) {
-        WindowWidthSizeClass.Compact -> GridCells.Fixed(1)
-        WindowWidthSizeClass.Medium -> GridCells.Fixed(2)
-        else -> GridCells.Adaptive(320.dp)
-    }
+    val columns = GridCells.Adaptive(minSize = 160.dp)
 
     val contentPadding = when (windowSizeClass.widthSizeClass) {
         WindowWidthSizeClass.Compact -> PaddingValues(16.dp)
         WindowWidthSizeClass.Medium -> PaddingValues(horizontal = 24.dp, vertical = 16.dp)
-        else -> PaddingValues(horizontal = 48.dp, vertical = 24.dp)
+        else -> PaddingValues(horizontal = 32.dp, vertical = 24.dp)
     }
 
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            LargeTopAppBar(
-                title = {
-                    Text(stringResource(Res.string.my_designs))
-                },
-                actions = {
-                    IconButton(
-                        onClick = {
-                            if (getPlatform() != Platforms.WEB) {
-                                navController.navigate(route = Settings)
-                            }
-                        }
+    Row(modifier = Modifier.fillMaxSize()) {
+        if (isLargeScreen) {
+            NavigationRail(
+                header = {
+                    FloatingActionButton(
+                        onClick = { navController.navigate(route = Draw()) },
+                        elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
                     ) {
+                        Icon(
+                            imageVector = Icons.Default.Brush,
+                            contentDescription = stringResource(Res.string.new_drawing)
+                        )
+                    }
+                },
+                modifier = Modifier.fillMaxHeight()
+            ) {
+                Spacer(modifier = Modifier.height(16.dp))
+                NavigationRailItem(
+                    selected = true,
+                    onClick = { /* Already here */ },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.GridView,
+                            contentDescription = null
+                        )
+                    },
+                    label = { Text(stringResource(Res.string.my_designs)) }
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                NavigationRailItem(
+                    selected = false,
+                    onClick = {
+                        if (getPlatform() != Platforms.WEB) {
+                            navController.navigate(route = Settings)
+                        }
+                    },
+                    icon = {
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = stringResource(Res.string.settings)
                         )
-                    }
-                },
-                scrollBehavior = scrollBehavior
-            )
-        },
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                text = { Text(text = stringResource(Res.string.draw)) },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.Brush,
-                        contentDescription = stringResource(Res.string.new_drawing)
-                    )
-                },
-                onClick = {
-                    navController.navigate(route = Draw())
-                },
-                expanded = isExpanded
-            )
+                    },
+                    label = { Text(stringResource(Res.string.settings)) }
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
         }
-    ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
+
+        Scaffold(
+            modifier = Modifier.weight(1f).nestedScroll(scrollBehavior.nestedScrollConnection),
+            topBar = {
+                LargeTopAppBar(
+                    title = {
+                        Text(stringResource(Res.string.my_designs))
+                    },
+                    actions = {
+                        if (!isLargeScreen) {
+                            IconButton(
+                                onClick = {
+                                    if (getPlatform() != Platforms.WEB) {
+                                        navController.navigate(route = Settings)
+                                    }
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Settings,
+                                    contentDescription = stringResource(Res.string.settings)
+                                )
+                            }
+                        }
+                    },
+                    scrollBehavior = scrollBehavior
+                )
+            },
+            floatingActionButton = {
+                if (!isLargeScreen) {
+                    ExtendedFloatingActionButton(
+                        text = { Text(text = stringResource(Res.string.draw)) },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.Brush,
+                                contentDescription = stringResource(Res.string.new_drawing)
+                            )
+                        },
+                        onClick = {
+                            navController.navigate(route = Draw())
+                        },
+                        expanded = isExpanded
+                    )
+                }
+            }
+        ) { innerPadding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
 
             if (migrationStatus.isLoading) {
                 AlertDialog(
@@ -192,6 +241,7 @@ fun HomeScreen(
         }
     }
 }
+}
 
 @Composable
 fun DesignListItem(design: SavedDesign, onDelete: () -> Unit = {}, onClick: () -> Unit = {}) {
@@ -200,52 +250,57 @@ fun DesignListItem(design: SavedDesign, onDelete: () -> Unit = {}, onClick: () -
         onClick = onClick,
         shape = MaterialTheme.shapes.large
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Surface(
-                modifier = Modifier.size(48.dp),
-                shape = MaterialTheme.shapes.medium,
-                color = MaterialTheme.colorScheme.primaryContainer
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = Icons.Default.Description,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                }
-            }
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = design.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-
-                Text(
-                    text = design.time.toString().substringBefore("T"),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                )
-            }
-
-            IconButton(
-                onClick = onDelete,
-                colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = MaterialTheme.colorScheme.error
-                )
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1.5f)
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
+                contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = stringResource(Res.string.delete),
-                    modifier = Modifier.size(20.dp)
+                    imageVector = Icons.Default.Brush,
+                    contentDescription = null,
+                    modifier = Modifier.size(40.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                 )
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = design.name,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+
+                    Text(
+                        text = design.time.toString().substringBefore("T"),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                    )
+                }
+
+                IconButton(
+                    onClick = onDelete,
+                    colors = IconButtonDefaults.iconButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = stringResource(Res.string.delete),
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
             }
         }
     }
