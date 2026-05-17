@@ -10,6 +10,7 @@ import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.coroutines.getStringFlow
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -26,7 +27,7 @@ class DbOperations(private val dbManager: DbManager) {
         val DEFAULT_VALUE = json.encodeToString(SavedDesigns.serializer(), SavedDesigns())
     }
 
-    suspend fun save(drawing: SavedDesign) = withContext(Dispatchers.Default){
+    suspend fun save(drawing: SavedDesign) = withContext(Dispatchers.IO){
         val data = loadDrawingData(settings = dbManager.getSettings())
         val savedDesigns = json.decodeFromString(SavedDesigns.serializer(),data)
         if (savedDesigns.designs.isNotEmpty()){
@@ -45,14 +46,14 @@ class DbOperations(private val dbManager: DbManager) {
         }
     }
 
-    suspend fun delete(id:String) = withContext(Dispatchers.Default){
+    suspend fun delete(id:String) = withContext(Dispatchers.IO){
         val data = loadDrawingData(settings = dbManager.getSettings())
         val savedDesigns = json.decodeFromString(SavedDesigns.serializer(),data)
         val newData = savedDesigns.copy(designs = savedDesigns.designs.filterNot { it.id == id })
         saveDrawingData(json.encodeToString(SavedDesigns.serializer(),newData), settings = dbManager.getSettings())
     }
 
-    suspend fun delete(design: SavedDesign) = withContext(Dispatchers.Default){
+    suspend fun delete(design: SavedDesign) = withContext(Dispatchers.IO){
         val data = loadDrawingData(settings = dbManager.getSettings())
         val savedDesigns = json.decodeFromString(SavedDesigns.serializer(),data)
         val newData = savedDesigns.copy(designs = savedDesigns.designs.filterNot { it.id == design.id })

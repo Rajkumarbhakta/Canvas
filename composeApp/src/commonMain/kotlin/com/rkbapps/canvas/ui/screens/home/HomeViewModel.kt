@@ -13,6 +13,8 @@ class HomeViewModel(
     private val dataMigrationManager: DataMigrationManager
 ): ViewModel() {
     val allDesign = repository.allDesign.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), SavedDesigns())
+    val migrationState = dataMigrationManager.migrationState
+
 
     init {
         viewModelScope.launch {

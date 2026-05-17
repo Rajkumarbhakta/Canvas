@@ -38,6 +38,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel()
 ) {
     val allDesign by viewModel.allDesign.collectAsStateWithLifecycle()
+    val migrationStatus by viewModel.migrationState.collectAsStateWithLifecycle()
     val currentDeletableProject = rememberSaveable { mutableStateOf<SavedDesign?>(null) }
 
     Scaffold(
@@ -83,12 +84,30 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
+            if(migrationStatus.isLoading){
+                AlertDialog(
+                    onDismissRequest = {},
+                    title = {
+                        Text("Please wait")
+                    },
+                    text = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            CircularProgressIndicator()
+                            Text("Migrating data")
+                        }
+                    },
+                    confirmButton = {},
+                )
+            }
+
+
             currentDeletableProject.value?.let {
                 DeleteConfirmationDialog(
                     projectName = it.name,
-                    onCancel = {
-                        currentDeletableProject.value = null
-                    }
+                    onCancel = { currentDeletableProject.value = null }
                 ) {
                     viewModel.deleteDesign(it.pId)
                     currentDeletableProject.value = null

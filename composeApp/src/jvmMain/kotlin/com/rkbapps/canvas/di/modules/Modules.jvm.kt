@@ -29,7 +29,7 @@ actual val platformModule = module {
             storage = FileStorage(
                 serializer = PreferencesFileSerializer,
                 produceFile = {
-                    File(System.getProperty("java.io.tmpdir"), DATASTORE_FILE_NAME)
+                    File(System.getProperty("user.home"), ".canvas/$DATASTORE_FILE_NAME")
                 }
             ),
         )

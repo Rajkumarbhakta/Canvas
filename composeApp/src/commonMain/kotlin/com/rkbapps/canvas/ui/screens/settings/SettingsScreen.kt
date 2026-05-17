@@ -63,22 +63,30 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import canvas.composeapp.generated.resources.Res
 import canvas.composeapp.generated.resources.app_name
+import canvas.composeapp.generated.resources.bengali
 import canvas.composeapp.generated.resources.buy_me_a_coffee
 import canvas.composeapp.generated.resources.confirm
 import canvas.composeapp.generated.resources.dark_theme
 import canvas.composeapp.generated.resources.english
 import canvas.composeapp.generated.resources.follow_system_theme
 import canvas.composeapp.generated.resources.follow_system_theme_desc
+import canvas.composeapp.generated.resources.french
+import canvas.composeapp.generated.resources.german
 import canvas.composeapp.generated.resources.github
+import canvas.composeapp.generated.resources.hindi
+import canvas.composeapp.generated.resources.japanese
+import canvas.composeapp.generated.resources.korean
 import canvas.composeapp.generated.resources.language
 import canvas.composeapp.generated.resources.language_description
 import canvas.composeapp.generated.resources.mail
+import canvas.composeapp.generated.resources.portuguese
 import canvas.composeapp.generated.resources.privacy_policy
 import canvas.composeapp.generated.resources.privacy_policy_desc
 import canvas.composeapp.generated.resources.raise_a_issue
 import canvas.composeapp.generated.resources.russian
 import canvas.composeapp.generated.resources.search_here
 import canvas.composeapp.generated.resources.select_language
+import canvas.composeapp.generated.resources.spanish
 import canvas.composeapp.generated.resources.settings
 import com.rkbapps.canvas.util.appLanguages
 import org.jetbrains.compose.resources.painterResource
@@ -218,7 +226,7 @@ fun SettingsScreen(
 
             item(key="lang") {
                 LanguageItem(
-                    currentLanguageCode = "en"
+                    currentLanguageCode = viewModel.getLocale().code
                 ) {
                     isLanguageDialogOpen = true
                 }
@@ -349,12 +357,14 @@ fun LanguageItem(
     val languageName = when (currentLanguageCode) {
         "en" -> stringResource(Res.string.english)
         "ru" -> stringResource(Res.string.russian)
-//        "hi" -> stringResource(R.string.hindi)
-//        "de" -> stringResource(R.string.german)
-//        "fr" -> stringResource(R.string.french)
-//        "ja" -> stringResource(R.string.japanese)
-//        "ko" -> stringResource(R.string.korean)
-//        "bn" -> stringResource(R.string.bengali)
+        "pt" -> stringResource(Res.string.portuguese)
+        "es" -> stringResource(Res.string.spanish)
+        "de" -> stringResource(Res.string.german)
+        "fr" -> stringResource(Res.string.french)
+        "ja" -> stringResource(Res.string.japanese)
+        "ko" -> stringResource(Res.string.korean)
+        "hi" -> stringResource(Res.string.hindi)
+        "bn" -> stringResource(Res.string.bengali)
         else -> stringResource(Res.string.english)
     }
 

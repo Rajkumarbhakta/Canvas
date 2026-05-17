@@ -73,5 +73,13 @@
     <string name="language">Language</string>
     <string name="select_language">Select Language</string>
     <string name="language_description">Choose your preferred language for the application to see content in your language. If any application content does not have support for your language, it will default to English (en).</string>
+    <string name="portuguese">Portuguese</string>
+    <string name="spanish">Spanish</string>
+    <string name="german">German</string>
+    <string name="french">French</string>
+    <string name="japanese">Japanese</string>
+    <string name="korean">Korean</string>
+    <string name="hindi">Hindi</string>
+    <string name="bengali">Bengali</string>
 
 </resources>

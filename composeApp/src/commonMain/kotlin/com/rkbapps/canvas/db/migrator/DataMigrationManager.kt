@@ -7,8 +7,12 @@ import com.rkbapps.canvas.db.old_db.DbOperations
 import com.rkbapps.canvas.db.old_db.loadDrawingData
 import com.rkbapps.canvas.db.utils.toEntity
 import com.rkbapps.canvas.model.SavedDesigns
+import com.rkbapps.canvas.util.UiState
 import com.rkbapps.canvas.util.serializers.json
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
@@ -17,12 +21,17 @@ class DataMigrationManager(
     private val appDatabase: AppDatabase,
     private val preferenceManager: PreferenceManager
 ) {
-    suspend fun migrateIfRequired() = withContext(Dispatchers.Default) {
+    private val _migrationStatus = MutableStateFlow(UiState<Boolean>(isLoading = true))
+    val migrationState = _migrationStatus.asStateFlow()
+
+
+
+    suspend fun migrateIfRequired() = withContext(Dispatchers.IO) {
+        _migrationStatus.value = UiState(isLoading = true)
         val isMigrated = preferenceManager.getBooleanPreference(
             PreferenceManager.IS_MIGRATED_TO_ROOM,
             false
         ).first()
-
         if (!isMigrated) {
             try {
                 val settings = dbManager.getSettings()
@@ -44,15 +53,14 @@ class DataMigrationManager(
                         dao.upsertDesignWithPaths(designEntity, pathEntities)
                     }
                 }
-
-
-                preferenceManager.saveBooleanPreference(
-                    PreferenceManager.Companion.IS_MIGRATED_TO_ROOM,
-                    true
-                )
+                preferenceManager.saveBooleanPreference(PreferenceManager.IS_MIGRATED_TO_ROOM, true)
+                _migrationStatus.value = UiState(isLoading = false, data = true)
             } catch (e: Exception) {
                 e.printStackTrace()
+                _migrationStatus.value = UiState(isLoading = false, error = e.message)
             }
+        }else{
+            _migrationStatus.value = UiState(isLoading = false, data = true)
         }
     }
 }

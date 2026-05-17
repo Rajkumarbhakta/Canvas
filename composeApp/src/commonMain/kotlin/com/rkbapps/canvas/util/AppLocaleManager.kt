@@ -1,7 +1,5 @@
 package com.rkbapps.canvas.util
 
-import androidx.compose.runtime.Composable
-
 data class Language(
     val name: String,
     val code: String,
@@ -11,14 +9,14 @@ data class Language(
 val appLanguages = listOf(
     Language("english","en", "English"), // default language
     Language("russian","ru", "Русский"),
-//    Language("portuguese", "pt", "Português"),
-//    Language("spanish", "es", "Español"),
-//    Language("german", "de", "Deutsch"),
-//    Language("french", "fr", "Français"),
-//    Language("japanese", "ja", "日本語"),
-//    Language("korean", "ko", "한국어"),
-//    Language("hindi","hi", "हिन्दी"),
-//    Language("bengali", "bn", "বাংলা"),
+    Language("portuguese", "pt", "Português"),
+    Language("spanish", "es", "Español"),
+    Language("german", "de", "Deutsch"),
+    Language("french", "fr", "Français"),
+    Language("japanese", "ja", "日本語"),
+    Language("korean", "ko", "한국어"),
+    Language("hindi","hi", "हिन्दी"),
+    Language("bengali", "bn", "বাংলা"),
     )
 
 
