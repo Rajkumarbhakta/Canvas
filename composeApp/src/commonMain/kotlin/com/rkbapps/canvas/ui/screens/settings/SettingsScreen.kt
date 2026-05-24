@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -33,6 +35,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
@@ -63,7 +66,9 @@ import canvas.composeapp.generated.resources.app_version
 import canvas.composeapp.generated.resources.back
 import canvas.composeapp.generated.resources.bengali
 import canvas.composeapp.generated.resources.buy_me_a_coffee
+import canvas.composeapp.generated.resources.cancel
 import canvas.composeapp.generated.resources.confirm
+import canvas.composeapp.generated.resources.done
 import canvas.composeapp.generated.resources.english
 import canvas.composeapp.generated.resources.french
 import canvas.composeapp.generated.resources.german
@@ -81,6 +86,8 @@ import canvas.composeapp.generated.resources.search_here
 import canvas.composeapp.generated.resources.select_language
 import canvas.composeapp.generated.resources.settings
 import canvas.composeapp.generated.resources.spanish
+import com.github.skydoves.colorpicker.compose.rememberColorPickerController
+import com.rkbapps.canvas.ui.composables.ColorPicker
 import com.rkbapps.canvas.ui.screens.settings.resposive_composables.SettingScreenCompact
 import com.rkbapps.canvas.ui.screens.settings.resposive_composables.SettingsScreenLarge
 import com.rkbapps.canvas.util.Platforms
@@ -105,8 +112,10 @@ fun SettingsScreen(
 
     val isSystemTheme by viewModel.isSystemTheme.collectAsStateWithLifecycle()
     val isDarkTheme by viewModel.isDarkTheme.collectAsStateWithLifecycle()
+    val colorTheme by viewModel.colorTheme.collectAsStateWithLifecycle()
 
     var isLanguageDialogOpen by remember { mutableStateOf(false) }
+    var isThemeColorDialogOpen by remember { mutableStateOf(false) }
 
     val windowSize = getWindowSize()
     val isLargeScreen = windowSize.widthSizeClass == WindowWidthSizeClass.Expanded
@@ -142,20 +151,83 @@ fun SettingsScreen(
             }
         }
 
+        if (isThemeColorDialogOpen) {
+            ColorThemePicker(
+                selectedColor = Color(colorTheme),
+                onCancel = { isThemeColorDialogOpen = false },
+                onColorSelected = { color ->
+                    viewModel.updateColorTheme(color)
+                    isThemeColorDialogOpen = false
+                }
+            )
+        }
+
         if (isLargeScreen) {
             SettingsScreenLarge(
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
                 viewModel = viewModel,
                 isSystemTheme = isSystemTheme,
-                isDarkTheme = isDarkTheme
-            ){ isLanguageDialogOpen = true }
+                isDarkTheme = isDarkTheme,
+                color = Color(colorTheme),
+                onLanguageClick = { isLanguageDialogOpen = true },
+                onThemeColorClick = { isThemeColorDialogOpen = true }
+            )
         } else {
             SettingScreenCompact(
                 viewModel = viewModel,
                 isSystemTheme = isSystemTheme,
                 isDarkTheme = isDarkTheme,
                 innerPadding = innerPadding,
-            ){ isLanguageDialogOpen = true }
+                color = Color(colorTheme),
+                onLanguageClick = { isLanguageDialogOpen = true },
+                onThemeColorClick = { isThemeColorDialogOpen = true }
+            )
+        }
+    }
+
+
+}
+
+@Composable
+fun ColorThemePicker(selectedColor:Color,onCancel:()->Unit,onColorSelected:(Color)->Unit){
+    val selectedColor = remember { mutableStateOf(selectedColor) }
+    val colorController = rememberColorPickerController()
+
+    Dialog(
+        onDismissRequest = {onCancel()}
+    ){
+        Column (modifier = Modifier.fillMaxWidth()
+            .clip(RoundedCornerShape(20.dp))
+            .background(
+                color = MaterialTheme.colorScheme.surface,
+                shape = RoundedCornerShape(20.dp)
+            )
+            .padding(16.dp)){
+            ColorPicker(
+                controller = colorController,
+                onColorChanged = {
+                    selectedColor.value = it.color
+                }
+            )
+            Row (modifier = Modifier.fillMaxWidth().padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ){
+                Button(
+                    modifier = Modifier.weight(1f),
+                    onClick = {
+                        onColorSelected(colorController.selectedColor.value)
+                    }
+                ) {
+                    Text(stringResource(Res.string.done))
+                }
+                OutlinedButton(
+                    modifier = Modifier.weight(1f),
+                    onClick = { onCancel() }
+                ) {
+                    Text(stringResource(Res.string.cancel))
+                }
+            }
         }
     }
 
@@ -196,6 +268,48 @@ fun TextWithSwitch(
             }
         }
         Switch(checked = checked, onCheckedChange = onChange)
+    }
+}
+
+
+@Composable
+fun TextWithColor(
+    modifier: Modifier = Modifier,
+    color: Color,
+    icon: ImageVector,
+    text: String,
+    subText:String? = null,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = text,
+        )
+        Column(modifier = Modifier.weight(1f),) {
+            Text(
+                text,
+
+                style = MaterialTheme.typography.titleLarge,
+            )
+            subText?.let {
+                Text(
+                    it,
+                    style = MaterialTheme.typography.labelSmall
+                )
+            }
+        }
+        Box(
+            modifier = Modifier.size(40.dp).clip(CircleShape).background(
+                color = color
+            ).clickable {
+                onClick()
+            }
+        )
     }
 }
 

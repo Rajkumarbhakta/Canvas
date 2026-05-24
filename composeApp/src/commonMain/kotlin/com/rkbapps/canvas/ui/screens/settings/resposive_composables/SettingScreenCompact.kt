@@ -28,14 +28,20 @@ import com.rkbapps.canvas.ui.screens.settings.TextWithArrow
 import com.rkbapps.canvas.ui.screens.settings.TextWithSwitch
 import org.jetbrains.compose.resources.stringResource
 
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.ui.graphics.Color
+import com.rkbapps.canvas.ui.screens.settings.TextWithColor
+
 @Composable
 fun SettingScreenCompact(
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel,
+    color: Color,
     isSystemTheme: Boolean,
     isDarkTheme: Boolean,
     innerPadding: PaddingValues,
     onLanguageClick: () -> Unit,
+    onThemeColorClick: () -> Unit,
 ) {
     val uriHandler = LocalUriHandler.current
 
@@ -61,6 +67,16 @@ fun SettingScreenCompact(
             LanguageItem(
                 currentLanguageCode = viewModel.getLocale().code,
                 onClick = onLanguageClick
+            )
+        }
+
+        item(key = "theme color") {
+            TextWithColor(
+                text = "Theme",
+                subText = "Choose application color theme",
+                color = color,
+                icon = Icons.Default.Palette,
+                onClick = onThemeColorClick
             )
         }
 

@@ -85,7 +85,7 @@
     <string name="please_wait">Veuillez patienter</string>
     <string name="migrating_data">Migration des données</string>
     <string name="no_designs_desc">Appuyez sur le bouton Dessiner pour commencer votre première création !</string>
-<string name="about">À propos</string>
-    <string name="appearance">Apparence</string>
+    <string name="about">À propos</string>
+    <string name="personalization">personnalisation</string>
     <string name="app_version">v%1$s</string>
     </resources>

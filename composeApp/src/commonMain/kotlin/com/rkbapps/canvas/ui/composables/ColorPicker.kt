@@ -1,4 +1,4 @@
-package com.rkbapps.canvas.ui.screens.drawing.composables
+package com.rkbapps.canvas.ui.composables
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
