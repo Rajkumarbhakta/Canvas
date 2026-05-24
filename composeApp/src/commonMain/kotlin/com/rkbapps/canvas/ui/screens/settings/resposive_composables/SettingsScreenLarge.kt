@@ -29,12 +29,14 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import canvas.composeapp.generated.resources.Res
 import canvas.composeapp.generated.resources.about
-import canvas.composeapp.generated.resources.appearance
 import canvas.composeapp.generated.resources.dark_theme
 import canvas.composeapp.generated.resources.follow_system_theme
 import canvas.composeapp.generated.resources.follow_system_theme_desc
+import canvas.composeapp.generated.resources.personalization
 import canvas.composeapp.generated.resources.privacy_policy
 import canvas.composeapp.generated.resources.privacy_policy_desc
+import canvas.composeapp.generated.resources.theme
+import canvas.composeapp.generated.resources.theme_description
 import com.rkbapps.canvas.ui.screens.settings.AppInfoHeader
 import com.rkbapps.canvas.ui.screens.settings.LanguageItem
 import com.rkbapps.canvas.ui.screens.settings.SettingsCategory
@@ -43,13 +45,19 @@ import com.rkbapps.canvas.ui.screens.settings.TextWithArrow
 import com.rkbapps.canvas.ui.screens.settings.TextWithSwitch
 import org.jetbrains.compose.resources.stringResource
 
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.ui.graphics.Color
+import com.rkbapps.canvas.ui.screens.settings.TextWithColor
+
 @Composable
 fun SettingsScreenLarge(
     modifier: Modifier,
     viewModel: SettingsViewModel,
+    color: Color,
     isSystemTheme: Boolean,
     isDarkTheme: Boolean,
     onLanguageClick: () -> Unit,
+    onThemeColorClick: () -> Unit,
 ) {
     var selectedCategory by remember { mutableStateOf(SettingsCategory.ABOUT) }
     val uriHandler = LocalUriHandler.current
@@ -72,7 +80,7 @@ fun SettingsScreenLarge(
                 icon = { Icon(Icons.Outlined.PrivacyTip, contentDescription = null) }
             )
             NavigationDrawerItem(
-                label = { Text(stringResource(Res.string.appearance)) },
+                label = { Text(stringResource(Res.string.personalization)) },
                 selected = selectedCategory == SettingsCategory.APPEARANCE,
                 onClick = { selectedCategory = SettingsCategory.APPEARANCE },
                 icon = { Icon(Icons.Default.Language, contentDescription = null) }
@@ -95,6 +103,16 @@ fun SettingsScreenLarge(
                         LanguageItem(
                             currentLanguageCode = viewModel.getLocale().code,
                             onClick = onLanguageClick
+                        )
+                    }
+
+                    item {
+                        TextWithColor(
+                            text = stringResource(Res.string.theme),
+                            subText = stringResource(Res.string.theme_description),
+                            color = color,
+                            icon = Icons.Default.Palette,
+                            onClick = onThemeColorClick
                         )
                     }
 

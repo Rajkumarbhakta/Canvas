@@ -6,6 +6,7 @@
     <string name="run">Запустить</string>
     <string name="stop">Остановить</string>
     <string name="theme">Тема</string>
+    <string name="theme_description">Выберите цветовую тему приложения</string>
     <string name="edit_name">Редактировать имя</string>
     <string name="save_project">Сохранить проект</string>
     <string name="save_as_image">Сохранить как изображение</string>

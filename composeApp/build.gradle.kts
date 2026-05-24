@@ -81,6 +81,9 @@ kotlin {
             // Room
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.sqlite.bundled)
+
+            // color
+            implementation(libs.material.kolor)
         }
 
         commonTest.dependencies {

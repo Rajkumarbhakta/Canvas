@@ -6,6 +6,7 @@
     <string name="run">Ausführen</string>
     <string name="stop">Stoppen</string>
     <string name="theme">Design</string>
+    <string name="theme_description">Wählen Sie das Farbschema der Anwendung</string>
     <string name="edit_name">Name bearbeiten</string>
     <string name="save_project">Projekt speichern</string>
     <string name="save_as_image">Als Bild speichern</string>

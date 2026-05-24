@@ -2,6 +2,8 @@ package com.rkbapps.canvas.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+val defaultColor = Color(0xffbc6c25)
+
 val primaryLight = Color(0xFF8F4C38)
 val onPrimaryLight = Color(0xFFFFFFFF)
 val primaryContainerLight = Color(0xFFFFDBD1)

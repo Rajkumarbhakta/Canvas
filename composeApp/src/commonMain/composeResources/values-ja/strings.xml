@@ -6,6 +6,7 @@
     <string name="run">実行</string>
     <string name="stop">停止</string>
     <string name="theme">テーマ</string>
+    <string name="theme_description">アプリケーションのカラーテーマを選択してください</string>
     <string name="edit_name">名前を編集</string>
     <string name="save_project">プロジェクトを保存</string>
     <string name="save_as_image">画像として保存</string>

@@ -6,6 +6,7 @@
     <string name="run">Exécuter</string>
     <string name="stop">Arrêter</string>
     <string name="theme">Thème</string>
+    <string name="theme_description">Choisissez le thème de couleur de l'application</string>
     <string name="edit_name">Modifier le nom</string>
     <string name="save_project">Enregistrer le Projet</string>
     <string name="save_as_image">Enregistrer comme Image</string>
@@ -85,7 +86,7 @@
     <string name="please_wait">Veuillez patienter</string>
     <string name="migrating_data">Migration des données</string>
     <string name="no_designs_desc">Appuyez sur le bouton Dessiner pour commencer votre première création !</string>
-<string name="about">À propos</string>
-    <string name="appearance">Apparence</string>
+    <string name="about">À propos</string>
+    <string name="personalization">personnalisation</string>
     <string name="app_version">v%1$s</string>
     </resources>

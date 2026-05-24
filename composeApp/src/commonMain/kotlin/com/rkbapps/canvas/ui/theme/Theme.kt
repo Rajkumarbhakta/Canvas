@@ -6,6 +6,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.Color
+import com.materialkolor.rememberDynamicColorScheme
 
 private val LightColors = lightColorScheme(
     primary = primaryLight,
@@ -89,15 +91,18 @@ internal val LocalThemeIsDark = compositionLocalOf { mutableStateOf(true) }
 @Composable
 internal fun AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    color: Color = defaultColor,
     content: @Composable () -> Unit
 ) {
-    val isDarkState = remember(darkTheme) { mutableStateOf(darkTheme) }
+    val color = rememberDynamicColorScheme(primary = color, isDark = darkTheme)
+    //val isDarkState = remember(darkTheme) { mutableStateOf(darkTheme) }
     CompositionLocalProvider(
-        LocalThemeIsDark provides isDarkState
+        //LocalThemeIsDark provides isDarkState
     ) {
-        val isDark by isDarkState
+        //val isDark by isDarkState
         MaterialTheme (
-            colorScheme = if (isDark) DarkColors else LightColors,
+//            colorScheme = if (isDark) DarkColors else LightColors,
+            colorScheme = color,
             content = { Surface(content = content) },
             typography = typography()
         )

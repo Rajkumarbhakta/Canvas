@@ -6,6 +6,7 @@
     <string name="run">চালান</string>
     <string name="stop">থামুন</string>
     <string name="theme">থিম</string>
+    <string name="theme_description">অ্যাপ্লিকেশনের রঙের থিম চয়ন করুন</string>
     <string name="edit_name">নাম সম্পাদনা করুন</string>
     <string name="save_project">প্রকল্প সংরক্ষণ করুন</string>
     <string name="save_as_image">ছবি হিসেবে সংরক্ষণ করুন</string>

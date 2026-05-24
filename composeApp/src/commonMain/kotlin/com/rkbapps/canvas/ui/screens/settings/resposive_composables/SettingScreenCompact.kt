@@ -21,6 +21,8 @@ import canvas.composeapp.generated.resources.follow_system_theme
 import canvas.composeapp.generated.resources.follow_system_theme_desc
 import canvas.composeapp.generated.resources.privacy_policy
 import canvas.composeapp.generated.resources.privacy_policy_desc
+import canvas.composeapp.generated.resources.theme
+import canvas.composeapp.generated.resources.theme_description
 import com.rkbapps.canvas.ui.screens.settings.AppInfoHeader
 import com.rkbapps.canvas.ui.screens.settings.LanguageItem
 import com.rkbapps.canvas.ui.screens.settings.SettingsViewModel
@@ -28,14 +30,20 @@ import com.rkbapps.canvas.ui.screens.settings.TextWithArrow
 import com.rkbapps.canvas.ui.screens.settings.TextWithSwitch
 import org.jetbrains.compose.resources.stringResource
 
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.ui.graphics.Color
+import com.rkbapps.canvas.ui.screens.settings.TextWithColor
+
 @Composable
 fun SettingScreenCompact(
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel,
+    color: Color,
     isSystemTheme: Boolean,
     isDarkTheme: Boolean,
     innerPadding: PaddingValues,
     onLanguageClick: () -> Unit,
+    onThemeColorClick: () -> Unit,
 ) {
     val uriHandler = LocalUriHandler.current
 
@@ -61,6 +69,16 @@ fun SettingScreenCompact(
             LanguageItem(
                 currentLanguageCode = viewModel.getLocale().code,
                 onClick = onLanguageClick
+            )
+        }
+
+        item(key = "theme color") {
+            TextWithColor(
+                text = stringResource(Res.string.theme),
+                subText = stringResource(Res.string.theme_description),
+                icon = Icons.Default.Palette,
+                color = color,
+                onClick = onThemeColorClick
             )
         }
 
