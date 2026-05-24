@@ -5,7 +5,8 @@
     <string name="open_github">GitHub खोलें</string>
     <string name="run">चलाएँ</string>
     <string name="stop">रोकें</string>
-    <string name="theme">थीम</string>
+    <string name="theme">थीম</string>
+    <string name="theme_description">एप्लिकेशन का रंग थीम चुनें</string>
     <string name="edit_name">नाम संपादित करें</string>
     <string name="save_project">प्रोजेक्ट सहेजें</string>
     <string name="save_as_image">इमेज के रूप में सहेजें</string>

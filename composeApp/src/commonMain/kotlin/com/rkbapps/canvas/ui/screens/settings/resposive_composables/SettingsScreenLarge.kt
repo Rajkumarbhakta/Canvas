@@ -35,6 +35,8 @@ import canvas.composeapp.generated.resources.follow_system_theme_desc
 import canvas.composeapp.generated.resources.personalization
 import canvas.composeapp.generated.resources.privacy_policy
 import canvas.composeapp.generated.resources.privacy_policy_desc
+import canvas.composeapp.generated.resources.theme
+import canvas.composeapp.generated.resources.theme_description
 import com.rkbapps.canvas.ui.screens.settings.AppInfoHeader
 import com.rkbapps.canvas.ui.screens.settings.LanguageItem
 import com.rkbapps.canvas.ui.screens.settings.SettingsCategory
@@ -106,8 +108,8 @@ fun SettingsScreenLarge(
 
                     item {
                         TextWithColor(
-                            text = "Theme",
-                            subText = "Choose application color theme",
+                            text = stringResource(Res.string.theme),
+                            subText = stringResource(Res.string.theme_description),
                             color = color,
                             icon = Icons.Default.Palette,
                             onClick = onThemeColorClick

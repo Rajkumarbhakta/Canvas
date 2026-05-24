@@ -21,6 +21,8 @@ import canvas.composeapp.generated.resources.follow_system_theme
 import canvas.composeapp.generated.resources.follow_system_theme_desc
 import canvas.composeapp.generated.resources.privacy_policy
 import canvas.composeapp.generated.resources.privacy_policy_desc
+import canvas.composeapp.generated.resources.theme
+import canvas.composeapp.generated.resources.theme_description
 import com.rkbapps.canvas.ui.screens.settings.AppInfoHeader
 import com.rkbapps.canvas.ui.screens.settings.LanguageItem
 import com.rkbapps.canvas.ui.screens.settings.SettingsViewModel
@@ -72,10 +74,10 @@ fun SettingScreenCompact(
 
         item(key = "theme color") {
             TextWithColor(
-                text = "Theme",
-                subText = "Choose application color theme",
-                color = color,
+                text = stringResource(Res.string.theme),
+                subText = stringResource(Res.string.theme_description),
                 icon = Icons.Default.Palette,
+                color = color,
                 onClick = onThemeColorClick
             )
         }
