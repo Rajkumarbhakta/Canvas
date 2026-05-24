@@ -110,7 +110,7 @@ fun SettingScreenCompact(
                 subText = stringResource(Res.string.privacy_policy_desc),
                 icon = Icons.Outlined.PrivacyTip
             ) {
-                uriHandler.openUri("https://sites.google.com/view/gdealz/home")
+                uriHandler.openUri("https://sites.google.com/view/canvas-privacy/home")
             }
         }
     }
