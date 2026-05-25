@@ -73,15 +73,11 @@ kotlin {
             implementation(libs.multiplatform.settings)
             implementation(libs.multiplatform.settings.coroutines)
             // datastore
-//            implementation(libs.datastore)
-//            implementation(libs.datastore.preferences)
             implementation(libs.androidx.datastore.preferences.core)
             implementation(libs.androidx.datastore.core.okio)
-
             // Room
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.sqlite.bundled)
-
             // color
             implementation(libs.material.kolor)
         }
