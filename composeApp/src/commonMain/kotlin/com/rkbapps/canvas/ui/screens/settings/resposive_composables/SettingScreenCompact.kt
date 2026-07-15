@@ -32,6 +32,7 @@ import org.jetbrains.compose.resources.stringResource
 
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.UriHandler
 import com.rkbapps.canvas.ui.screens.settings.TextWithColor
 
 @Composable
@@ -58,10 +59,10 @@ fun SettingScreenCompact(
         item(key = "top header") {
             AppInfoHeader(
                 appVersion = viewModel.appVersion,
-                onGithubClick = { uriHandler.openUri("https://github.com/Rajkumarbhakta/Canvas") },
-                onMailClick = { uriHandler.openUri("mailto:contact@rkbapps.in") },
-                onIssueClick = { uriHandler.openUri("https://github.com/Rajkumarbhakta/Canvas/issues") },
-                onCoffeeClick = { uriHandler.openUri("https://coff.ee/rajkumarbhakta") }
+                onGithubClick = { openUri(uriHandler,"https://github.com/Rajkumarbhakta/Canvas") },
+                onMailClick = { openUri(uriHandler,"mailto:contact@rkbapps.in") },
+                onIssueClick = { openUri(uriHandler,"https://github.com/Rajkumarbhakta/Canvas/issues") },
+                onCoffeeClick = { openUri(uriHandler,"https://coff.ee/rajkumarbhakta") }
             )
         }
 
@@ -110,8 +111,16 @@ fun SettingScreenCompact(
                 subText = stringResource(Res.string.privacy_policy_desc),
                 icon = Icons.Outlined.PrivacyTip
             ) {
-                uriHandler.openUri("https://sites.google.com/view/canvas-privacy/home")
+               openUri( uriHandler,"https://sites.google.com/view/canvas-privacy/home")
             }
         }
+    }
+}
+
+fun openUri(uriHandler: UriHandler, uri: String) {
+    try {
+        uriHandler.openUri(uri)
+    } catch (e: Exception) {
+        // Safely ignore or log when no app is installed to handle the URI (e.g. no browser or email client)
     }
 }

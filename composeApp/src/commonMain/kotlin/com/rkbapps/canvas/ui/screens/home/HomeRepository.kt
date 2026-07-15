@@ -8,11 +8,21 @@ import com.rkbapps.canvas.model.SavedDesigns
 import com.rkbapps.canvas.ui.screens.drawing.utils.PaintingStyleType
 import com.rkbapps.canvas.ui.screens.drawing.utils.ShapeType
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 
 class HomeRepository (
     private val drawingDao: DrawingDao
 ) {
+    private val _selectedProjectForDelete = MutableStateFlow<SavedDesign?>(null)
+    val selectedProjectForDelete = _selectedProjectForDelete.asStateFlow()
+
+    fun selectDesignForDelete(design: SavedDesign?){
+        _selectedProjectForDelete.value = design
+    }
+
+
     val allDesign: Flow<SavedDesigns> = drawingDao.getAllDesigns().map { entities ->
         val allDesigns = entities.map { entity ->
             SavedDesign(
@@ -37,6 +47,7 @@ class HomeRepository (
 
     suspend fun deleteDesign(id: Long){
         drawingDao.deleteDesignById(id)
+        _selectedProjectForDelete.value = null
     }
 
 

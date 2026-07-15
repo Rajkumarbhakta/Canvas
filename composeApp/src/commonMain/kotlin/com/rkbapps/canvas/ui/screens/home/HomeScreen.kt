@@ -42,7 +42,8 @@ fun HomeScreen(
 ) {
     val allDesign by viewModel.allDesign.collectAsStateWithLifecycle()
     val migrationStatus by viewModel.migrationState.collectAsStateWithLifecycle()
-    val currentDeletableProject = rememberSaveable { mutableStateOf<SavedDesign?>(null) }
+    val currentDeletableProject by viewModel.selectedProjectForDelete.collectAsStateWithLifecycle()
+
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val gridState = rememberLazyGridState()
     val isExpanded by remember {
@@ -179,13 +180,12 @@ fun HomeScreen(
             }
 
 
-            currentDeletableProject.value?.let {
+            currentDeletableProject?.let {
                 DeleteConfirmationDialog(
                     projectName = it.name,
-                    onCancel = { currentDeletableProject.value = null }
+                    onCancel = { viewModel.selectDesignForDelete(null) }
                 ) {
                     viewModel.deleteDesign(it.pId)
-                    currentDeletableProject.value = null
                 }
             }
 
@@ -200,7 +200,7 @@ fun HomeScreen(
                 ) {
                     items(items = allDesign.designs.reversed(), key = { it.id }) {
                         DesignListItem(it, onDelete = {
-                            currentDeletableProject.value = it
+                            viewModel.selectDesignForDelete(it)
                         }) {
                             navController.navigate(route = Draw(it.id))
                         }

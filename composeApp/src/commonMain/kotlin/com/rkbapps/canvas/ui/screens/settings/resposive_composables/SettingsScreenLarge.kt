@@ -154,7 +154,7 @@ fun SettingsScreenLarge(
                             subText = stringResource(Res.string.privacy_policy_desc),
                             icon = Icons.Outlined.PrivacyTip
                         ) {
-                            uriHandler.openUri("https://sites.google.com/view/canvas-privacy/home")
+                            openUri(uriHandler,"https://sites.google.com/view/canvas-privacy/home")
                         }
                     }
                 }
