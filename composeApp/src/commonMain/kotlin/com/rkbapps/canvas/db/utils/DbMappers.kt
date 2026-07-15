@@ -9,8 +9,8 @@ import com.rkbapps.canvas.db.entities.PathEntity
 import com.rkbapps.canvas.model.DrawingState
 import com.rkbapps.canvas.model.PathData
 import com.rkbapps.canvas.model.SavedDesign
-import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyleType
-import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeType
+import com.rkbapps.canvas.ui.screens.drawing.utils.PaintingStyleType
+import com.rkbapps.canvas.ui.screens.drawing.utils.ShapeType
 
 fun SavedDesign.toEntity(): DesignEntity {
     return DesignEntity(

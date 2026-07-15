@@ -1,34 +1,32 @@
 package com.rkbapps.canvas.ui.screens.drawing.composables
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FormatColorFill
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 
 @Composable
 fun BackgroundColorChangeItem(
-    onBackgroundColorPick:(Color)->Unit
-){
-
+    onBackgroundColorPick: (Color) -> Unit
+) {
     val colorPickerController = rememberColorPickerController()
     val isColorPickerDialogVisible = remember { mutableStateOf(false) }
 
-    if (isColorPickerDialogVisible.value){
+    if (isColorPickerDialogVisible.value) {
         ColorPickerDialog(
             isColorPickerVisible = isColorPickerDialogVisible,
             controller = colorPickerController,
@@ -36,19 +34,56 @@ fun BackgroundColorChangeItem(
         )
     }
 
-    Row(
-        modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(10.dp))
-            .padding(horizontal = 8.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    CompactToolButton(
+        isActive = false,
+        onClick = { isColorPickerDialogVisible.value = true }
     ) {
-        ColorItems(
-            color = if(colorPickerController.selectedColor.value == Color.Transparent) Color.White else colorPickerController.selectedColor.value,
-            isSelected = false,
-            imageVector = Icons.Default.FormatColorFill
-        ){
-            isColorPickerDialogVisible.value = true
-        }
+        Icon(
+            imageVector = Icons.Default.FormatColorFill,
+            contentDescription = "Change background color",
+            modifier = Modifier.size(22.dp)
+        )
+    }
+}
+
+/**
+ * Desktop/Tablet: Background color inline picker with label.
+ */
+@Composable
+fun BackgroundColorInlineItem(
+    currentBgColor: Color,
+    onBackgroundColorPick: (Color) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val colorPickerController = rememberColorPickerController()
+    val isColorPickerDialogVisible = remember { mutableStateOf(false) }
+
+    if (isColorPickerDialogVisible.value) {
+        ColorPickerDialog(
+            isColorPickerVisible = isColorPickerDialogVisible,
+            controller = colorPickerController,
+            onDone = onBackgroundColorPick
+        )
+    }
+
+    Box(
+        modifier = modifier
+            .size(32.dp)
+            .clip(CircleShape)
+            .background(currentBgColor)
+            .border(
+                width = 2.dp,
+                color = MaterialTheme.colorScheme.outlineVariant,
+                shape = CircleShape
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = Icons.Default.FormatColorFill,
+            contentDescription = "Canvas background color",
+            modifier = Modifier.size(16.dp),
+            tint = if (currentBgColor == Color.White || currentBgColor == Color.Transparent)
+                Color.DarkGray else Color.White
+        )
     }
 }

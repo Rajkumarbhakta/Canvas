@@ -5,8 +5,8 @@ import com.rkbapps.canvas.db.dao.DrawingDao
 import com.rkbapps.canvas.model.DrawingState
 import com.rkbapps.canvas.model.SavedDesign
 import com.rkbapps.canvas.model.SavedDesigns
-import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyleType
-import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeType
+import com.rkbapps.canvas.ui.screens.drawing.utils.PaintingStyleType
+import com.rkbapps.canvas.ui.screens.drawing.utils.ShapeType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 

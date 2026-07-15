@@ -3,8 +3,8 @@ package com.rkbapps.canvas.model
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.Color
-import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyleType
-import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeType
+import com.rkbapps.canvas.ui.screens.drawing.utils.PaintingStyleType
+import com.rkbapps.canvas.ui.screens.drawing.utils.ShapeType
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 

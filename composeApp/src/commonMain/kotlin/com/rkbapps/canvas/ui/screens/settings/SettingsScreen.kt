@@ -144,7 +144,7 @@ fun SettingsScreen(
                 ) { languageCode ->
                     viewModel.changeLanguage(languageCode)
                     isLanguageDialogOpen = false
-                    if (getPlatform()== Platforms.DESKTOP){
+                    if (getPlatform()!= Platforms.ANDROID){
                         navController.navigateUp()
                     }
                 }

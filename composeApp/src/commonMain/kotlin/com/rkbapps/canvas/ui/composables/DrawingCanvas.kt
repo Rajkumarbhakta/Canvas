@@ -22,8 +22,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.util.fastForEach
 import com.rkbapps.canvas.model.PathData
 import com.rkbapps.canvas.ui.screens.drawing.DrawingAction
-import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyleType
-import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeType
+import com.rkbapps.canvas.ui.screens.drawing.utils.PaintingStyleType
+import com.rkbapps.canvas.ui.screens.drawing.utils.ShapeType
 import kotlin.math.abs
 
 @Composable

@@ -3,9 +3,8 @@ package com.rkbapps.canvas.ui.screens.drawing
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import com.rkbapps.canvas.model.DrawingState
-import com.rkbapps.canvas.navigation.Draw
-import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyleType
-import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeType
+import com.rkbapps.canvas.ui.screens.drawing.utils.PaintingStyleType
+import com.rkbapps.canvas.ui.screens.drawing.utils.ShapeType
 
 sealed interface DrawingAction {
     data object OnNewPathStart : DrawingAction

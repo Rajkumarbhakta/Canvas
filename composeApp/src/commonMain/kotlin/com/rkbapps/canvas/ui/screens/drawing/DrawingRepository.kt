@@ -11,8 +11,8 @@ import com.rkbapps.canvas.model.DrawingState
 import com.rkbapps.canvas.model.PathData
 import com.rkbapps.canvas.model.SavedDesign
 import com.rkbapps.canvas.navigation.Draw
-import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyleType
-import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeType
+import com.rkbapps.canvas.ui.screens.drawing.utils.PaintingStyleType
+import com.rkbapps.canvas.ui.screens.drawing.utils.ShapeType
 import com.rkbapps.canvas.util.ImageSharer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
