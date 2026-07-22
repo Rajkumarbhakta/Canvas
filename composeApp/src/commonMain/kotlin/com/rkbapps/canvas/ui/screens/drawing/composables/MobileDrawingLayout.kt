@@ -303,6 +303,5 @@ fun MobileDrawingLayout(
                 }
             }
         }
-
     }
 }

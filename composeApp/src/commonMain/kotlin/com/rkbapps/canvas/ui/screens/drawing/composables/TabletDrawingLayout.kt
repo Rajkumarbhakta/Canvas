@@ -15,6 +15,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Redo
 import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Download
@@ -27,6 +28,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -87,230 +89,333 @@ fun TabletDrawingLayout(
         )
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        // ── Top App Bar ──────────────────────────────────────────────────────
-        AnimatedVisibility(visible = !uiState.isFullScreen) {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = currentDesign.name.ifEmpty { stringResource(Res.string.untitled_drawing) },
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = navigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(Res.string.back))
-                    }
-                },
-                actions = {
-                    // Inline action buttons for tablet
-                    IconButton(onClick = { onAction(DrawingAction.OnUndo) }) {
-                        Icon(Icons.AutoMirrored.Filled.Undo, "Undo")
-                    }
-                    IconButton(onClick = { onAction(DrawingAction.SaveDesign(state, currentDesign.name)) }) {
-                        Icon(Icons.Default.Save, stringResource(Res.string.save_project))
-                    }
-                    IconButton(onClick = { onAction(DrawingAction.OnSaveAsImage) }) {
-                        Icon(Icons.Default.Download, stringResource(Res.string.save_as_image))
-                    }
-                    IconButton(onClick = { onAction(DrawingAction.OnShareDrawing) }) {
-                        Icon(Icons.Default.Share, stringResource(Res.string.share))
-                    }
-                    MinimalDropdownMenu {
-                        DropdownMenuItem(
-                            leadingIcon = { Icon(Icons.Default.Edit, null) },
-                            text = { Text(stringResource(Res.string.edit_name)) },
-                            onClick = { onAction(DrawingAction.OnOpenNameEditDialog) }
-                        )
-                        DropdownMenuItem(
-                            leadingIcon = { Icon(Icons.Default.Cancel, null) },
-                            text = { Text(stringResource(Res.string.clear), color = MaterialTheme.colorScheme.error) },
-                            onClick = { showClearConfirm = true }
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                )
-            )
-        }
-
-        Row(modifier = Modifier.fillMaxSize().weight(1f)) {
-            // ── Left Tool Rail ───────────────────────────────────────────────
+    Scaffold(
+        topBar = {
+            // ── Top App Bar ──────────────────────────────────────────────────────
             AnimatedVisibility(visible = !uiState.isFullScreen) {
-                Surface(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(72.dp),
-                    color = MaterialTheme.colorScheme.surfaceContainerLow,
-                    tonalElevation = 2.dp
-                ) {
-                    Column(
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = currentDesign.name.ifEmpty { stringResource(Res.string.untitled_drawing) },
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = navigateBack) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowBack,
+                                stringResource(Res.string.back)
+                            )
+                        }
+                    },
+                    actions = {
+                        // Inline action buttons for tablet
+                        IconButton(onClick = { onAction(DrawingAction.OnUndo) }) {
+                            Icon(Icons.AutoMirrored.Filled.Undo, "Undo")
+                        }
+                        IconButton(onClick = {
+                            onAction(
+                                DrawingAction.SaveDesign(
+                                    state,
+                                    currentDesign.name
+                                )
+                            )
+                        }) {
+                            Icon(Icons.Default.Save, stringResource(Res.string.save_project))
+                        }
+                        IconButton(onClick = { onAction(DrawingAction.OnSaveAsImage) }) {
+                            Icon(Icons.Default.Download, stringResource(Res.string.save_as_image))
+                        }
+                        IconButton(onClick = { onAction(DrawingAction.OnShareDrawing) }) {
+                            Icon(Icons.Default.Share, stringResource(Res.string.share))
+                        }
+                        MinimalDropdownMenu {
+                            DropdownMenuItem(
+                                leadingIcon = { Icon(Icons.Default.Edit, null) },
+                                text = { Text(stringResource(Res.string.edit_name)) },
+                                onClick = { onAction(DrawingAction.OnOpenNameEditDialog) }
+                            )
+                            DropdownMenuItem(
+                                leadingIcon = { Icon(Icons.Default.Cancel, null) },
+                                text = {
+                                    Text(
+                                        stringResource(Res.string.clear),
+                                        color = MaterialTheme.colorScheme.error
+                                    )
+                                },
+                                onClick = { showClearConfirm = true }
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                    )
+                )
+            }
+        }
+    ) {
+        Column(modifier = Modifier.fillMaxSize().padding(it)) {
+
+            Row(modifier = Modifier.fillMaxSize().weight(1f)) {
+                // ── Left Tool Rail ───────────────────────────────────────────────
+                AnimatedVisibility(visible = !uiState.isFullScreen) {
+                    Surface(
                         modifier = Modifier
                             .fillMaxHeight()
-                            .padding(vertical = 16.dp, horizontal = 12.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                            .width(72.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerLow,
+                        tonalElevation = 2.dp
                     ) {
-                        UndoRedoItem(
-                            onUndo = { onAction(DrawingAction.OnUndo) },
-                            onRedo = { onAction(DrawingAction.OnRedo) }
-                        )
-
-                        HorizontalDivider(
-                            modifier = Modifier.padding(vertical = 4.dp),
-                            color = MaterialTheme.colorScheme.outlineVariant
-                        )
-
-                        // Brush tool (pencil mode is "drawing")
-                        ToolButton(
-                            isActive = !uiState.isEraserSelected && state.selectedShapeType == ShapeType.NONE,
-                            label = "Brush",
-                            showLabel = false,
-                            onClick = {
-                                onAction(DrawingAction.OnEraserUnselected)
-                                onAction(DrawingAction.OnToggleEraser(false))
-                                onAction(DrawingAction.OnShapeTypeChange(ShapeType.NONE))
-                            }
+                        Column(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .verticalScroll(rememberScrollState())
+                                .padding(vertical = 16.dp, horizontal = 12.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Icon(
-                                painter = painterResource(
-                                    Res.drawable.outline_stylus_brush
-                                ),
-                                contentDescription = "Brush",
-                                modifier = Modifier.size(22.dp)
+                            UndoRedoItem(
+                                onUndo = { onAction(DrawingAction.OnUndo) },
+                                onRedo = { onAction(DrawingAction.OnRedo) }
                             )
-                        }
 
-                        EraserItem(
-                            isEraserSelected = uiState.isEraserSelected,
-                            showLabel = false,
-                            onClick = {
-                                if (uiState.isEraserSelected) {
+                            HorizontalDivider(
+                                modifier = Modifier.padding(vertical = 4.dp),
+                                color = MaterialTheme.colorScheme.outlineVariant
+                            )
+
+                            // Brush tool (pencil mode is "drawing")
+                            ToolButton(
+                                isActive = !uiState.isEraserSelected && state.selectedShapeType == ShapeType.NONE,
+                                label = "Brush",
+                                showLabel = false,
+                                onClick = {
                                     onAction(DrawingAction.OnEraserUnselected)
                                     onAction(DrawingAction.OnToggleEraser(false))
-                                } else {
-                                    onAction(DrawingAction.OnEraserSelected)
-                                    onAction(DrawingAction.OnToggleEraser(true))
+                                    onAction(DrawingAction.OnShapeTypeChange(ShapeType.NONE))
                                 }
+                            ) {
+                                Icon(
+                                    painter = painterResource(
+                                        Res.drawable.outline_stylus_brush
+                                    ),
+                                    contentDescription = "Brush",
+                                    modifier = Modifier.size(22.dp)
+                                )
                             }
-                        )
 
-                        ToolButton(
-                            isActive = state.selectedShapeType != ShapeType.NONE,
-                            label = "Shapes",
-                            showLabel = false,
-                            onClick = { /* Toggle shape panel — handled via right panel */ }
-                        ) {
-                            Icon(
-                                painter = painterResource(
-                                    Res.drawable.shapes
-                                ),
-                                contentDescription = "Shapes",
-                                modifier = Modifier.size(22.dp)
+                            EraserItem(
+                                isEraserSelected = uiState.isEraserSelected,
+                                showLabel = false,
+                                onClick = {
+                                    if (uiState.isEraserSelected) {
+                                        onAction(DrawingAction.OnEraserUnselected)
+                                        onAction(DrawingAction.OnToggleEraser(false))
+                                    } else {
+                                        onAction(DrawingAction.OnEraserSelected)
+                                        onAction(DrawingAction.OnToggleEraser(true))
+                                    }
+                                }
                             )
-                        }
 
-                        Spacer(Modifier.weight(1f))
-
-                        // Full screen toggle
-                        ToolButton(
-                            isActive = uiState.isFullScreen,
-                            onClick = {
-                                if (uiState.isFullScreen) onAction(DrawingAction.OnExitFullScreen)
-                                else onAction(DrawingAction.OnEnterFullScreen)
+                            ToolButton(
+                                isActive = state.selectedShapeType != ShapeType.NONE,
+                                label = "Shapes",
+                                showLabel = false,
+                                onClick = { /* Toggle shape panel — handled via right panel */ }
+                            ) {
+                                Icon(
+                                    painter = painterResource(
+                                        Res.drawable.shapes
+                                    ),
+                                    contentDescription = "Shapes",
+                                    modifier = Modifier.size(22.dp)
+                                )
                             }
-                        ) {
-                            Text(
-                                text = if (uiState.isFullScreen) "◻" else "⛶",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = if (uiState.isFullScreen) MaterialTheme.colorScheme.onPrimaryContainer
-                                else MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+
+                            Spacer(Modifier.weight(1f))
+
+                            // Full screen toggle
+                            ToolButton(
+                                isActive = uiState.isFullScreen,
+                                onClick = {
+                                    if (uiState.isFullScreen) onAction(DrawingAction.OnExitFullScreen)
+                                    else onAction(DrawingAction.OnEnterFullScreen)
+                                }
+                            ) {
+                                Text(
+                                    text = if (uiState.isFullScreen) "◻" else "⛶",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = if (uiState.isFullScreen) MaterialTheme.colorScheme.onPrimaryContainer
+                                    else MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-            // ── Canvas ───────────────────────────────────────────────────────
-            Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
-                DrawingCanvas(
-                    paths = state.paths,
-                    currentPath = state.currentPath,
-                    onAction = onAction,
-                    modifier = Modifier.fillMaxSize(),
-                    backgroundColor = state.backgroundColor
-                )
-            }
+                // ── Canvas ───────────────────────────────────────────────────────
+                Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
+                    DrawingCanvas(
+                        paths = state.paths,
+                        currentPath = state.currentPath,
+                        onAction = onAction,
+                        modifier = Modifier.fillMaxSize(),
+                        backgroundColor = state.backgroundColor
+                    )
 
-            // ── Right Properties Panel ───────────────────────────────────────
-            AnimatedVisibility(visible = !uiState.isFullScreen) {
-                Surface(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(240.dp),
-                    color = MaterialTheme.colorScheme.surfaceContainerLow,
-                    tonalElevation = 2.dp
-                ) {
                     Column(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .verticalScroll(rememberScrollState())
-                            .padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(20.dp)
+                        modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 20.dp)
                     ) {
-                        // Section: Brush Style
-                        PropertySection(title = "Brush Style") {
-                            BrushStyleInlineSelector(
-                                selected = state.selectedPathEffect,
-                                onSelected = { onAction(DrawingAction.OnPathEffectChange(it)) }
-                            )
-                        }
-
-                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-
-                        // Section: Shapes
-                        PropertySection(title = "Shapes") {
-                            ShapeInlineGrid(
-                                selectedShape = state.selectedShapeType,
-                                onShapeSelected = {
-                                    onAction(DrawingAction.OnEraserUnselected)
-                                    onAction(DrawingAction.OnToggleEraser(false))
-                                    onAction(DrawingAction.OnShapeTypeChange(it))
+                        AnimatedVisibility(visible = uiState.isFullScreen) {
+                            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                ToolButton(
+                                    isActive = uiState.isFullScreen,
+                                    label = if (uiState.isFullScreen) "Exit" else "Focus",
+                                    showLabel = true,
+                                    onClick = {
+                                        if (uiState.isFullScreen) onAction(DrawingAction.OnExitFullScreen)
+                                        else onAction(DrawingAction.OnEnterFullScreen)
+                                    }
+                                ) {
+                                    Text(
+                                        text = if (uiState.isFullScreen) "◻" else "⛶",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = if (uiState.isFullScreen) MaterialTheme.colorScheme.onPrimaryContainer
+                                        else MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
                                 }
-                            )
-                        }
-
-                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-
-                        // Section: Stroke Color
-                        PropertySection(title = "Stroke Color") {
-                            ColorSwatchPanel(
-                                selectedColor = state.selectedColor,
-                                onColorSelected = {
-                                    onAction(DrawingAction.OnEraserUnselected)
-                                    onAction(DrawingAction.OnToggleEraser(false))
-                                    onAction(DrawingAction.OnSelectColor(it))
+                                ToolButton(
+                                    isActive = false,
+                                    label = "Undo",
+                                    showLabel = true,
+                                    onClick = { onAction(DrawingAction.OnUndo) }
+                                ) {
+                                    Icon(
+                                        Icons.AutoMirrored.Filled.Undo,
+                                        "Undo",
+                                        Modifier.size(20.dp)
+                                    )
                                 }
-                            )
-                        }
+                                ToolButton(
+                                    isActive = false,
+                                    label = "Redo",
+                                    showLabel = true,
+                                    onClick = { onAction(DrawingAction.OnRedo) }
+                                ) {
+                                    Icon(
+                                        Icons.AutoMirrored.Filled.Redo,
+                                        "Redo",
+                                        Modifier.size(20.dp)
+                                    )
+                                }
 
-                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                                // Brush tool
+                                ToolButton(
+                                    isActive = !uiState.isEraserSelected && state.selectedShapeType == ShapeType.NONE,
+                                    label = "Brush",
+                                    showLabel = true,
+                                    onClick = {
+                                        onAction(DrawingAction.OnEraserUnselected)
+                                        onAction(DrawingAction.OnToggleEraser(false))
+                                        onAction(DrawingAction.OnShapeTypeChange(ShapeType.NONE))
+                                    }
+                                ) {
+                                    Icon(
+                                        painter = painterResource(Res.drawable.outline_stylus_brush),
+                                        contentDescription = "Brush",
+                                        modifier = Modifier.size(22.dp)
+                                    )
+                                }
 
-                        // Section: Background Color
-                        PropertySection(title = "Canvas Background") {
-                            BackgroundColorChangeItem { color ->
-                                onAction(DrawingAction.OnBackgroundColorChange(color))
+                                // Eraser
+                                EraserItem(
+                                    isEraserSelected = uiState.isEraserSelected,
+                                    showLabel = true,
+                                    onClick = {
+                                        if (uiState.isEraserSelected) {
+                                            onAction(DrawingAction.OnEraserUnselected)
+                                            onAction(DrawingAction.OnToggleEraser(false))
+                                        } else {
+                                            onAction(DrawingAction.OnEraserSelected)
+                                            onAction(DrawingAction.OnToggleEraser(true))
+                                        }
+                                    }
+                                )
                             }
                         }
+                    }
+                }
 
-                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                // ── Right Properties Panel ───────────────────────────────────────
+                AnimatedVisibility(visible = !uiState.isFullScreen) {
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .width(240.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerLow,
+                        tonalElevation = 2.dp
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .verticalScroll(rememberScrollState())
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(20.dp)
+                        ) {
+                            // Section: Brush Style
+                            PropertySection(title = "Brush Style") {
+                                BrushStyleInlineSelector(
+                                    selected = state.selectedPathEffect,
+                                    onSelected = { onAction(DrawingAction.OnPathEffectChange(it)) }
+                                )
+                            }
 
-                        // Section: Thickness
-                        PropertySection(title = "Stroke Width") {
-                            ThicknessManagement(value = state.selectedThickness) {
-                                onAction(DrawingAction.OnThicknessChange(it))
+                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+
+                            // Section: Shapes
+                            PropertySection(title = "Shapes") {
+                                ShapeInlineGrid(
+                                    selectedShape = state.selectedShapeType,
+                                    onShapeSelected = {
+                                        onAction(DrawingAction.OnEraserUnselected)
+                                        onAction(DrawingAction.OnToggleEraser(false))
+                                        onAction(DrawingAction.OnShapeTypeChange(it))
+                                    }
+                                )
+                            }
+
+                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+
+                            // Section: Stroke Color
+                            PropertySection(title = "Stroke Color") {
+                                ColorSwatchPanel(
+                                    selectedColor = state.selectedColor,
+                                    onColorSelected = {
+                                        onAction(DrawingAction.OnEraserUnselected)
+                                        onAction(DrawingAction.OnToggleEraser(false))
+                                        onAction(DrawingAction.OnSelectColor(it))
+                                    }
+                                )
+                            }
+
+                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+
+                            // Section: Background Color
+                            PropertySection(title = "Canvas Background") {
+                                BackgroundColorChangeItem { color ->
+                                    onAction(DrawingAction.OnBackgroundColorChange(color))
+                                }
+                            }
+
+                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+
+                            // Section: Thickness
+                            PropertySection(title = "Stroke Width") {
+                                ThicknessManagement(value = state.selectedThickness) {
+                                    onAction(DrawingAction.OnThicknessChange(it))
+                                }
                             }
                         }
                     }
