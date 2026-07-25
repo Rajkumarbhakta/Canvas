@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -214,12 +215,29 @@ fun DesktopDrawingLayout(
                                 color = MaterialTheme.colorScheme.outlineVariant
                             )
 
+                            // Selection tool
+                            ToolButton(
+                                isActive = state.isSelectionMode,
+                                label = "Select",
+                                showLabel = true,
+                                onClick = {
+                                    onAction(DrawingAction.OnToggleSelectionMode(!state.isSelectionMode))
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.TouchApp,
+                                    contentDescription = "Select",
+                                    modifier = Modifier.size(22.dp)
+                                )
+                            }
+
                             // Brush tool
                             ToolButton(
-                                isActive = !uiState.isEraserSelected && state.selectedShapeType == ShapeType.NONE,
+                                isActive = !state.isSelectionMode && !uiState.isEraserSelected && state.selectedShapeType == ShapeType.NONE,
                                 label = "Brush",
                                 showLabel = true,
                                 onClick = {
+                                    onAction(DrawingAction.OnToggleSelectionMode(false))
                                     onAction(DrawingAction.OnEraserUnselected)
                                     onAction(DrawingAction.OnToggleEraser(false))
                                     onAction(DrawingAction.OnShapeTypeChange(ShapeType.NONE))
@@ -237,6 +255,7 @@ fun DesktopDrawingLayout(
                                 isEraserSelected = uiState.isEraserSelected,
                                 showLabel = true,
                                 onClick = {
+                                    onAction(DrawingAction.OnToggleSelectionMode(false))
                                     if (uiState.isEraserSelected) {
                                         onAction(DrawingAction.OnEraserUnselected)
                                         onAction(DrawingAction.OnToggleEraser(false))
@@ -287,6 +306,9 @@ fun DesktopDrawingLayout(
                         paths = state.paths,
                         currentPath = state.currentPath,
                         onAction = onAction,
+                        isSelectionMode = state.isSelectionMode,
+                        selectedPathId = state.selectedPathId,
+                        dragOffset = state.dragOffset,
                         modifier = Modifier.fillMaxSize(),
                         backgroundColor = state.backgroundColor
                     )
@@ -337,12 +359,29 @@ fun DesktopDrawingLayout(
                                     )
                                 }
 
+                                // Selection tool
+                                ToolButton(
+                                    isActive = state.isSelectionMode,
+                                    label = "Select",
+                                    showLabel = true,
+                                    onClick = {
+                                        onAction(DrawingAction.OnToggleSelectionMode(!state.isSelectionMode))
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.TouchApp,
+                                        contentDescription = "Select",
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+
                                 // Brush tool
                                 ToolButton(
-                                    isActive = !uiState.isEraserSelected && state.selectedShapeType == ShapeType.NONE,
+                                    isActive = !state.isSelectionMode && !uiState.isEraserSelected && state.selectedShapeType == ShapeType.NONE,
                                     label = "Brush",
                                     showLabel = true,
                                     onClick = {
+                                        onAction(DrawingAction.OnToggleSelectionMode(false))
                                         onAction(DrawingAction.OnEraserUnselected)
                                         onAction(DrawingAction.OnToggleEraser(false))
                                         onAction(DrawingAction.OnShapeTypeChange(ShapeType.NONE))
@@ -360,6 +399,7 @@ fun DesktopDrawingLayout(
                                     isEraserSelected = uiState.isEraserSelected,
                                     showLabel = true,
                                     onClick = {
+                                        onAction(DrawingAction.OnToggleSelectionMode(false))
                                         if (uiState.isEraserSelected) {
                                             onAction(DrawingAction.OnEraserUnselected)
                                             onAction(DrawingAction.OnToggleEraser(false))

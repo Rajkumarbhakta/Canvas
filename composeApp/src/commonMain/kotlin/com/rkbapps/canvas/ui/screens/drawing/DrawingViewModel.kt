@@ -42,6 +42,10 @@ class DrawingViewModel(
             DrawingAction.OnOpenNameEditDialog -> repository.showHideNameEditorDialog(true)
             DrawingAction.OnShareDrawing -> repository.onShareDrawing()
             DrawingAction.OnSaveAsImage -> repository.onSaveAsImage()
+            is DrawingAction.OnToggleSelectionMode -> repository.onToggleSelectionMode(action.isSelection)
+            is DrawingAction.OnSelectPath -> repository.onSelectPath(action.pathId)
+            is DrawingAction.OnDragSelectedPath -> repository.onDragSelectedPath(action.dragAmount)
+            DrawingAction.OnDeleteSelectedPath -> repository.onDeleteSelectedPath()
         }
     }
 }

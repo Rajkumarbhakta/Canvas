@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.material.icons.filled.TouchApp
 import canvas.composeapp.generated.resources.Res
 import canvas.composeapp.generated.resources.back
 import canvas.composeapp.generated.resources.clear
@@ -152,6 +154,9 @@ fun MobileDrawingLayout(
                 paths = state.paths,
                 currentPath = state.currentPath,
                 onAction = onAction,
+                isSelectionMode = state.isSelectionMode,
+                selectedPathId = state.selectedPathId,
+                dragOffset = state.dragOffset,
                 modifier = Modifier.fillMaxSize(),
                 backgroundColor = state.backgroundColor
             )
@@ -209,12 +214,30 @@ fun MobileDrawingLayout(
                                 )
                             }
                             item {
+                                ToolButton(
+                                    isActive = state.isSelectionMode,
+                                    label = "Select",
+                                    showLabel = false,
+                                    onClick = {
+                                        onAction(DrawingAction.OnToggleSelectionMode(!state.isSelectionMode))
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.TouchApp,
+                                        contentDescription = "Select",
+                                        modifier = Modifier.size(22.dp)
+                                    )
+                                }
+                            }
+                            item {
                                 PaintingStyle(selected = state.selectedPathEffect) { effect ->
+                                    onAction(DrawingAction.OnToggleSelectionMode(false))
                                     onAction(DrawingAction.OnPathEffectChange(effect))
                                 }
                             }
                             item {
                                 EraserItem(isEraserSelected = uiState.isEraserSelected) {
+                                    onAction(DrawingAction.OnToggleSelectionMode(false))
                                     if (uiState.isEraserSelected) {
                                         onAction(DrawingAction.OnEraserUnselected)
                                         onAction(DrawingAction.OnToggleEraser(false))
@@ -226,6 +249,7 @@ fun MobileDrawingLayout(
                             }
                             item {
                                 ShapeSelector(selectedShape = state.selectedShapeType) { shapeType ->
+                                    onAction(DrawingAction.OnToggleSelectionMode(false))
                                     onAction(DrawingAction.OnEraserUnselected)
                                     onAction(DrawingAction.OnToggleEraser(false))
                                     onAction(DrawingAction.OnShapeTypeChange(shapeType))

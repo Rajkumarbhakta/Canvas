@@ -3,10 +3,12 @@ package com.rkbapps.canvas.ui.composables
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -24,7 +26,9 @@ import com.rkbapps.canvas.model.PathData
 import com.rkbapps.canvas.ui.screens.drawing.DrawingAction
 import com.rkbapps.canvas.ui.screens.drawing.utils.PaintingStyleType
 import com.rkbapps.canvas.ui.screens.drawing.utils.ShapeType
-import kotlin.math.abs
+import com.rkbapps.canvas.util.Log
+import com.rkbapps.canvas.util.detectTapAndDrag
+import kotlin.math.*
 
 @Composable
 fun DrawingCanvas(
@@ -32,22 +36,56 @@ fun DrawingCanvas(
     currentPath: PathData?,
     backgroundColor:Color,
     onAction: (DrawingAction) -> Unit,
+    isSelectionMode: Boolean = false,
+    selectedPathId: String? = null,
+    dragOffset: Offset = Offset.Zero,
     modifier: Modifier = Modifier
 ){
     Canvas(
         modifier = modifier
             .clipToBounds()
             .background(backgroundColor)
-            .pointerInput(true) {
-                detectDragGestures (
-                    onDragStart = {
-                        onAction(DrawingAction.OnNewPathStart)
+            .pointerInput(isSelectionMode, paths, selectedPathId) {
+                detectTapAndDrag(
+                    onTap = { offset->
+                        if (isSelectionMode){
+                            // Check if hit delete button of the currently selected path
+                            val selectedPath = paths.firstOrNull { it.id == selectedPathId }
+                            if (selectedPath != null) {
+                                val box = selectedPath.getBoundingBox()
+                                if (box != null) {
+                                    val deleteButtonCenter = Offset(box.right, box.top)
+                                    if ((offset - deleteButtonCenter).getDistance() <= 35f) {
+                                        onAction(DrawingAction.OnDeleteSelectedPath)
+                                        return@detectTapAndDrag
+                                    }
+                                }
+                            }
+
+                            // Otherwise check if hit any path
+                            val hitPath = paths.lastOrNull { it.isHit(offset) }
+                            if (hitPath != null) {
+                                onAction(DrawingAction.OnSelectPath(hitPath.id))
+                            } else {
+                                onAction(DrawingAction.OnSelectPath(null))
+                            }
+                        }
+                    },
+                    onDragStart = { startOffset ->
+                        if (!isSelectionMode)
+                            onAction(DrawingAction.OnNewPathStart)
+                    },
+                    onDrag = { change, dragAmount  ->
+                        if (isSelectionMode) {
+                            if (selectedPathId != null) {
+                                onAction(DrawingAction.OnDragSelectedPath(dragAmount))
+                            }
+                        } else {
+                            onAction(DrawingAction.OnDraw(change.position))
+                        }
                     },
                     onDragEnd = {
                         onAction(DrawingAction.OnPathEnd)
-                    },
-                    onDrag = { change, dragAmount ->
-                        onAction(DrawingAction.OnDraw(change.position))
                     },
                     onDragCancel = {
                         onAction(DrawingAction.OnPathEnd)
@@ -56,16 +94,33 @@ fun DrawingCanvas(
             }
     ){
         paths.fastForEach {
-            drawPath(
-                it.path,
-                it.color,
-                it.thickness,
-                it.pathEffect,
-                isEraser = it.isEraser,
-                backgroundColor,
-                it.shapeType,
-                it.shapePoints
-            )
+            val isSelected = isSelectionMode && it.id == selectedPathId
+            if (isSelected && dragOffset != Offset.Zero) {
+                drawContext.canvas.save()
+                drawContext.canvas.translate(dragOffset.x, dragOffset.y)
+                drawPath(
+                    it.path,
+                    it.color,
+                    it.thickness,
+                    it.pathEffect,
+                    isEraser = it.isEraser,
+                    backgroundColor,
+                    it.shapeType,
+                    it.shapePoints
+                )
+                drawContext.canvas.restore()
+            } else {
+                drawPath(
+                    it.path,
+                    it.color,
+                    it.thickness,
+                    it.pathEffect,
+                    isEraser = it.isEraser,
+                    backgroundColor,
+                    it.shapeType,
+                    it.shapePoints
+                )
+            }
         }
         currentPath?.let {
             drawPath(
@@ -79,8 +134,234 @@ fun DrawingCanvas(
                 it.shapePoints
             )
         }
+
+        // Draw selection decorations on top of all paths
+        if (isSelectionMode && selectedPathId != null) {
+            val selectedPath = paths.firstOrNull { it.id == selectedPathId }
+            if (selectedPath != null) {
+                var box = selectedPath.getBoundingBox()
+                if (box != null) {
+                    if (dragOffset != Offset.Zero) {
+                        box = box.translate(dragOffset)
+                    }
+                    // Draw bounding box dashed border
+                    drawRect(
+                        color = Color(0xFF2196F3),
+                        topLeft = box.topLeft,
+                        size = box.size,
+                        style = Stroke(
+                            width = 2f,
+                            pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
+                        )
+                    )
+                    
+                    // Draw delete button at top-right
+                    val deleteButtonCenter = Offset(box.right, box.top)
+                    drawCircle(
+                        color = Color.Red,
+                        radius = 14f,
+                        center = deleteButtonCenter
+                    )
+                    val crossSize = 6f
+                    drawLine(
+                        color = Color.White,
+                        start = deleteButtonCenter - Offset(crossSize, crossSize),
+                        end = deleteButtonCenter + Offset(crossSize, crossSize),
+                        strokeWidth = 3f
+                    )
+                    drawLine(
+                        color = Color.White,
+                        start = deleteButtonCenter - Offset(crossSize, -crossSize),
+                        end = deleteButtonCenter + Offset(crossSize, -crossSize),
+                        strokeWidth = 3f
+                    )
+                }
+            }
+        }
     }
 
+}
+
+fun PathData.getBoundingBox(): Rect? {
+    if (shapeType == ShapeType.NONE) {
+        if (path.isEmpty()) return null
+        var minX = Float.MAX_VALUE
+        var maxX = Float.MIN_VALUE
+        var minY = Float.MAX_VALUE
+        var maxY = Float.MIN_VALUE
+        path.forEach {
+            if (it.x < minX) minX = it.x
+            if (it.x > maxX) maxX = it.x
+            if (it.y < minY) minY = it.y
+            if (it.y > maxY) maxY = it.y
+        }
+        val halfThickness = maxOf(thickness, 10f) / 2f
+        return Rect(
+            minX - halfThickness,
+            minY - halfThickness,
+            maxX + halfThickness,
+            maxY + halfThickness
+        )
+    } else {
+        if (shapePoints.size < 2) return null
+        val start = shapePoints[0]
+        val end = shapePoints[1]
+        val halfThickness = maxOf(thickness, 10f) / 2f
+        
+        return when (shapeType) {
+            ShapeType.LINE -> {
+                Rect(
+                    minOf(start.x, end.x) - halfThickness,
+                    minOf(start.y, end.y) - halfThickness,
+                    maxOf(start.x, end.x) + halfThickness,
+                    maxOf(start.y, end.y) + halfThickness
+                )
+            }
+            ShapeType.RECTANGLE, ShapeType.SQUARE -> {
+                val minX = minOf(start.x, end.x)
+                val maxX = maxOf(start.x, end.x)
+                val minY = minOf(start.y, end.y)
+                val maxY = maxOf(start.y, end.y)
+                if (shapeType == ShapeType.SQUARE) {
+                    val size = maxOf(abs(end.x - start.x), abs(end.y - start.y))
+                    val endX = if (end.x >= start.x) start.x + size else start.x - size
+                    val endY = if (end.y >= start.y) start.y + size else start.y - size
+                    Rect(
+                        minOf(start.x, endX) - halfThickness,
+                        minOf(start.y, endY) - halfThickness,
+                        maxOf(start.x, endX) + halfThickness,
+                        maxOf(start.y, endY) + halfThickness
+                    )
+                } else {
+                    Rect(
+                        minX - halfThickness,
+                        minY - halfThickness,
+                        maxX + halfThickness,
+                        maxY + halfThickness
+                    )
+                }
+            }
+            ShapeType.CIRCLE -> {
+                val radius = sqrt(
+                    (end.x - start.x) * (end.x - start.x) + 
+                    (end.y - start.y) * (end.y - start.y)
+                )
+                Rect(
+                    start.x - radius - halfThickness,
+                    start.y - radius - halfThickness,
+                    start.x + radius + halfThickness,
+                    start.y + radius + halfThickness
+                )
+            }
+            ShapeType.OVAL -> {
+                val width = abs(end.x - start.x) * 2
+                val height = abs(end.y - start.y) * 2
+                Rect(
+                    start.x - width/2 - halfThickness,
+                    start.y - height/2 - halfThickness,
+                    start.x + width/2 + halfThickness,
+                    start.y + height/2 + halfThickness
+                )
+            }
+            ShapeType.TRIANGLE -> {
+                Rect(
+                    minOf(start.x, end.x) - halfThickness,
+                    minOf(start.y, end.y) - halfThickness,
+                    maxOf(start.x, end.x) + halfThickness,
+                    maxOf(start.y, end.y) + halfThickness
+                )
+            }
+            ShapeType.ARROW_RIGHT, ShapeType.ARROW_LEFT, ShapeType.ARROW_UP, ShapeType.ARROW_DOWN -> {
+                val minX = minOf(start.x, end.x)
+                val maxX = maxOf(start.x, end.x)
+                val minY = minOf(start.y, end.y)
+                val maxY = maxOf(start.y, end.y)
+                Rect(
+                    minX - halfThickness - 20f,
+                    minY - halfThickness - 20f,
+                    maxX + halfThickness + 20f,
+                    maxY + halfThickness + 20f
+                )
+            }
+            ShapeType.STAR, ShapeType.PENTAGON, ShapeType.HEXAGON -> {
+                val radius = sqrt(
+                    (end.x - start.x) * (end.x - start.x) + 
+                    (end.y - start.y) * (end.y - start.y)
+                )
+                Rect(
+                    start.x - radius - halfThickness,
+                    start.y - radius - halfThickness,
+                    start.x + radius + halfThickness,
+                    start.y + radius + halfThickness
+                )
+            }
+        }
+    }
+}
+
+fun distanceToSegment(p: Offset, a: Offset, b: Offset): Float {
+    val ab = b - a
+    val ap = p - a
+    val abLenSq = ab.x * ab.x + ab.y * ab.y
+    if (abLenSq == 0f) return (p - a).getDistance()
+    
+    var t = (ap.x * ab.x + ap.y * ab.y) / abLenSq
+    t = maxOf(0f, minOf(1f, t))
+    val projection = a + ab * t
+    return (p - projection).getDistance()
+}
+
+fun distanceToPath(p: Offset, path: List<Offset>): Float {
+    if (path.isEmpty()) return Float.MAX_VALUE
+    if (path.size == 1) return (p - path[0]).getDistance()
+    var minDistance = Float.MAX_VALUE
+    for (i in 0 until path.size - 1) {
+        val d = distanceToSegment(p, path[i], path[i+1])
+        if (d < minDistance) {
+            minDistance = d
+        }
+    }
+    return minDistance
+}
+
+fun PathData.isHit(offset: Offset): Boolean {
+    val threshold = maxOf(thickness, 10f) / 2f + 30f // 30f is hit padding for easy selection
+    
+    if (shapeType == ShapeType.NONE) {
+        if (path.isEmpty()) return false
+        return distanceToPath(offset, path) <= threshold
+    } else {
+        if (shapePoints.size < 2) return false
+        val start = shapePoints[0]
+        val end = shapePoints[1]
+        
+        return when (shapeType) {
+            ShapeType.LINE -> {
+                distanceToSegment(offset, start, end) <= threshold
+            }
+            ShapeType.RECTANGLE, ShapeType.SQUARE, ShapeType.TRIANGLE -> {
+                val box = getBoundingBox() ?: return false
+                box.contains(offset)
+            }
+            ShapeType.CIRCLE -> {
+                val radius = sqrt(
+                    (end.x - start.x) * (end.x - start.x) + 
+                    (end.y - start.y) * (end.y - start.y)
+                )
+                val distToCenter = (offset - start).getDistance()
+                distToCenter <= radius + threshold
+            }
+            ShapeType.OVAL -> {
+                val box = getBoundingBox() ?: return false
+                box.contains(offset)
+            }
+            ShapeType.STAR, ShapeType.PENTAGON, ShapeType.HEXAGON -> {
+                val box = getBoundingBox() ?: return false
+                box.contains(offset)
+            }
+            else -> false
+        }
+    }
 }
 
 fun DrawScope.drawPath(

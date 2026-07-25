@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -185,12 +186,29 @@ fun TabletDrawingLayout(
                                 color = MaterialTheme.colorScheme.outlineVariant
                             )
 
+                            // Selection tool
+                            ToolButton(
+                                isActive = state.isSelectionMode,
+                                label = "Select",
+                                showLabel = false,
+                                onClick = {
+                                    onAction(DrawingAction.OnToggleSelectionMode(!state.isSelectionMode))
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.TouchApp,
+                                    contentDescription = "Select",
+                                    modifier = Modifier.size(22.dp)
+                                )
+                            }
+
                             // Brush tool (pencil mode is "drawing")
                             ToolButton(
-                                isActive = !uiState.isEraserSelected && state.selectedShapeType == ShapeType.NONE,
+                                isActive = !state.isSelectionMode && !uiState.isEraserSelected && state.selectedShapeType == ShapeType.NONE,
                                 label = "Brush",
                                 showLabel = false,
                                 onClick = {
+                                    onAction(DrawingAction.OnToggleSelectionMode(false))
                                     onAction(DrawingAction.OnEraserUnselected)
                                     onAction(DrawingAction.OnToggleEraser(false))
                                     onAction(DrawingAction.OnShapeTypeChange(ShapeType.NONE))
@@ -209,6 +227,7 @@ fun TabletDrawingLayout(
                                 isEraserSelected = uiState.isEraserSelected,
                                 showLabel = false,
                                 onClick = {
+                                    onAction(DrawingAction.OnToggleSelectionMode(false))
                                     if (uiState.isEraserSelected) {
                                         onAction(DrawingAction.OnEraserUnselected)
                                         onAction(DrawingAction.OnToggleEraser(false))
@@ -261,6 +280,9 @@ fun TabletDrawingLayout(
                         paths = state.paths,
                         currentPath = state.currentPath,
                         onAction = onAction,
+                        isSelectionMode = state.isSelectionMode,
+                        selectedPathId = state.selectedPathId,
+                        dragOffset = state.dragOffset,
                         modifier = Modifier.fillMaxSize(),
                         backgroundColor = state.backgroundColor
                     )
@@ -311,12 +333,29 @@ fun TabletDrawingLayout(
                                     )
                                 }
 
+                                // Selection tool
+                                ToolButton(
+                                    isActive = state.isSelectionMode,
+                                    label = "Select",
+                                    showLabel = true,
+                                    onClick = {
+                                        onAction(DrawingAction.OnToggleSelectionMode(!state.isSelectionMode))
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.TouchApp,
+                                        contentDescription = "Select",
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+
                                 // Brush tool
                                 ToolButton(
-                                    isActive = !uiState.isEraserSelected && state.selectedShapeType == ShapeType.NONE,
+                                    isActive = !state.isSelectionMode && !uiState.isEraserSelected && state.selectedShapeType == ShapeType.NONE,
                                     label = "Brush",
                                     showLabel = true,
                                     onClick = {
+                                        onAction(DrawingAction.OnToggleSelectionMode(false))
                                         onAction(DrawingAction.OnEraserUnselected)
                                         onAction(DrawingAction.OnToggleEraser(false))
                                         onAction(DrawingAction.OnShapeTypeChange(ShapeType.NONE))
@@ -334,6 +373,7 @@ fun TabletDrawingLayout(
                                     isEraserSelected = uiState.isEraserSelected,
                                     showLabel = true,
                                     onClick = {
+                                        onAction(DrawingAction.OnToggleSelectionMode(false))
                                         if (uiState.isEraserSelected) {
                                             onAction(DrawingAction.OnEraserUnselected)
                                             onAction(DrawingAction.OnToggleEraser(false))
@@ -368,7 +408,9 @@ fun TabletDrawingLayout(
                             PropertySection(title = "Brush Style") {
                                 BrushStyleInlineSelector(
                                     selected = state.selectedPathEffect,
-                                    onSelected = { onAction(DrawingAction.OnPathEffectChange(it)) }
+                                    onSelected = { pathEffect->
+                                        onAction(DrawingAction.OnPathEffectChange(pathEffect))
+                                    }
                                 )
                             }
 
@@ -378,10 +420,10 @@ fun TabletDrawingLayout(
                             PropertySection(title = "Shapes") {
                                 ShapeInlineGrid(
                                     selectedShape = state.selectedShapeType,
-                                    onShapeSelected = {
+                                    onShapeSelected = {shapeType->
                                         onAction(DrawingAction.OnEraserUnselected)
                                         onAction(DrawingAction.OnToggleEraser(false))
-                                        onAction(DrawingAction.OnShapeTypeChange(it))
+                                        onAction(DrawingAction.OnShapeTypeChange(shapeType))
                                     }
                                 )
                             }
@@ -392,10 +434,10 @@ fun TabletDrawingLayout(
                             PropertySection(title = "Stroke Color") {
                                 ColorSwatchPanel(
                                     selectedColor = state.selectedColor,
-                                    onColorSelected = {
+                                    onColorSelected = {color->
                                         onAction(DrawingAction.OnEraserUnselected)
                                         onAction(DrawingAction.OnToggleEraser(false))
-                                        onAction(DrawingAction.OnSelectColor(it))
+                                        onAction(DrawingAction.OnSelectColor(color))
                                     }
                                 )
                             }
@@ -413,8 +455,8 @@ fun TabletDrawingLayout(
 
                             // Section: Thickness
                             PropertySection(title = "Stroke Width") {
-                                ThicknessManagement(value = state.selectedThickness) {
-                                    onAction(DrawingAction.OnThicknessChange(it))
+                                ThicknessManagement(value = state.selectedThickness) {thickness ->
+                                    onAction(DrawingAction.OnThicknessChange(thickness))
                                 }
                             }
                         }

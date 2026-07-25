@@ -33,4 +33,8 @@ sealed interface DrawingAction {
     data object OnShareDrawing: DrawingAction
     data object OnSaveAsImage: DrawingAction
 
+    data class OnToggleSelectionMode(val isSelection: Boolean) : DrawingAction
+    data class OnSelectPath(val pathId: String?) : DrawingAction
+    data class OnDragSelectedPath(val dragAmount: Offset) : DrawingAction
+    data object OnDeleteSelectedPath : DrawingAction
 }

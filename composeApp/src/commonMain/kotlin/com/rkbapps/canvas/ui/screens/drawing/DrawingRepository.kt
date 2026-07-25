@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.milliseconds
 
 class DrawingRepository(
     private val drawingDao: DrawingDao,
@@ -44,7 +45,7 @@ class DrawingRepository(
         val draw = saveStateHandle.toRoute<Draw>()
         draw.id?.let {
             CoroutineScope(Dispatchers.IO).launch {
-                delay(200)
+                delay(200.milliseconds)
                 val designWithPaths = drawingDao.getDesignWithPathsByStringId(it)
                 if (designWithPaths!=null){
                     val design = designWithPaths.toDomain()
@@ -99,19 +100,48 @@ class DrawingRepository(
 
     fun onSelectColor(color: Color) {
         _state.update {
-            it.copy(selectedColor = color)
+            it.copy(
+                selectedColor = color,
+                isSelectionMode = false,
+                selectedPathId = null
+            )
         }
     }
 
     fun onPathEnd() {
-        val currentPathData = state.value.currentPath ?: return
-        _state.update {
-            it.copy(
-                currentPath = null,
-                paths = it.paths + currentPathData,
-                undoStack = _state.value.undoStack + listOf(_state.value.paths),
-                redoStack = emptyList()
-            )
+        val currentPathData = state.value.currentPath
+        if (currentPathData != null) {
+            _state.update {
+                it.copy(
+                    currentPath = null,
+                    paths = it.paths + currentPathData,
+                    undoStack = _state.value.undoStack + listOf(_state.value.paths),
+                    redoStack = emptyList()
+                )
+            }
+        } else if (state.value.isSelectionMode) {
+            val selectedId = state.value.selectedPathId
+            val finalOffset = state.value.dragOffset
+            if (selectedId != null && finalOffset != Offset.Zero) {
+                _state.update { currentState ->
+                    val updatedPaths = currentState.paths.map { pathData ->
+                        if (pathData.id == selectedId) {
+                            if (pathData.shapeType == ShapeType.NONE) {
+                                pathData.copy(path = pathData.path.map { it + finalOffset })
+                            } else {
+                                pathData.copy(shapePoints = pathData.shapePoints.map { it + finalOffset })
+                            }
+                        } else {
+                            pathData
+                        }
+                    }
+                    currentState.copy(
+                        paths = updatedPaths,
+                        dragOffset = Offset.Zero
+                    )
+                }
+            }
+            hasPushedUndoForCurrentDrag = false
         }
     }
 
@@ -159,7 +189,9 @@ class DrawingRepository(
     fun onPathEffectChange(pathEffect: PaintingStyleType) {
         _state.update {
             it.copy(
-                selectedPathEffect = pathEffect
+                selectedPathEffect = pathEffect,
+                isSelectionMode = false,
+                selectedPathId = null
             )
         }
     }
@@ -168,7 +200,9 @@ class DrawingRepository(
         _state.update {
             it.copy(
                 selectedShapeType = shapeType,
-                isEraserMode = false
+                isEraserMode = false,
+                isSelectionMode = false,
+                selectedPathId = null
             )
         }
         // Update UI state to unselect eraser when shape is selected
@@ -180,7 +214,65 @@ class DrawingRepository(
     fun onToggleEraser(isEraser: Boolean) {
         _state.update {
             it.copy(
-                isEraserMode = isEraser
+                isEraserMode = isEraser,
+                isSelectionMode = false,
+                selectedPathId = null
+            )
+        }
+    }
+
+    private var hasPushedUndoForCurrentDrag = false
+
+    fun onToggleSelectionMode(isSelection: Boolean) {
+        _state.update {
+            it.copy(
+                isSelectionMode = isSelection,
+                selectedPathId = if (isSelection) it.selectedPathId else null,
+                isEraserMode = if (isSelection) false else it.isEraserMode,
+                selectedShapeType = if (isSelection) ShapeType.NONE else it.selectedShapeType
+            )
+        }
+        if (isSelection) {
+            changeEraserSelection(false)
+        }
+    }
+
+    fun onSelectPath(pathId: String?) {
+        _state.update {
+            it.copy(
+                selectedPathId = pathId,
+                dragOffset = Offset.Zero
+            )
+        }
+        // When drag gesture starts, reset the undo flag
+        hasPushedUndoForCurrentDrag = false
+    }
+
+    fun onDragSelectedPath(dragAmount: Offset) {
+        val selectedId = _state.value.selectedPathId ?: return
+        // Push current paths to undo stack on the first movement of this drag session
+        if (!hasPushedUndoForCurrentDrag) {
+            _state.update {
+                it.copy(
+                    undoStack = it.undoStack + listOf(it.paths),
+                    redoStack = emptyList()
+                )
+            }
+            hasPushedUndoForCurrentDrag = true
+        }
+        _state.update { currentState ->
+            currentState.copy(dragOffset = currentState.dragOffset + dragAmount)
+        }
+    }
+
+    fun onDeleteSelectedPath() {
+        val selectedId = _state.value.selectedPathId ?: return
+        _state.update { currentState ->
+            currentState.copy(
+                paths = currentState.paths.filter { it.id != selectedId },
+                selectedPathId = null,
+                undoStack = currentState.undoStack + listOf(currentState.paths),
+                redoStack = emptyList()
             )
         }
     }
