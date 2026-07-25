@@ -23,7 +23,7 @@ fun SavedDesign.toEntity(): DesignEntity {
         selectedThickness = state.selectedThickness,
         selectedPathEffect = state.selectedPathEffect.name,
         selectedShapeType = state.selectedShapeType.name,
-        isEraserMode = state.isEraserMode
+        isEraserMode = false
     )
 }
 
@@ -54,7 +54,6 @@ fun DesignWithPaths.toDomain(): SavedDesign {
             selectedPathEffect = PaintingStyleType.valueOf(design.selectedPathEffect),
             selectedShapeType = ShapeType.valueOf(design.selectedShapeType),
             backgroundColor = Color(design.backgroundColor),
-            isEraserMode = design.isEraserMode,
             paths = paths.sortedBy { it.orderIndex }.map { it.toDomain() }
         )
     )

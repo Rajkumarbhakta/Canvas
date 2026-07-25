@@ -154,8 +154,8 @@ fun MobileDrawingLayout(
                 paths = state.paths,
                 currentPath = state.currentPath,
                 onAction = onAction,
-                isSelectionMode = state.isSelectionMode,
-                selectedPathId = state.selectedPathId,
+                isSelectionMode = uiState.isSelectionMode,
+                selectedPathId = uiState.selectedPathId,
                 dragOffset = state.dragOffset,
                 modifier = Modifier.fillMaxSize(),
                 backgroundColor = state.backgroundColor
@@ -215,11 +215,11 @@ fun MobileDrawingLayout(
                             }
                             item {
                                 ToolButton(
-                                    isActive = state.isSelectionMode,
+                                    isActive = uiState.isSelectionMode,
                                     label = "Select",
                                     showLabel = false,
                                     onClick = {
-                                        onAction(DrawingAction.OnToggleSelectionMode(!state.isSelectionMode))
+                                        onAction(DrawingAction.OnToggleSelectionMode(!uiState.isSelectionMode))
                                     }
                                 ) {
                                     Icon(

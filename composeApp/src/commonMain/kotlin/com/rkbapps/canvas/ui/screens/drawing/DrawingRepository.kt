@@ -34,9 +34,8 @@ class DrawingRepository(
     private val _state = MutableStateFlow(DrawingState())
     val state = _state.asStateFlow()
 
-    private val _currentDesign = MutableStateFlow<SavedDesign>(SavedDesign(name = "Untitled drawing", state = DrawingState()))
+    private val _currentDesign = MutableStateFlow(SavedDesign(name = "Untitled drawing", state = DrawingState()))
     val currentDesign = _currentDesign.asStateFlow()
-
 
     private val _uiState = MutableStateFlow(DrawingScreenState())
     val uiState = _uiState.asStateFlow()
@@ -71,9 +70,7 @@ class DrawingRepository(
 
     fun changeEraserSelection(value: Boolean){
         _uiState.update {
-            it.copy(
-                isEraserSelected = value
-            )
+            it.copy( isEraserSelected = value )
         }
     }
 
@@ -100,11 +97,7 @@ class DrawingRepository(
 
     fun onSelectColor(color: Color) {
         _state.update {
-            it.copy(
-                selectedColor = color,
-                isSelectionMode = false,
-                selectedPathId = null
-            )
+            it.copy( selectedColor = color )
         }
     }
 
@@ -119,8 +112,8 @@ class DrawingRepository(
                     redoStack = emptyList()
                 )
             }
-        } else if (state.value.isSelectionMode) {
-            val selectedId = state.value.selectedPathId
+        } else if (uiState.value.isSelectionMode) {
+            val selectedId = uiState.value.selectedPathId
             val finalOffset = state.value.dragOffset
             if (selectedId != null && finalOffset != Offset.Zero) {
                 _state.update { currentState ->
@@ -146,6 +139,7 @@ class DrawingRepository(
     }
 
     fun onNewPathStart() {
+        val isEraser = uiState.value.isEraserSelected
         _state.update {
             it.copy(
                 currentPath = PathData(
@@ -153,7 +147,7 @@ class DrawingRepository(
                     color = it.selectedColor,
                     thickness = it.selectedThickness,
                     pathEffect = it.selectedPathEffect,
-                    isEraser = it.isEraserMode,
+                    isEraser = isEraser,
                     path = emptyList(),
                     shapeType = it.selectedShapeType,
                     shapePoints = emptyList()
@@ -188,8 +182,10 @@ class DrawingRepository(
 
     fun onPathEffectChange(pathEffect: PaintingStyleType) {
         _state.update {
+            it.copy( selectedPathEffect = pathEffect, )
+        }
+        _uiState.update {
             it.copy(
-                selectedPathEffect = pathEffect,
                 isSelectionMode = false,
                 selectedPathId = null
             )
@@ -197,10 +193,10 @@ class DrawingRepository(
     }
     
     fun onShapeTypeChange(shapeType: ShapeType) {
-        _state.update {
+        _state.update { it.copy( selectedShapeType = shapeType, ) }
+        _uiState.update {
             it.copy(
-                selectedShapeType = shapeType,
-                isEraserMode = false,
+                isEraserSelected = false,
                 isSelectionMode = false,
                 selectedPathId = null
             )
@@ -212,9 +208,16 @@ class DrawingRepository(
     }
 
     fun onToggleEraser(isEraser: Boolean) {
-        _state.update {
+        if (isEraser){
+            _state.update {
+                it.copy(
+                    selectedShapeType = ShapeType.NONE
+                    )
+            }
+        }
+        _uiState.update {
             it.copy(
-                isEraserMode = isEraser,
+                isEraserSelected = isEraser,
                 isSelectionMode = false,
                 selectedPathId = null
             )
@@ -224,11 +227,11 @@ class DrawingRepository(
     private var hasPushedUndoForCurrentDrag = false
 
     fun onToggleSelectionMode(isSelection: Boolean) {
-        _state.update {
+        _uiState.update {
             it.copy(
                 isSelectionMode = isSelection,
                 selectedPathId = if (isSelection) it.selectedPathId else null,
-                isEraserMode = if (isSelection) false else it.isEraserMode,
+                isEraserSelected = if (isSelection) false else it.isEraserSelected,
                 selectedShapeType = if (isSelection) ShapeType.NONE else it.selectedShapeType
             )
         }
@@ -238,9 +241,13 @@ class DrawingRepository(
     }
 
     fun onSelectPath(pathId: String?) {
-        _state.update {
+        _uiState.update {
             it.copy(
                 selectedPathId = pathId,
+            )
+        }
+        _state.update {
+            it.copy(
                 dragOffset = Offset.Zero
             )
         }
@@ -249,7 +256,7 @@ class DrawingRepository(
     }
 
     fun onDragSelectedPath(dragAmount: Offset) {
-        val selectedId = _state.value.selectedPathId ?: return
+        val selectedId = uiState.value.selectedPathId ?: return
         // Push current paths to undo stack on the first movement of this drag session
         if (!hasPushedUndoForCurrentDrag) {
             _state.update {
@@ -266,11 +273,13 @@ class DrawingRepository(
     }
 
     fun onDeleteSelectedPath() {
-        val selectedId = _state.value.selectedPathId ?: return
+        val selectedId = uiState.value.selectedPathId ?: return
+        _uiState.update {
+            it.copy(selectedPathId = null,)
+        }
         _state.update { currentState ->
             currentState.copy(
                 paths = currentState.paths.filter { it.id != selectedId },
-                selectedPathId = null,
                 undoStack = currentState.undoStack + listOf(currentState.paths),
                 redoStack = emptyList()
             )

@@ -37,7 +37,6 @@ class HomeRepository (
                     selectedThickness = entity.selectedThickness,
                     selectedPathEffect = PaintingStyleType.valueOf(entity.selectedPathEffect),
                     selectedShapeType = ShapeType.valueOf(entity.selectedShapeType),
-                    isEraserMode = entity.isEraserMode,
                     paths = emptyList() // We don't load heavy paths for the list
                 )
             )

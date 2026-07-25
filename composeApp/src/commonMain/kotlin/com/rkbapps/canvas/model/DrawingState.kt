@@ -21,11 +21,8 @@ data class DrawingState(
     val selectedShapeType: ShapeType = ShapeType.NONE,
     val currentPath: PathData? = null,
     val paths : List<PathData> = emptyList(),
-    val isEraserMode: Boolean = false,
     @Contextual
     val backgroundColor:Color = Color.White,
-    val isSelectionMode: Boolean = false,
-    val selectedPathId: String? = null,
     @Contextual
     val dragOffset: Offset = Offset.Zero,
     val undoStack: List<List<PathData>> = emptyList(),
