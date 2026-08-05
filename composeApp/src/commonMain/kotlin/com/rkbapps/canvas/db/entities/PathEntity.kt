@@ -27,7 +27,12 @@ data class PathEntity(
     val pathEffect: String,
     val isEraser: Boolean,
     val shapeType: String,
-    val pathPoints: ByteArray, // Binary stored offsets
-    val shapePoints: ByteArray, // Binary stored offsets for shapes
-    val orderIndex: Int // To maintain drawing order
+    val pathPoints: ByteArray,   // Binary stored offsets (page-local coordinates)
+    val shapePoints: ByteArray,  // Binary stored offsets for shapes
+    val orderIndex: Int,         // Maintains drawing order within a page
+
+    // ── Milestone 2: multi-page ───────────────────────────────────────────────
+    /** Zero-based index of the page this stroke belongs to.
+     *  Migration4To5 defaults this to 0 so existing strokes go on page 0. */
+    val pageIndex: Int = 0,
 )

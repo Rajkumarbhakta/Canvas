@@ -53,12 +53,14 @@ import canvas.composeapp.generated.resources.outline_stylus_brush
 import canvas.composeapp.generated.resources.save_as_image
 import canvas.composeapp.generated.resources.share
 import canvas.composeapp.generated.resources.untitled_drawing
+import com.rkbapps.canvas.model.CanvasPage
 import com.rkbapps.canvas.model.DrawingState
 import com.rkbapps.canvas.model.SavedDesign
 import com.rkbapps.canvas.ui.composables.DrawingCanvas
 import com.rkbapps.canvas.ui.screens.drawing.DrawingAction
 import com.rkbapps.canvas.ui.screens.drawing.DrawingScreenState
 import com.rkbapps.canvas.ui.screens.drawing.utils.ShapeType
+import com.rkbapps.canvas.util.desktopScrollZoom
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import kotlin.text.ifEmpty
@@ -74,9 +76,8 @@ fun DesktopDrawingLayout(
     uiState: DrawingScreenState,
     currentDesign: SavedDesign,
     onAction: (DrawingAction) -> Unit,
-    navigateBack:()-> Unit
+    navigateBack: () -> Unit
 ) {
-
     var showClearConfirm by remember { mutableStateOf(false) }
 
     if (showClearConfirm) {
@@ -89,20 +90,28 @@ fun DesktopDrawingLayout(
         )
     }
 
+    if (uiState.isPageSizePickerVisible) {
+        PageSizePickerDialog(
+            currentLabel = state.pageSizeLabel,
+            onAction = onAction
+        )
+    }
+
     Scaffold(
         topBar = {
-            // ── Top MenuBar ──────────────────────────────────────────────────────
             AnimatedVisibility(visible = !uiState.isFullScreen) {
                 TopAppBar(
                     title = {
                         Column {
                             Text(
-                                text = currentDesign.name.ifEmpty { stringResource(Res.string.untitled_drawing) },
+                                text = currentDesign.name.ifEmpty {
+                                    stringResource(Res.string.untitled_drawing)
+                                },
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.SemiBold
                             )
                             Text(
-                                text = "Ctrl+S to save  •  Ctrl+Z undo  •  Ctrl+Y redo",
+                                text = "Ctrl+S save  •  Ctrl+Z undo  •  Ctrl+Y redo",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -110,10 +119,7 @@ fun DesktopDrawingLayout(
                     },
                     navigationIcon = {
                         IconButton(onClick = navigateBack) {
-                            Icon(
-                                Icons.AutoMirrored.Filled.ArrowBack,
-                                stringResource(Res.string.back)
-                            )
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(Res.string.back))
                         }
                     },
                     actions = {
@@ -123,12 +129,7 @@ fun DesktopDrawingLayout(
                             Text(stringResource(Res.string.edit_name))
                         }
                         TextButton(onClick = {
-                            onAction(
-                                DrawingAction.SaveDesign(
-                                    state,
-                                    currentDesign.name
-                                )
-                            )
+                            onAction(DrawingAction.SaveDesign(state, currentDesign.name))
                         }) {
                             Icon(Icons.Default.Save, null, modifier = Modifier.size(16.dp))
                             Spacer(Modifier.width(4.dp))
@@ -144,6 +145,15 @@ fun DesktopDrawingLayout(
                             Spacer(Modifier.width(4.dp))
                             Text(stringResource(Res.string.share))
                         }
+                        // Page size button (hidden for legacy drawings)
+                        if (!uiState.isLegacy) {
+                            TextButton(onClick = { onAction(DrawingAction.OnOpenPageSizePicker) }) {
+                                Text("📄 ${state.pageSizeLabel}")
+                            }
+                            TextButton(onClick = { onAction(DrawingAction.OnResetView) }) {
+                                Text("Fit")
+                            }
+                        }
                         TextButton(onClick = { showClearConfirm = true }) {
                             Text(
                                 text = stringResource(Res.string.clear),
@@ -158,15 +168,14 @@ fun DesktopDrawingLayout(
                 )
             }
         }
-    ) {
-        Column(modifier = Modifier.fillMaxSize().padding(it)) {
-            Row(modifier = Modifier.fillMaxSize().weight(1f)) {
-                // ── Left Tool Rail ───────────────────────────────────────────────
+    ) { paddingValues ->
+        Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            Row(modifier = Modifier.weight(1f).fillMaxSize()) {
+
+                // ── Left Tool Rail ────────────────────────────────────────────
                 AnimatedVisibility(visible = !uiState.isFullScreen) {
                     Surface(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .width(72.dp),
+                        modifier = Modifier.fillMaxHeight().width(72.dp),
                         color = MaterialTheme.colorScheme.surfaceContainerLow,
                         tonalElevation = 2.dp
                     ) {
@@ -175,24 +184,42 @@ fun DesktopDrawingLayout(
                             selectedShape = state.selectedShapeType,
                             isRedoVisible = state.redoStack.isNotEmpty(),
                             isUndoVisible = state.undoStack.isNotEmpty(),
-                            onAction = onAction
+                            onAction = onAction,
+                            isLegacy = uiState.isLegacy,
                         )
                     }
                 }
 
                 // ── Canvas ───────────────────────────────────────────────────────
                 Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
+                    val currentPage = state.pages.getOrElse(uiState.currentPageIndex) { CanvasPage() }
+
                     DrawingCanvas(
-                        paths = state.paths,
+                        paths = if (uiState.isLegacy) state.paths else currentPage.paths,
                         currentPath = state.currentPath,
                         onAction = onAction,
                         isSelectionMode = uiState.isSelectionMode,
                         selectedPathId = uiState.selectedPathId,
                         dragOffset = state.dragOffset,
-                        modifier = Modifier.fillMaxSize(),
-                        backgroundColor = state.backgroundColor
+                        modifier = Modifier
+                            .fillMaxSize()
+                            // Scroll-wheel zoom/pan: no-op on Android/iOS, active on Desktop.
+                            // Implemented via expect/actual so DesktopDrawingLayout stays in
+                            // commonMain while the JVM-specific onPointerEvent lives in jvmMain.
+                            .desktopScrollZoom(
+                                isLegacy = uiState.isLegacy,
+                                onAction = onAction,
+                            ),
+                        backgroundColor = if (uiState.isLegacy) state.backgroundColor
+                                          else currentPage.backgroundColor,
+                        zoom = uiState.zoom,
+                        panOffset = uiState.panOffset,
+                        pageWidth = state.pageWidth,
+                        pageHeight = state.pageHeight,
+                        isLegacy = uiState.isLegacy,
                     )
 
+                    // Floating toolbar in full-screen mode
                     Column(
                         modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 20.dp)
                     ) {
@@ -200,22 +227,35 @@ fun DesktopDrawingLayout(
                             HorizontalDrawingActionItem(
                                 uiState = uiState,
                                 isRedoVisible = state.redoStack.isNotEmpty(),
-                                isUndoVisible =  state.undoStack.isNotEmpty(),
+                                isUndoVisible = state.undoStack.isNotEmpty(),
                                 onAction = onAction
                             )
                         }
                     }
                 }
 
-                // ── Right Properties Panel ───────────────────────────────────────
+                // ── Right panel: Properties + Page Strip ──────────────────────
                 AnimatedVisibility(visible = !uiState.isFullScreen) {
-                    RightPanelUiForLargeScreen(
-                        selectedPaintingStyle = state.selectedPathEffect,
-                        selectedShape = state.selectedShapeType,
-                        selectedColor = state.selectedColor,
-                        selectedThickness = state.selectedThickness,
-                        onAction = onAction
-                    )
+                    Row {
+                        RightPanelUiForLargeScreen(
+                            selectedPaintingStyle = state.selectedPathEffect,
+                            selectedShape = state.selectedShapeType,
+                            selectedColor = state.selectedColor,
+                            selectedThickness = state.selectedThickness,
+                            onAction = onAction
+                        )
+                        // Page strip on the far right (hidden for legacy drawings)
+                        if (!uiState.isLegacy) {
+                            VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                            VerticalPageStrip(
+                                pages = state.pages,
+                                currentPageIndex = uiState.currentPageIndex,
+                                pageWidth = state.pageWidth,
+                                pageHeight = state.pageHeight,
+                                onAction = onAction
+                            )
+                        }
+                    }
                 }
             }
         }

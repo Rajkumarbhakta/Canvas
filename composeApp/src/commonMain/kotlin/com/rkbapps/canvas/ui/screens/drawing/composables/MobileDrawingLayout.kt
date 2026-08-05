@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -44,7 +45,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.material.icons.filled.TouchApp
 import canvas.composeapp.generated.resources.Res
 import canvas.composeapp.generated.resources.back
 import canvas.composeapp.generated.resources.clear
@@ -54,12 +54,14 @@ import canvas.composeapp.generated.resources.save_as_image
 import canvas.composeapp.generated.resources.save_project
 import canvas.composeapp.generated.resources.share
 import canvas.composeapp.generated.resources.untitled_drawing
+import com.rkbapps.canvas.model.CanvasPage
 import com.rkbapps.canvas.model.DrawingState
 import com.rkbapps.canvas.model.SavedDesign
 import com.rkbapps.canvas.ui.composables.DrawingCanvas
 import com.rkbapps.canvas.ui.composables.MinimalDropdownMenu
 import com.rkbapps.canvas.ui.screens.drawing.DrawingAction
 import com.rkbapps.canvas.ui.screens.drawing.DrawingScreenState
+import com.rkbapps.canvas.util.desktopScrollZoom
 import org.jetbrains.compose.resources.stringResource
 
 
@@ -74,7 +76,7 @@ fun MobileDrawingLayout(
     uiState: DrawingScreenState,
     currentDesign: SavedDesign,
     onAction: (DrawingAction) -> Unit,
-    navigateBack:()-> Unit
+    navigateBack: () -> Unit
 ) {
     var showClearConfirm by remember { mutableStateOf(false) }
 
@@ -88,9 +90,15 @@ fun MobileDrawingLayout(
         )
     }
 
+    if (uiState.isPageSizePickerVisible) {
+        PageSizePickerDialog(
+            currentLabel = state.pageSizeLabel,
+            onAction = onAction
+        )
+    }
+
     Scaffold(
         topBar = {
-            // Top AppBar (hidden in full screen)
             AnimatedVisibility(
                 visible = !uiState.isFullScreen,
                 enter = fadeIn() + slideInVertically { -it },
@@ -134,6 +142,16 @@ fun MobileDrawingLayout(
                                 text = { Text(stringResource(Res.string.share)) },
                                 onClick = { onAction(DrawingAction.OnShareDrawing) }
                             )
+                            if (!uiState.isLegacy) {
+                                DropdownMenuItem(
+                                    text = { Text("📄 Page Size") },
+                                    onClick = { onAction(DrawingAction.OnOpenPageSizePicker) }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("🔍 Reset Zoom") },
+                                    onClick = { onAction(DrawingAction.OnResetView) }
+                                )
+                            }
                             DropdownMenuItem(
                                 leadingIcon = { Icon(Icons.Default.Cancel, null) },
                                 text = { Text(stringResource(Res.string.clear)) },
@@ -147,20 +165,34 @@ fun MobileDrawingLayout(
                 )
             }
         }
-    ) {
-        Box(modifier = Modifier.fillMaxSize().padding(it)) {
+    ) { paddingValues ->
+        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            val currentPage = state.pages.getOrElse(uiState.currentPageIndex) { CanvasPage() }
+
             // Canvas — full screen
             DrawingCanvas(
-                paths = state.paths,
+                paths = if (uiState.isLegacy) state.paths else currentPage.paths,
                 currentPath = state.currentPath,
                 onAction = onAction,
                 isSelectionMode = uiState.isSelectionMode,
                 selectedPathId = uiState.selectedPathId,
                 dragOffset = state.dragOffset,
-                modifier = Modifier.fillMaxSize(),
-                backgroundColor = state.backgroundColor
+                modifier = Modifier
+                    .fillMaxSize()
+                    .desktopScrollZoom(
+                        isLegacy = uiState.isLegacy,
+                        onAction = onAction,
+                    ),
+                backgroundColor = if (uiState.isLegacy) state.backgroundColor
+                                  else currentPage.backgroundColor,
+                zoom = uiState.zoom,
+                panOffset = uiState.panOffset,
+                pageWidth = state.pageWidth,
+                pageHeight = state.pageHeight,
+                isLegacy = uiState.isLegacy,
             )
-            // Floating undo/redo buttons on top-left (visible always)
+
+            // Floating undo/redo buttons in full-screen mode
             AnimatedVisibility(
                 visible = uiState.isFullScreen,
                 modifier = Modifier.align(Alignment.TopStart).padding(top = 16.dp, start = 12.dp)
@@ -283,18 +315,14 @@ fun MobileDrawingLayout(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            TextButton(
-                                onClick = { showClearConfirm = true }
-                            ) {
+                            TextButton(onClick = { showClearConfirm = true }) {
                                 Text(
                                     text = stringResource(Res.string.clear_canvas),
                                     color = MaterialTheme.colorScheme.error,
                                     style = MaterialTheme.typography.labelLarge
                                 )
                             }
-                            TextButton(
-                                onClick = { onAction(DrawingAction.OnEnterFullScreen) }
-                            ) {
+                            TextButton(onClick = { onAction(DrawingAction.OnEnterFullScreen) }) {
                                 Text(
                                     text = "Full Screen",
                                     style = MaterialTheme.typography.labelLarge
@@ -305,12 +333,28 @@ fun MobileDrawingLayout(
                 }
             }
 
+            // Page navigation bar (mobile — compact floating bar above the bottom toolbar)
+            AnimatedVisibility(
+                visible = !uiState.isFullScreen && !uiState.isLegacy,
+                enter = fadeIn() + slideInVertically { it },
+                exit = fadeOut() + slideOutVertically { it },
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 200.dp)   // clear the ~180dp toolbar pill
+            ) {
+                MobilePageNavigationBar(
+                    pages = state.pages,
+                    currentPageIndex = uiState.currentPageIndex,
+                    pageWidth = state.pageWidth,
+                    pageHeight = state.pageHeight,
+                    onAction = onAction,
+                )
+            }
+
             // Full-screen exit button
             AnimatedVisibility(
                 visible = uiState.isFullScreen,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 10.dp)
+                modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 10.dp)
             ) {
                 Surface(
                     onClick = { onAction(DrawingAction.OnExitFullScreen) },

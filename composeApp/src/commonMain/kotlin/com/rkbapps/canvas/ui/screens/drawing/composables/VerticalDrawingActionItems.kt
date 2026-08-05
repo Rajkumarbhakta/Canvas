@@ -39,6 +39,7 @@ fun VerticalDrawingActionItems(
     selectedShape: ShapeType,
     isUndoVisible: Boolean = true,
     isRedoVisible: Boolean = true,
+    isLegacy: Boolean = false,
     onAction:(action: DrawingAction) -> Unit
 ) {
 
@@ -50,18 +51,19 @@ fun VerticalDrawingActionItems(
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AnimatedVisibility(visible = isUndoVisible){}
-        ToolButton(
-            isActive = false,
-            label = stringResource(Res.string.undo),
-            showLabel = true,
-            onClick = { onAction(DrawingAction.OnUndo) },
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.Undo,
-                contentDescription = stringResource(Res.string.undo),
-                modifier = Modifier.size(20.dp)
-            )
+        AnimatedVisibility(visible = isUndoVisible){
+            ToolButton(
+                isActive = false,
+                label = stringResource(Res.string.undo),
+                showLabel = true,
+                onClick = { onAction(DrawingAction.OnUndo) },
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Undo,
+                    contentDescription = stringResource(Res.string.undo),
+                    modifier = Modifier.size(20.dp)
+                )
+            }
         }
         AnimatedVisibility(visible = isRedoVisible){
             ToolButton(
@@ -149,6 +151,33 @@ fun VerticalDrawingActionItems(
         }
 
         Spacer(Modifier.weight(1f))
+
+        // Page size button (only for new paged drawings)
+        if (!isLegacy) {
+            ToolButton(
+                isActive = uiState.isPageSizePickerVisible,
+                label = "Page",
+                showLabel = true,
+                onClick = { onAction(DrawingAction.OnOpenPageSizePicker) }
+            ) {
+                Text(
+                    text = "📄",
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
+            ToolButton(
+                isActive = false,
+                label = "Fit",
+                showLabel = true,
+                onClick = { onAction(DrawingAction.OnResetView) }
+            ) {
+                Text(
+                    text = "⟲",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
 
         // Full screen toggle
         ToolButton(

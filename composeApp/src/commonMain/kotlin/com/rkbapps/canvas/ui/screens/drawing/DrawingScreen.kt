@@ -20,7 +20,6 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import com.rkbapps.canvas.ui.screens.drawing.composables.DrawingLayoutState
 import com.rkbapps.canvas.ui.screens.drawing.composables.DesktopDrawingLayout
 import com.rkbapps.canvas.ui.screens.drawing.composables.EditDrawingNameDialog
 import com.rkbapps.canvas.ui.screens.drawing.composables.MobileDrawingLayout
@@ -64,6 +63,13 @@ fun DrawingScreen(
                 (it.isCtrlPressed || it.isMetaPressed) && it.key == Key.F -> {
                     if (!uiState.isFullScreen){
                         viewModel.onAction(DrawingAction.OnEnterFullScreen)
+                    }
+                    true
+                }
+                // Ctrl+0 / Cmd+0 — reset zoom and pan to default (1× centred)
+                (it.isCtrlPressed || it.isMetaPressed) && it.key == Key.Zero -> {
+                    if (!uiState.isLegacy) {
+                        viewModel.onAction(DrawingAction.OnResetView)
                     }
                     true
                 }

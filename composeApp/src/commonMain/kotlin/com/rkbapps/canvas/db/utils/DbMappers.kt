@@ -6,11 +6,14 @@ import androidx.compose.ui.graphics.toArgb
 import com.rkbapps.canvas.db.entities.DesignEntity
 import com.rkbapps.canvas.db.entities.DesignWithPaths
 import com.rkbapps.canvas.db.entities.PathEntity
+import com.rkbapps.canvas.model.CanvasPage
 import com.rkbapps.canvas.model.DrawingState
 import com.rkbapps.canvas.model.PathData
 import com.rkbapps.canvas.model.SavedDesign
 import com.rkbapps.canvas.ui.screens.drawing.utils.PaintingStyleType
 import com.rkbapps.canvas.ui.screens.drawing.utils.ShapeType
+
+// ── Domain → Entity ──────────────────────────────────────────────────────────
 
 fun SavedDesign.toEntity(): DesignEntity {
     return DesignEntity(
@@ -23,11 +26,27 @@ fun SavedDesign.toEntity(): DesignEntity {
         selectedThickness = state.selectedThickness,
         selectedPathEffect = state.selectedPathEffect.name,
         selectedShapeType = state.selectedShapeType.name,
-        isEraserMode = false
+        isEraserMode = false,
+        // ── Milestone 1 ────────────────────────────────────────────────────────
+        pageWidth = state.pageWidth,
+        pageHeight = state.pageHeight,
+        pageSizeLabel = state.pageSizeLabel,
+        isLegacy = isLegacy,
+        // ── Milestone 2 ────────────────────────────────────────────────────────
+        // Explicitly store page count so blank trailing pages survive reload.
+        // For legacy drawings there are no pages; use 1 as the sentinel value.
+        pageCount = if (isLegacy) 1 else state.pages.size.coerceAtLeast(1),
     )
 }
 
-fun PathData.toEntity(designId: Long, index: Int): PathEntity {
+/**
+ * Converts a [PathData] to a [PathEntity].
+ *
+ * @param designId  The DB primary key of the owning design.
+ * @param index     Stroke order within the page.
+ * @param pageIndex The zero-based page index this stroke belongs to (default 0).
+ */
+fun PathData.toEntity(designId: Long, index: Int, pageIndex: Int = 0): PathEntity {
     return PathEntity(
         designId = designId,
         strokeId = id,
@@ -38,27 +57,68 @@ fun PathData.toEntity(designId: Long, index: Int): PathEntity {
         shapeType = shapeType.name,
         pathPoints = path.toBinary(),
         shapePoints = shapePoints.toBinary(),
-        orderIndex = index
+        orderIndex = index,
+        pageIndex = pageIndex,
     )
 }
 
+// ── Entity → Domain ──────────────────────────────────────────────────────────
+
 fun DesignWithPaths.toDomain(): SavedDesign {
+    val isLegacy = design.isLegacy
+
+    // Group paths by pageIndex
+    val pathsByPage: Map<Int, List<PathEntity>> =
+        paths.groupBy { it.pageIndex }
+
+    val pages: List<CanvasPage> = if (isLegacy) {
+        // Legacy drawings: flat list on a single page; page model is not used
+        // (the canvas renders legacy drawings directly from DrawingState.paths)
+        emptyList()
+    } else {
+        // Use the stored pageCount so blank trailing pages are preserved.
+        // Previously this used maxOfOrNull { it.pageIndex } which dropped pages
+        // that had no strokes (their index never appeared in the paths table).
+        val targetCount = design.pageCount.coerceAtLeast(1)
+        (0 until targetCount).map { pageIdx ->
+            CanvasPage(
+                id = "page_${design.id}_$pageIdx",
+                backgroundColor = Color(design.backgroundColor),
+                paths = (pathsByPage[pageIdx] ?: emptyList())
+                    .sortedBy { it.orderIndex }
+                    .map { it.toDomain() },
+            )
+        }
+    }
+
     return SavedDesign(
         pId = design.id,
         id = design.stringId,
         name = design.name,
         time = design.time,
+        isLegacy = isLegacy,
         state = DrawingState(
+            // ── Page geometry ─────────────────────────────────────────────
+            pageWidth = design.pageWidth,
+            pageHeight = design.pageHeight,
+            pageSizeLabel = design.pageSizeLabel,
+            // ── Tool state ────────────────────────────────────────────────
             selectedColor = Color(design.selectedColor),
             selectedThickness = design.selectedThickness,
             selectedPathEffect = PaintingStyleType.valueOf(design.selectedPathEffect),
             selectedShapeType = ShapeType.valueOf(design.selectedShapeType),
             backgroundColor = Color(design.backgroundColor),
-            paths = paths.sortedBy { it.orderIndex }.map { it.toDomain() }
-        )
+            // ── Pages / legacy paths ──────────────────────────────────────
+            pages = pages,
+            paths = if (isLegacy) {
+                // Legacy: load all paths into the flat list (original behaviour)
+                paths.sortedBy { it.orderIndex }.map { it.toDomain() }
+            } else {
+                emptyList()
+            },
+        ),
     )
 }
-
 
 fun PathEntity.toDomain(): PathData {
     return PathData(
@@ -73,7 +133,8 @@ fun PathEntity.toDomain(): PathData {
     )
 }
 
-// Binary conversion helpers
+// ── Binary conversion helpers ────────────────────────────────────────────────
+
 fun List<Offset>.toBinary(): ByteArray {
     val bytes = ByteArray(size * 8)
     forEachIndexed { i, offset ->

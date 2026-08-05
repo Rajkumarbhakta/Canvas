@@ -34,6 +34,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,6 +54,7 @@ import canvas.composeapp.generated.resources.save_project
 import canvas.composeapp.generated.resources.shapes
 import canvas.composeapp.generated.resources.share
 import canvas.composeapp.generated.resources.untitled_drawing
+import com.rkbapps.canvas.model.CanvasPage
 import com.rkbapps.canvas.model.DrawingState
 import com.rkbapps.canvas.model.SavedDesign
 import com.rkbapps.canvas.ui.composables.DrawingCanvas
@@ -60,6 +62,7 @@ import com.rkbapps.canvas.ui.composables.MinimalDropdownMenu
 import com.rkbapps.canvas.ui.screens.drawing.DrawingAction
 import com.rkbapps.canvas.ui.screens.drawing.DrawingScreenState
 import com.rkbapps.canvas.ui.screens.drawing.utils.ShapeType
+import com.rkbapps.canvas.util.desktopScrollZoom
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -75,9 +78,8 @@ fun TabletDrawingLayout(
     uiState: DrawingScreenState,
     currentDesign: SavedDesign,
     onAction: (DrawingAction) -> Unit,
-    navigateBack:()-> Unit
+    navigateBack: () -> Unit
 ) {
-
     var showClearConfirm by remember { mutableStateOf(false) }
 
     if (showClearConfirm) {
@@ -90,9 +92,15 @@ fun TabletDrawingLayout(
         )
     }
 
+    if (uiState.isPageSizePickerVisible) {
+        PageSizePickerDialog(
+            currentLabel = state.pageSizeLabel,
+            onAction = onAction
+        )
+    }
+
     Scaffold(
         topBar = {
-            // ── Top App Bar ──────────────────────────────────────────────────────
             AnimatedVisibility(visible = !uiState.isFullScreen) {
                 TopAppBar(
                     title = {
@@ -104,24 +112,15 @@ fun TabletDrawingLayout(
                     },
                     navigationIcon = {
                         IconButton(onClick = navigateBack) {
-                            Icon(
-                                Icons.AutoMirrored.Filled.ArrowBack,
-                                stringResource(Res.string.back)
-                            )
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(Res.string.back))
                         }
                     },
                     actions = {
-                        // Inline action buttons for tablet
                         IconButton(onClick = { onAction(DrawingAction.OnUndo) }) {
                             Icon(Icons.AutoMirrored.Filled.Undo, "Undo")
                         }
                         IconButton(onClick = {
-                            onAction(
-                                DrawingAction.SaveDesign(
-                                    state,
-                                    currentDesign.name
-                                )
-                            )
+                            onAction(DrawingAction.SaveDesign(state, currentDesign.name))
                         }) {
                             Icon(Icons.Default.Save, stringResource(Res.string.save_project))
                         }
@@ -131,12 +130,23 @@ fun TabletDrawingLayout(
                         IconButton(onClick = { onAction(DrawingAction.OnShareDrawing) }) {
                             Icon(Icons.Default.Share, stringResource(Res.string.share))
                         }
+                        if (!uiState.isLegacy) {
+                            IconButton(onClick = { onAction(DrawingAction.OnResetView) }) {
+                                Text("Fit", style = MaterialTheme.typography.labelSmall)
+                            }
+                        }
                         MinimalDropdownMenu {
                             DropdownMenuItem(
                                 leadingIcon = { Icon(Icons.Default.Edit, null) },
                                 text = { Text(stringResource(Res.string.edit_name)) },
                                 onClick = { onAction(DrawingAction.OnOpenNameEditDialog) }
                             )
+                            if (!uiState.isLegacy) {
+                                DropdownMenuItem(
+                                    text = { Text("📄 Page Size") },
+                                    onClick = { onAction(DrawingAction.OnOpenPageSizePicker) }
+                                )
+                            }
                             DropdownMenuItem(
                                 leadingIcon = { Icon(Icons.Default.Cancel, null) },
                                 text = {
@@ -155,16 +165,14 @@ fun TabletDrawingLayout(
                 )
             }
         }
-    ) {
-        Column(modifier = Modifier.fillMaxSize().padding(it)) {
+    ) { paddingValues ->
+        Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            Row(modifier = Modifier.weight(1f).fillMaxSize()) {
 
-            Row(modifier = Modifier.fillMaxSize().weight(1f)) {
-                // ── Left Tool Rail ───────────────────────────────────────────────
+                // ── Left Tool Rail ────────────────────────────────────────────
                 AnimatedVisibility(visible = !uiState.isFullScreen) {
                     Surface(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .width(72.dp),
+                        modifier = Modifier.fillMaxHeight().width(72.dp),
                         color = MaterialTheme.colorScheme.surfaceContainerLow,
                         tonalElevation = 2.dp
                     ) {
@@ -173,22 +181,36 @@ fun TabletDrawingLayout(
                             selectedShape = state.selectedShapeType,
                             isRedoVisible = state.redoStack.isNotEmpty(),
                             isUndoVisible = state.undoStack.isNotEmpty(),
-                            onAction = onAction
+                            onAction = onAction,
+                            isLegacy = uiState.isLegacy,
                         )
                     }
                 }
 
-                // ── Canvas ───────────────────────────────────────────────────────
+                // ── Canvas ────────────────────────────────────────────────────
                 Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
+                    val currentPage = state.pages.getOrElse(uiState.currentPageIndex) { CanvasPage() }
+
                     DrawingCanvas(
-                        paths = state.paths,
+                        paths = if (uiState.isLegacy) state.paths else currentPage.paths,
                         currentPath = state.currentPath,
                         onAction = onAction,
                         isSelectionMode = uiState.isSelectionMode,
                         selectedPathId = uiState.selectedPathId,
                         dragOffset = state.dragOffset,
-                        modifier = Modifier.fillMaxSize(),
-                        backgroundColor = state.backgroundColor
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .desktopScrollZoom(
+                                isLegacy = uiState.isLegacy,
+                                onAction = onAction,
+                            ),
+                        backgroundColor = if (uiState.isLegacy) state.backgroundColor
+                                          else currentPage.backgroundColor,
+                        zoom = uiState.zoom,
+                        panOffset = uiState.panOffset,
+                        pageWidth = state.pageWidth,
+                        pageHeight = state.pageHeight,
+                        isLegacy = uiState.isLegacy,
                     )
 
                     Column(
@@ -198,22 +220,49 @@ fun TabletDrawingLayout(
                             HorizontalDrawingActionItem(
                                 uiState = uiState,
                                 isRedoVisible = state.redoStack.isNotEmpty(),
-                                isUndoVisible =  state.undoStack.isNotEmpty(),
+                                isUndoVisible = state.undoStack.isNotEmpty(),
                                 onAction = onAction
                             )
                         }
                     }
                 }
 
-                // ── Right Properties Panel ───────────────────────────────────────
+                // ── Right panel: Properties + Page Strip ──────────────────────
                 AnimatedVisibility(visible = !uiState.isFullScreen) {
-                    RightPanelUiForLargeScreen(
-                        selectedPaintingStyle = state.selectedPathEffect,
-                        selectedShape = state.selectedShapeType,
-                        selectedColor = state.selectedColor,
-                        selectedThickness = state.selectedThickness,
-                        onAction = onAction
-                    )
+                    Row {
+                        RightPanelUiForLargeScreen(
+                            selectedPaintingStyle = state.selectedPathEffect,
+                            selectedShape = state.selectedShapeType,
+                            selectedColor = state.selectedColor,
+                            selectedThickness = state.selectedThickness,
+                            onAction = onAction
+                        )
+                        if (!uiState.isLegacy) {
+                            VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                // Page navigation header
+                                TabletPageNavigationHeader(
+                                    currentPageIndex = uiState.currentPageIndex,
+                                    totalPages = state.pages.size,
+                                    onAction = onAction
+                                )
+                                HorizontalDivider(
+                                    modifier = Modifier.padding(horizontal = 8.dp),
+                                    color = MaterialTheme.colorScheme.outlineVariant
+                                )
+                                // Vertical page strip with thumbnails
+                                VerticalPageStrip(
+                                    pages = state.pages,
+                                    currentPageIndex = uiState.currentPageIndex,
+                                    pageWidth = state.pageWidth,
+                                    pageHeight = state.pageHeight,
+                                    onAction = onAction
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
