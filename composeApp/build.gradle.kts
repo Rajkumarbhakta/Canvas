@@ -73,23 +73,17 @@ kotlin {
             implementation(libs.multiplatform.settings)
             implementation(libs.multiplatform.settings.coroutines)
             // datastore
-//            implementation(libs.datastore)
-//            implementation(libs.datastore.preferences)
             implementation(libs.androidx.datastore.preferences.core)
             implementation(libs.androidx.datastore.core.okio)
-
             // Room
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.sqlite.bundled)
-
             // color
             implementation(libs.material.kolor)
         }
 
         commonTest.dependencies {
             implementation(kotlin("test"))
-//            @OptIn(ExperimentalComposeLibrary::class)
-//            implementation(compose.uiTest)
             implementation(libs.kotlinx.coroutines.test)
         }
 
@@ -105,6 +99,11 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
+        }
+
+        // Compose UI tests run headless on desktop; on Android they would need a device.
+        jvmTest.dependencies {
+            implementation(libs.compose.ui.test)
         }
 
         nativeMain.dependencies {}

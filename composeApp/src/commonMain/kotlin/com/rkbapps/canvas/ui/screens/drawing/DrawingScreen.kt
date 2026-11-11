@@ -1,325 +1,159 @@
 package com.rkbapps.canvas.ui.screens.drawing
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
-import androidx.compose.foundation.gestures.scrollBy
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import canvas.composeapp.generated.resources.*
-import org.jetbrains.compose.resources.stringResource
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.isCtrlPressed
 import androidx.compose.ui.input.key.isMetaPressed
+import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.input.key.type
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import com.rkbapps.canvas.ui.composables.DrawingCanvas
-import com.rkbapps.canvas.ui.composables.MinimalDropdownMenu
-import com.rkbapps.canvas.ui.screens.drawing.composables.BackgroundColorChangeItem
-import com.rkbapps.canvas.ui.screens.drawing.composables.ColorItemList
+import canvas.composeapp.generated.resources.Res
+import canvas.composeapp.generated.resources.drawing_saved
 import com.rkbapps.canvas.ui.screens.drawing.composables.EditDrawingNameDialog
-import com.rkbapps.canvas.ui.screens.drawing.composables.EraserItem
-import com.rkbapps.canvas.ui.screens.drawing.composables.PaintingStyle
-import com.rkbapps.canvas.ui.screens.drawing.composables.ShapeSelector
-import com.rkbapps.canvas.ui.screens.drawing.composables.ThicknessManagement
-import com.rkbapps.canvas.ui.screens.drawing.composables.UndoRedoItem
+import com.rkbapps.canvas.ui.screens.drawing.composables.MobileDrawingLayout
+import com.rkbapps.canvas.ui.screens.drawing.composables.WideDrawingLayout
+import com.rkbapps.canvas.ui.screens.drawing.composables.ZOOM_STEP
+import com.rkbapps.canvas.ui.screens.drawing.utils.DrawingTool
+import com.rkbapps.canvas.ui.screens.drawing.utils.ShapeType
+import com.rkbapps.canvas.ui.screens.drawing.utils.activeTool
+import com.rkbapps.canvas.ui.screens.drawing.utils.toolAction
+import com.rkbapps.canvas.util.getWindowSize
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DrawingScreen(navController: NavHostController, viewModel: DrawingViewModel = koinViewModel()) {
+fun DrawingScreen(
+    navController: NavHostController,
+    viewModel: DrawingViewModel = koinViewModel()
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val currentDesign by viewModel.currentDesign.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val scrollState = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
+    val widthSizeClass = getWindowSize().widthSizeClass
 
-    val requester = remember { FocusRequester() }
+    // ── Tools ─────────────────────────────────────────────────────────────────
+    val tool = activeTool(state, uiState)
+    // Leaving the shape tool resets the shape to NONE; remember the last one so
+    // coming back to the tool brings back the same shape.
+    var lastShape by rememberSaveable { mutableStateOf(ShapeType.RECTANGLE) }
+    if (state.selectedShapeType != ShapeType.NONE && state.selectedShapeType != lastShape) {
+        SideEffect { lastShape = state.selectedShapeType }
+    }
+    val onSelectTool: (DrawingTool) -> Unit = { viewModel.onAction(toolAction(it, lastShape)) }
 
-    LaunchedEffect(Unit) {
-        requester.requestFocus()
+    // ── Save, with confirmation ───────────────────────────────────────────────
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val savedMessage = stringResource(Res.string.drawing_saved)
+    val onSave: () -> Unit = {
+        viewModel.onAction(DrawingAction.SaveDesign(state, currentDesign.name))
+        scope.launch {
+            snackbarHostState.currentSnackbarData?.dismiss()
+            snackbarHostState.showSnackbar(savedMessage)
+        }
     }
 
-    Scaffold(
-        modifier = Modifier.onKeyEvent {
-            if ((it.isCtrlPressed || it.isMetaPressed) && it.key == Key.S) {
-                viewModel.onAction(DrawingAction.SaveDesign(state, currentDesign.name))
-                true
-            }
-            if ((it.isCtrlPressed || it.isMetaPressed) && it.key == Key.Z) {
-                viewModel.onAction(DrawingAction.OnUndo)
-                true
-            }
-            if ((it.isCtrlPressed || it.isMetaPressed) && it.key == Key.Y) {
-                viewModel.onAction(DrawingAction.OnRedo)
-                true
-            }
+    // ── Keyboard shortcuts (desktop, tablets with a keyboard) ─────────────────
+    val requester = remember { FocusRequester() }
+    LaunchedEffect(Unit) { requester.requestFocus() }
 
-            false
-        }.focusRequester(requester)
-            .focusable(),
-
-        topBar = {
-            AnimatedVisibility(
-                visible = !uiState.isFullScreen
-            ) {
-                TopAppBar(
-                    title = {
-                        Text(currentDesign.name.ifEmpty { stringResource(Res.string.untitled_drawing) })
-                    },
-                    navigationIcon = {
-                        IconButton(
-                            onClick = {
-                                viewModel.onAction(DrawingAction.OnClearCanvasList)
-                                navController.navigateUp()
-                            }
-                        ) {
-                            Icon(
-                                modifier = Modifier.size(20.dp),
-                                imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                                contentDescription = stringResource(Res.string.back)                            )
-                        }
-                    },
-                    actions = {
-                        MinimalDropdownMenu{
-                            DropdownMenuItem(
-                                leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null) },
-                                text = { Text(stringResource(Res.string.edit_name)) },
-                                onClick = {
-                                    viewModel.onAction(DrawingAction.OnOpenNameEditDialog)
-                                }
-                            )
-                            DropdownMenuItem(
-                                leadingIcon = { Icon(Icons.Default.Save, contentDescription = null) },
-                                text = { Text(stringResource(Res.string.save_project)) },
-                                onClick = {
-                                    viewModel.onAction(DrawingAction.SaveDesign(state, currentDesign.name))
-                                }
-                            )
-                            DropdownMenuItem(
-                                leadingIcon = { Icon(Icons.Default.Download, contentDescription = null) },
-                                text = { Text(stringResource(Res.string.save_as_image)) },
-                                onClick = {
-                                    viewModel.onAction(DrawingAction.OnSaveAsImage)
-                                }
-                            )
-                            DropdownMenuItem(
-                                leadingIcon = { Icon(Icons.Default.Share, contentDescription = null) },
-                                text = { Text(stringResource(Res.string.share)) },
-                                onClick = {
-                                    viewModel.onAction(DrawingAction.OnShareDrawing)
-                                }
-                            )
-                            DropdownMenuItem(
-                                leadingIcon = { Icon(Icons.Default.Cancel, contentDescription = null) },
-                                text = { Text(stringResource(Res.string.clear)) },
-                                onClick = {
-                                    viewModel.onAction(DrawingAction.OnClearCanvasList)
-                                }
-                            )
-                        }
+    val keyModifier = Modifier
+        .onKeyEvent { event ->
+            // Every press also sends a KeyUp; acting on both would run each shortcut twice.
+            if (event.type != KeyEventType.KeyDown) return@onKeyEvent false
+            val action: DrawingAction? = if (event.isCtrlPressed || event.isMetaPressed) {
+                when (event.key) {
+                    Key.S -> {
+                        onSave()
+                        return@onKeyEvent true
                     }
-                )
+                    Key.Z -> if (event.isShiftPressed) DrawingAction.OnRedo else DrawingAction.OnUndo
+                    Key.Y -> DrawingAction.OnRedo
+                    Key.F -> if (uiState.isFullScreen) DrawingAction.OnExitFullScreen
+                    else DrawingAction.OnEnterFullScreen
+                    Key.Zero -> DrawingAction.OnResetView.takeIf { !uiState.isLegacy }
+                    Key.Equals, Key.Plus ->
+                        DrawingAction.OnZoomPan(ZOOM_STEP, Offset.Zero).takeIf { !uiState.isLegacy }
+                    Key.Minus ->
+                        DrawingAction.OnZoomPan(1f / ZOOM_STEP, Offset.Zero).takeIf { !uiState.isLegacy }
+                    else -> null
+                }
+            } else {
+                when (event.key) {
+                    Key.V -> toolAction(DrawingTool.SELECT, lastShape)
+                    Key.B -> toolAction(DrawingTool.BRUSH, lastShape)
+                    Key.U -> toolAction(DrawingTool.SHAPE, lastShape)
+                    Key.E -> toolAction(DrawingTool.ERASER, lastShape)
+                    Key.Escape -> DrawingAction.OnExitFullScreen.takeIf { uiState.isFullScreen }
+                    Key.Delete, Key.Backspace ->
+                        DrawingAction.OnDeleteSelectedPath.takeIf { uiState.selectedPathId != null }
+                    else -> null
+                }
             }
+            action?.let(viewModel::onAction) != null
         }
-    ) {
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(it)
-                .padding(vertical = 10.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            if (uiState.isEditDrawingNameDialogVisible) {
-                EditDrawingNameDialog(
-                    initialName = currentDesign.name,
-                    onCanceled = {
-                        viewModel.onAction(DrawingAction.OnCloseNameEditDialog)
-                    }
-                ) { name ->
-                    viewModel.updateDrawingName(name)
-                    viewModel.onAction(DrawingAction.OnCloseNameEditDialog)
-                }
-            }
+        .focusRequester(requester)
+        .focusable()
 
-            DrawingCanvas(
-                paths = state.paths,
-                currentPath = state.currentPath,
+    // Name edit dialog (shown on top of any layout)
+    if (uiState.isEditDrawingNameDialogVisible) {
+        EditDrawingNameDialog(
+            initialName = currentDesign.name,
+            onCanceled = { viewModel.onAction(DrawingAction.OnCloseNameEditDialog) }
+        ) { name ->
+            viewModel.updateDrawingName(name)
+            viewModel.onAction(DrawingAction.OnCloseNameEditDialog)
+        }
+    }
+
+    Box(modifier = keyModifier) {
+        if (widthSizeClass == WindowWidthSizeClass.Compact) {
+            MobileDrawingLayout(
+                state = state,
+                uiState = uiState,
+                drawingName = currentDesign.name,
+                tool = tool,
+                snackbarHostState = snackbarHostState,
+                onSelectTool = onSelectTool,
+                onSave = onSave,
                 onAction = viewModel::onAction,
-                modifier = Modifier.fillMaxWidth().weight(1f),
-                backgroundColor = state.backgroundColor
+                navigateBack = { navController.navigateUp() }
             )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                val rotation = animateFloatAsState(
-                    targetValue = if (uiState.isFullScreen) 0f else 180f,
-                    label = "ArrowRotation"
-                )
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowUp,
-                    contentDescription = "",
-                    modifier = Modifier.rotate(rotation.value).clickable {
-                        if (uiState.isFullScreen) viewModel.onAction(DrawingAction.OnExitFullScreen)
-                        else viewModel.onAction(DrawingAction.OnEnterFullScreen)
-                    }
-                )
-            }
-
-            LazyRow(
-                modifier = Modifier.fillMaxWidth().draggable(
-                    orientation = Orientation.Horizontal,
-                    state = rememberDraggableState { delta ->
-                        coroutineScope.launch {
-                            scrollState.scrollBy(-delta)
-                        }
-                    },
-                ),
-                state = scrollState,
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-
-            ) {
-                item {
-                    Spacer(Modifier.width(16.dp))
-                }
-                item {
-                    BackgroundColorChangeItem { color ->
-                        viewModel.onAction(DrawingAction.OnBackgroundColorChange(color))
-                    }
-                }
-
-                item {
-                    ColorItemList(
-                        selectedColor = state.selectedColor,
-                    ) { color ->
-                        viewModel.onAction(DrawingAction.OnEraserUnselected)
-                        viewModel.onAction(DrawingAction.OnToggleEraser(false))
-                        viewModel.onAction(DrawingAction.OnSelectColor(color))
-                    }
-                }
-
-                item {
-                    EraserItem(
-                        isEraserSelected = uiState.isEraserSelected
-                    ) {
-                        if (uiState.isEraserSelected){
-                            viewModel.onAction(DrawingAction.OnEraserUnselected)
-                            viewModel.onAction(DrawingAction.OnToggleEraser(false))
-                        }else{
-                            viewModel.onAction(DrawingAction.OnEraserSelected)
-                            viewModel.onAction(DrawingAction.OnToggleEraser(true))
-                        }
-                    }
-                }
-
-                item {
-                    PaintingStyle(
-                        selected = state.selectedPathEffect,
-                    ) { pathEffect ->
-                        viewModel.onAction(DrawingAction.OnPathEffectChange(pathEffect))
-                    }
-                }
-
-                item {
-                    ShapeSelector(
-                        selectedShape = state.selectedShapeType,
-                        onShapeSelected = { shapeType ->
-                            viewModel.onAction(DrawingAction.OnEraserUnselected)
-                            viewModel.onAction(DrawingAction.OnToggleEraser(false))
-                            viewModel.onAction(DrawingAction.OnShapeTypeChange(shapeType))
-                        }
-                    )
-                }
-
-                item {
-                    UndoRedoItem(
-                        onUndo = {
-                            viewModel.onAction(DrawingAction.OnUndo)
-                        },
-                        onRedo = {
-                            viewModel.onAction(DrawingAction.OnRedo)
-                        }
-                    )
-                }
-                item {
-                    Spacer(Modifier.width(16.dp))
-                }
-
-            }
-            AnimatedVisibility(visible = !uiState.isFullScreen) {
-                ThicknessManagement(
-                    value = state.selectedThickness
-                ) { thickness ->
-                    viewModel.onAction(DrawingAction.OnThicknessChange(thickness))
-                }
-
-            }
-            AnimatedVisibility(
-                visible = !uiState.isFullScreen,
-                modifier = Modifier.fillMaxWidth(0.6f).align(Alignment.CenterHorizontally),
-            ) {
-                Button(
-                    onClick = {
-                        viewModel.onAction(DrawingAction.OnClearCanvasList)
-                    }
-                ) {
-                    Text(stringResource(Res.string.clear_canvas))
-                }
-            }
-
+        } else {
+            WideDrawingLayout(
+                state = state,
+                uiState = uiState,
+                drawingName = currentDesign.name,
+                tool = tool,
+                snackbarHostState = snackbarHostState,
+                panelInitiallyOpen = widthSizeClass == WindowWidthSizeClass.Expanded,
+                onSelectTool = onSelectTool,
+                onSave = onSave,
+                onAction = viewModel::onAction,
+                navigateBack = { navController.navigateUp() }
+            )
         }
     }
 }
-
-
-
-
-

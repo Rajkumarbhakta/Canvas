@@ -1,4 +1,4 @@
-package com.rkbapps.canvas.ui.screens.drawing.composables
+package com.rkbapps.canvas.ui.screens.drawing.utils
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable

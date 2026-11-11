@@ -10,6 +10,9 @@ data class SavedDesign(
     val id: String = Clock.System.now().toString(),
     val name: String,
     val time: Instant = Clock.System.now(),
-    val state: DrawingState
+    val state: DrawingState,
+    /** True for drawings created before the page-coordinate system was introduced.
+     *  Legacy drawings render with no page frame, filling the screen as before. */
+    val isLegacy: Boolean = false,
 )
 

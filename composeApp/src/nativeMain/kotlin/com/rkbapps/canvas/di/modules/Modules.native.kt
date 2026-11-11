@@ -11,6 +11,8 @@ import com.rkbapps.canvas.db.old_db.DbManager
 import com.rkbapps.canvas.db.old_db.DbManagerImpl
 import com.rkbapps.canvas.db.PreferenceManager.Companion.DATASTORE_FILE_NAME
 import com.rkbapps.canvas.db.getDatabaseBuilder
+import com.rkbapps.canvas.db.migrator.Migration1To2
+import com.rkbapps.canvas.db.migrator.Migration2To3
 import com.rkbapps.canvas.util.ImageSharer
 import com.rkbapps.canvas.util.ImageSharerNative
 import com.rkbapps.canvas.util.AppLocaleManager
@@ -51,7 +53,9 @@ actual val platformModule = module {
         )
     }
     single<AppDatabase> {
-        getDatabaseBuilder().setDriver(BundledSQLiteDriver())
+        getDatabaseBuilder()
+            .addMigrations(Migration1To2, Migration2To3)
+            .setDriver(BundledSQLiteDriver())
             .setQueryCoroutineContext(Dispatchers.IO).build()
     }
 }

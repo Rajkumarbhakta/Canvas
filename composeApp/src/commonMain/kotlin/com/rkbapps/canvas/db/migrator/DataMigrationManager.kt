@@ -45,8 +45,11 @@ class DataMigrationManager(
                     val savedDesigns = json.decodeFromString(SavedDesigns.serializer(), legacyData)
                     val dao = appDatabase.drawingDao()
                     savedDesigns.designs.forEach { design ->
-                        val designEntity = design.toEntity()
-                        val pathEntities = design.state.paths.mapIndexed { index, pathData ->
+                        // Mark as legacy so old drawings render in full-screen mode (not paged mode).
+                        // Their path coordinates are raw screen pixels, not page-local coordinates.
+                        val legacyDesign = design.copy(isLegacy = true)
+                        val designEntity = legacyDesign.toEntity()
+                        val pathEntities = legacyDesign.state.paths.mapIndexed { index, pathData ->
                             // Use 0L as temporary designId, it will be updated by dao.upsertDesignWithPaths
                             pathData.toEntity(0L, index)
                         }
