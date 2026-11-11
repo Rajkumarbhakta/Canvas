@@ -3,6 +3,8 @@ package com.rkbapps.canvas.ui.composables
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.runtime.Composable
@@ -92,6 +94,10 @@ fun DrawingCanvas(
     pageWidth: Float = 794f,
     pageHeight: Float = 1123f,
     isLegacy: Boolean = false,
+    /** Colour of the desk around the page (paged mode only). */
+    deskColor: Color = DeskColor,
+    /** Area of the desk covered by floating UI; the fitted page keeps clear of it. */
+    contentPadding: PaddingValues = PaddingValues(),
     modifier: Modifier = Modifier
 ) {
     if (isLegacy) {
@@ -150,8 +156,7 @@ fun DrawingCanvas(
         modifier = modifier
             // The zoomed page may be larger than the desk; keep it off neighbouring UI.
             .clipToBounds()
-            .background(DeskColor)
-            .onSizeChanged { deskSize = it }
+            .background(deskColor)
             .pointerInput(Unit) {       // Unit key → coroutine NEVER restarts mid-gesture
                 detectCanvasTransformGestures(
                     // Decide ownership BEFORE consuming anything, otherwise the desk
@@ -180,43 +185,51 @@ fun DrawingCanvas(
                     // This does NOT drive graphicsLayer — local state does.
                     onAction(DrawingAction.OnZoomPan(zoomChange, pan))
                 }
-            },
-        contentAlignment = Alignment.Center
+            }
     ) {
-        // One page unit = one layout px, whatever the screen density.
-        val (pageWidthDp, pageHeightDp) = with(LocalDensity.current) {
-            pageWidth.toDp() to pageHeight.toDp()
-        }
-
-        // Page frame with drop shadow — transform driven by LOCAL state (draw-phase only)
+        // The page is fitted to, and centred in, the part of the desk not covered by floating UI.
         Box(
             modifier = Modifier
-                .graphicsLayer {
-                    val scale = viewScale()
-                    scaleX       = scale
-                    scaleY       = scale
-                    translationX = localPan.x
-                    translationY = localPan.y
-                }
-                // requiredSize, not size: the desk's constraints are the viewport, and
-                // size() would clamp every page larger than the viewport down to it.
-                .requiredSize(pageWidthDp, pageHeightDp)
-                .testTag(DrawingPageTestTag)
-                .shadow(elevation = 8.dp)
+                .fillMaxSize()
+                .padding(contentPadding)
+                .onSizeChanged { deskSize = it },
+            contentAlignment = Alignment.Center
         ) {
-            // Inner Canvas = actual drawing surface in page coordinates.
-            // Compose maps touch coordinates through graphicsLayer automatically.
-            PagedCanvas(
-                paths = paths,
-                currentPath = currentPath,
-                backgroundColor = backgroundColor,
-                onAction = onAction,
-                isSelectionMode = isSelectionMode,
-                selectedPathId = selectedPathId,
-                dragOffset = dragOffset,
-                viewScale = viewScale,
-                modifier = Modifier.fillMaxSize()
-            )
+            // One page unit = one layout px, whatever the screen density.
+            val (pageWidthDp, pageHeightDp) = with(LocalDensity.current) {
+                pageWidth.toDp() to pageHeight.toDp()
+            }
+
+            // Page frame with drop shadow — transform driven by LOCAL state (draw-phase only)
+            Box(
+                modifier = Modifier
+                    .graphicsLayer {
+                        val scale = viewScale()
+                        scaleX       = scale
+                        scaleY       = scale
+                        translationX = localPan.x
+                        translationY = localPan.y
+                    }
+                    // requiredSize, not size: the desk's constraints are the viewport, and
+                    // size() would clamp every page larger than the viewport down to it.
+                    .requiredSize(pageWidthDp, pageHeightDp)
+                    .testTag(DrawingPageTestTag)
+                    .shadow(elevation = 8.dp)
+            ) {
+                // Inner Canvas = actual drawing surface in page coordinates.
+                // Compose maps touch coordinates through graphicsLayer automatically.
+                PagedCanvas(
+                    paths = paths,
+                    currentPath = currentPath,
+                    backgroundColor = backgroundColor,
+                    onAction = onAction,
+                    isSelectionMode = isSelectionMode,
+                    selectedPathId = selectedPathId,
+                    dragOffset = dragOffset,
+                    viewScale = viewScale,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
         }
     }
 }

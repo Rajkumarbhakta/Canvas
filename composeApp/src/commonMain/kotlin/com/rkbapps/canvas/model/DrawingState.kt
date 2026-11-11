@@ -21,7 +21,7 @@ data class DrawingState(
 
     // ── Tool state ────────────────────────────────────────────────────────
     @Contextual
-    val selectedColor: Color = Color.Blue,
+    val selectedColor: Color = Color.Black,
     val selectedThickness: Float = 10f,
     val selectedPathEffect: PaintingStyleType = PaintingStyleType.STROKE,
     val selectedShapeType: ShapeType = ShapeType.NONE,
