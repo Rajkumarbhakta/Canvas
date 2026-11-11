@@ -125,4 +125,10 @@
     <string name="select_hint">Tap a stroke or shape to select it, then drag to move it. Drag empty space to pan, and pinch to zoom.</string>
     <string name="delete_selection">Delete selection</string>
     <string name="eraser_hint">Drag across the page to erase.</string>
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="pages_count">%1$d pages</string>
+    <string name="clear_search">Clear search</string>
+    <string name="no_search_results">No drawing is named “%1$s”</string>
+    <string name="no_search_results_desc">Check the spelling, or clear the search to see all your drawings.</string>
     </resources>

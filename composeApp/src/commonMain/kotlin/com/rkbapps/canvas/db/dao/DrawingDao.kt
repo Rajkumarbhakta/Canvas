@@ -19,6 +19,10 @@ interface DrawingDao {
     @Query("SELECT * FROM designs WHERE stringId = :stringId")
     suspend fun getDesignWithPathsByStringId(stringId: String): DesignWithPaths?
 
+    /** Strokes of the first page only, in drawing order — enough to render a thumbnail. */
+    @Query("SELECT * FROM paths WHERE designId = :designId AND pageIndex = 0 ORDER BY orderIndex ASC")
+    suspend fun getFirstPagePaths(designId: Long): List<PathEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDesign(design: DesignEntity): Long
 
