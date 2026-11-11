@@ -19,6 +19,17 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <!-- Open .rkcanvas files from file managers, chats and "Open with".
+                 Android has no type for the extension, so providers hand these files
+                 over as plain binary data; MainActivity checks what it is given. -->
+            <intent-filter android:label="Canvas">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="content" />
+                <data android:mimeType="application/x-rkcanvas" />
+                <data android:mimeType="application/octet-stream" />
+            </intent-filter>
         </activity>
 
         <provider

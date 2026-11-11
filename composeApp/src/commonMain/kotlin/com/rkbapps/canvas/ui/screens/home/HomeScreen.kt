@@ -29,6 +29,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.FileOpen
+import androidx.compose.material.icons.outlined.SaveAlt
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.rounded.Brush
 import androidx.compose.material.icons.rounded.Close
@@ -42,17 +44,24 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -86,6 +95,14 @@ import canvas.composeapp.generated.resources.confirm_deletion
 import canvas.composeapp.generated.resources.delete
 import canvas.composeapp.generated.resources.delete_confirmation
 import canvas.composeapp.generated.resources.draw
+import canvas.composeapp.generated.resources.drawing_imported
+import canvas.composeapp.generated.resources.export_as_file
+import canvas.composeapp.generated.resources.file_export_failed
+import canvas.composeapp.generated.resources.file_exported
+import canvas.composeapp.generated.resources.import_damaged
+import canvas.composeapp.generated.resources.import_drawing
+import canvas.composeapp.generated.resources.import_newer_version
+import canvas.composeapp.generated.resources.import_not_canvas_file
 import canvas.composeapp.generated.resources.migrating_data
 import canvas.composeapp.generated.resources.more_options
 import canvas.composeapp.generated.resources.my_designs
@@ -93,6 +110,7 @@ import canvas.composeapp.generated.resources.no_designs
 import canvas.composeapp.generated.resources.no_designs_desc
 import canvas.composeapp.generated.resources.no_search_results
 import canvas.composeapp.generated.resources.no_search_results_desc
+import canvas.composeapp.generated.resources.open
 import canvas.composeapp.generated.resources.pages_count
 import canvas.composeapp.generated.resources.please_wait
 import canvas.composeapp.generated.resources.search_here
@@ -100,8 +118,10 @@ import canvas.composeapp.generated.resources.settings
 import canvas.composeapp.generated.resources.today
 import canvas.composeapp.generated.resources.untitled_drawing
 import canvas.composeapp.generated.resources.yesterday
+import com.rkbapps.canvas.model.CanvasFileError
 import com.rkbapps.canvas.model.PathData
 import com.rkbapps.canvas.model.SavedDesign
+import com.rkbapps.canvas.model.canvasFileName
 import com.rkbapps.canvas.navigation.Draw
 import com.rkbapps.canvas.navigation.Settings
 import com.rkbapps.canvas.ui.composables.drawPath
@@ -114,6 +134,10 @@ import com.rkbapps.canvas.ui.screens.drawing.utils.PaintingStyleType
 import com.rkbapps.canvas.util.Platforms
 import com.rkbapps.canvas.util.getPlatform
 import com.rkbapps.canvas.util.getWindowSize
+import com.rkbapps.canvas.util.isDrawingFileSupported
+import com.rkbapps.canvas.util.rememberDrawingFileExporter
+import com.rkbapps.canvas.util.rememberDrawingFileImporter
+import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
 import kotlinx.datetime.number
@@ -167,9 +191,61 @@ fun HomeScreen(
         }
     }
 
+    // ── Canvas files: import, export, and telling the user how it went ────────
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val importFile = rememberDrawingFileImporter(viewModel::importFile)
+    val exportFile = rememberDrawingFileExporter(viewModel::onFileExported)
+    val onExport: (SavedDesign) -> Unit = { design ->
+        scope.launch {
+            val file = viewModel.buildCanvasFile(design)
+            if (file != null) exportFile(canvasFileName(design.name), file) else viewModel.onFileExported(false)
+        }
+    }
+
+    val exported = stringResource(Res.string.file_exported)
+    val exportFailed = stringResource(Res.string.file_export_failed)
+    val imported = stringResource(Res.string.drawing_imported)
+    val notCanvasFile = stringResource(Res.string.import_not_canvas_file)
+    val newerVersion = stringResource(Res.string.import_newer_version)
+    val damaged = stringResource(Res.string.import_damaged)
+    val openLabel by rememberUpdatedState(stringResource(Res.string.open))
+    val textOf by rememberUpdatedState { message: HomeMessage ->
+        when (message) {
+            HomeMessage.Exported -> exported
+            HomeMessage.ExportFailed -> exportFailed
+            is HomeMessage.Imported -> imported
+            is HomeMessage.ImportFailed -> when (message.error) {
+                CanvasFileError.NOT_A_CANVAS_FILE -> notCanvasFile
+                CanvasFileError.NEWER_VERSION -> newerVersion
+                CanvasFileError.DAMAGED -> damaged
+            }
+        }
+    }
+    LaunchedEffect(Unit) {
+        viewModel.messages.collect { message ->
+            snackbarHostState.currentSnackbarData?.dismiss()
+            launch {
+                val importedDesign = (message as? HomeMessage.Imported)?.design
+                val result = snackbarHostState.showSnackbar(
+                    message = textOf(message),
+                    // An imported drawing can be opened straight from the message.
+                    actionLabel = openLabel.takeIf { importedDesign != null },
+                    duration = if (message == HomeMessage.Exported) SnackbarDuration.Short else SnackbarDuration.Long
+                )
+                if (result == SnackbarResult.ActionPerformed && importedDesign != null) {
+                    navController.navigate(route = Draw(importedDesign.id))
+                }
+            }
+        }
+    }
+
     HomeContent(
         designs = allDesign.designs,
         isWide = getWindowSize().widthSizeClass != WindowWidthSizeClass.Compact,
+        snackbarHostState = snackbarHostState,
+        onImport = importFile.takeIf { isDrawingFileSupported },
+        onExport = onExport.takeIf { isDrawingFileSupported },
         cachedPreview = viewModel::cachedPreview,
         loadPreview = viewModel::loadPreview,
         onNewDrawing = { navController.navigate(route = Draw()) },
@@ -192,6 +268,10 @@ fun HomeContent(
     onOpen: (SavedDesign) -> Unit,
     onDelete: (SavedDesign) -> Unit,
     onSettings: () -> Unit,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    /** Null where Canvas files are not supported; the controls are then left out. */
+    onImport: (() -> Unit)? = null,
+    onExport: ((SavedDesign) -> Unit)? = null,
 ) {
     var query by rememberSaveable { mutableStateOf("") }
     // Newest first; the search matches anywhere in the name.
@@ -212,6 +292,7 @@ fun HomeContent(
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surface,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = {
@@ -226,6 +307,13 @@ fun HomeContent(
                 actions = {
                     if (isWide && hasDesigns) {
                         SearchField(query, onQueryChange = { query = it }, Modifier.width(280.dp))
+                    }
+                    if (onImport != null) {
+                        ChromeButton(
+                            label = stringResource(Res.string.import_drawing),
+                            onClick = onImport,
+                            modifier = Modifier.padding(start = 8.dp)
+                        ) { Icon(Icons.Outlined.FileOpen, null) }
                     }
                     ChromeButton(
                         label = stringResource(Res.string.settings),
@@ -261,7 +349,7 @@ fun HomeContent(
         }
     ) { innerPadding ->
         if (!hasDesigns) {
-            EmptyGallery(onNewDrawing, Modifier.fillMaxSize().padding(innerPadding))
+            EmptyGallery(onNewDrawing, onImport, Modifier.fillMaxSize().padding(innerPadding))
         } else {
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = if (isWide) 208.dp else 152.dp),
@@ -292,6 +380,8 @@ fun HomeContent(
                         loadPreview = loadPreview,
                         onClick = { onOpen(design) },
                         onDelete = { onDelete(design) },
+                        // Legacy drawings are in screen pixels and cannot be exported.
+                        onExport = onExport?.takeIf { !design.isLegacy }?.let { export -> { export(design) } },
                         modifier = Modifier.animateItem()
                     )
                 }
@@ -366,6 +456,7 @@ private fun DesignCard(
     loadPreview: suspend (Long) -> List<PathData>,
     onClick: () -> Unit,
     onDelete: () -> Unit,
+    onExport: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     // Show what was loaded last time straight away, then refresh from the database.
@@ -401,6 +492,12 @@ private fun DesignCard(
             }
             // Delete sits behind a menu so it cannot be hit while scrolling the gallery.
             MenuButton(stringResource(Res.string.more_options), Icons.Rounded.MoreVert) { close ->
+                if (onExport != null) {
+                    MenuItem(
+                        stringResource(Res.string.export_as_file), Icons.Outlined.SaveAlt,
+                        onClick = { close(); onExport() }
+                    )
+                }
                 MenuItem(
                     stringResource(Res.string.delete), Icons.Outlined.Delete,
                     destructive = true,
@@ -526,7 +623,7 @@ private fun dateLabel(time: Instant): String {
 // ── Empty states ─────────────────────────────────────────────────────────────
 
 @Composable
-private fun EmptyGallery(onNewDrawing: () -> Unit, modifier: Modifier = Modifier) {
+private fun EmptyGallery(onNewDrawing: () -> Unit, onImport: (() -> Unit)?, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.padding(32.dp),
         verticalArrangement = Arrangement.Center,
@@ -552,6 +649,14 @@ private fun EmptyGallery(onNewDrawing: () -> Unit, modifier: Modifier = Modifier
         Button(onClick = onNewDrawing, shape = ChromeShape) {
             Icon(Icons.Rounded.Brush, null, Modifier.size(18.dp))
             Text(stringResource(Res.string.draw), Modifier.padding(start = 8.dp))
+        }
+        // Bringing drawings over from another device starts from an empty gallery.
+        if (onImport != null) {
+            Spacer(Modifier.height(4.dp))
+            TextButton(onClick = onImport) {
+                Icon(Icons.Outlined.FileOpen, null, Modifier.size(18.dp))
+                Text(stringResource(Res.string.import_drawing), Modifier.padding(start = 8.dp))
+            }
         }
     }
 }

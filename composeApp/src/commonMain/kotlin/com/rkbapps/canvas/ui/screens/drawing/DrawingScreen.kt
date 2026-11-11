@@ -29,6 +29,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import canvas.composeapp.generated.resources.Res
 import canvas.composeapp.generated.resources.drawing_saved
+import canvas.composeapp.generated.resources.file_export_failed
+import canvas.composeapp.generated.resources.file_exported
+import com.rkbapps.canvas.model.canvasFileName
 import com.rkbapps.canvas.ui.screens.drawing.composables.EditDrawingNameDialog
 import com.rkbapps.canvas.ui.screens.drawing.composables.MobileDrawingLayout
 import com.rkbapps.canvas.ui.screens.drawing.composables.WideDrawingLayout
@@ -38,6 +41,8 @@ import com.rkbapps.canvas.ui.screens.drawing.utils.ShapeType
 import com.rkbapps.canvas.ui.screens.drawing.utils.activeTool
 import com.rkbapps.canvas.ui.screens.drawing.utils.toolAction
 import com.rkbapps.canvas.util.getWindowSize
+import com.rkbapps.canvas.util.isDrawingFileSupported
+import com.rkbapps.canvas.util.rememberDrawingFileExporter
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -67,13 +72,31 @@ fun DrawingScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val savedMessage = stringResource(Res.string.drawing_saved)
-    val onSave: () -> Unit = {
-        viewModel.onAction(DrawingAction.SaveDesign(state, currentDesign.name))
+    val showMessage: (String) -> Unit = { message ->
         scope.launch {
             snackbarHostState.currentSnackbarData?.dismiss()
-            snackbarHostState.showSnackbar(savedMessage)
+            snackbarHostState.showSnackbar(message)
         }
     }
+    val onSave: () -> Unit = {
+        viewModel.onAction(DrawingAction.SaveDesign(state, currentDesign.name))
+        showMessage(savedMessage)
+    }
+
+    // ── Export as a Canvas file (paged drawings, where files are supported) ───
+    val exportedMessage = stringResource(Res.string.file_exported)
+    val exportFailedMessage = stringResource(Res.string.file_export_failed)
+    val exportFile = rememberDrawingFileExporter { saved ->
+        showMessage(if (saved) exportedMessage else exportFailedMessage)
+    }
+    val onExportFile: (() -> Unit)? = if (isDrawingFileSupported && !uiState.isLegacy) {
+        {
+            scope.launch {
+                // What is on screen is exported, saved or not — the same as "Save as image".
+                exportFile(canvasFileName(currentDesign.name), viewModel.buildCanvasFile())
+            }
+        }
+    } else null
 
     // ── Keyboard shortcuts (desktop, tablets with a keyboard) ─────────────────
     val requester = remember { FocusRequester() }
@@ -138,6 +161,7 @@ fun DrawingScreen(
                 snackbarHostState = snackbarHostState,
                 onSelectTool = onSelectTool,
                 onSave = onSave,
+                onExportFile = onExportFile,
                 onAction = viewModel::onAction,
                 navigateBack = { navController.navigateUp() }
             )
@@ -151,6 +175,7 @@ fun DrawingScreen(
                 panelInitiallyOpen = widthSizeClass == WindowWidthSizeClass.Expanded,
                 onSelectTool = onSelectTool,
                 onSave = onSave,
+                onExportFile = onExportFile,
                 onAction = viewModel::onAction,
                 navigateBack = { navController.navigateUp() }
             )

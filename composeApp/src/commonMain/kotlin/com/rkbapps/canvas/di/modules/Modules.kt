@@ -10,6 +10,7 @@ import com.rkbapps.canvas.ui.screens.home.HomeRepository
 import com.rkbapps.canvas.ui.screens.home.HomeViewModel
 import com.rkbapps.canvas.ui.screens.settings.SettingsRepository
 import com.rkbapps.canvas.ui.screens.settings.SettingsViewModel
+import com.rkbapps.canvas.util.IncomingFiles
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
@@ -28,8 +29,9 @@ val dbModule = module {
 
 
 val provideRepositories = module {
+    single { IncomingFiles() }
     factoryOf(::DrawingRepository)
-    factory { HomeRepository(get()) }
+    factory { HomeRepository(get(), get()) }
     factory { SettingsRepository(get(),get()) }
 }
 

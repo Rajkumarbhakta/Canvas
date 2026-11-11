@@ -155,6 +155,13 @@ compose.desktop {
             packageName = "Canvas"
             packageVersion = "1.0.0"
 
+            // Opening a .rkcanvas file starts Canvas (see openDrawingFiles in main.kt).
+            fileAssociation(
+                mimeType = "application/x-rkcanvas",
+                extension = "rkcanvas",
+                description = "Canvas drawing",
+            )
+
             linux {
                 iconFile.set(project.file("desktopAppIcons/LinuxIcon.png"))
             }

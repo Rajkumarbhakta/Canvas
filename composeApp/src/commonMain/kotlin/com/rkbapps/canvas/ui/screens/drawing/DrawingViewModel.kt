@@ -17,6 +17,8 @@ class DrawingViewModel(
 
     fun updateDrawingName(name: String) = repository.updateDrawingName(name)
 
+    suspend fun buildCanvasFile(): ByteArray = repository.buildCanvasFile()
+
     fun onAction(action: DrawingAction) {
         when (action) {
             // ── Drawing ──────────────────────────────────────────────────────
