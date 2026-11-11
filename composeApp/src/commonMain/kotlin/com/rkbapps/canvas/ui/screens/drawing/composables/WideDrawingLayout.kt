@@ -25,6 +25,7 @@ import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.FileDownload
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Save
+import androidx.compose.material.icons.outlined.SaveAlt
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material.icons.rounded.Fullscreen
@@ -54,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import canvas.composeapp.generated.resources.Res
 import canvas.composeapp.generated.resources.back
 import canvas.composeapp.generated.resources.clear_page
+import canvas.composeapp.generated.resources.export_as_file
 import canvas.composeapp.generated.resources.focus_mode
 import canvas.composeapp.generated.resources.more_options
 import canvas.composeapp.generated.resources.page_size
@@ -97,6 +99,8 @@ fun WideDrawingLayout(
     panelInitiallyOpen: Boolean,
     onSelectTool: (DrawingTool) -> Unit,
     onSave: () -> Unit,
+    /** Null when the drawing cannot be exported as a file (legacy drawings, iOS). */
+    onExportFile: (() -> Unit)?,
     onAction: (DrawingAction) -> Unit,
     navigateBack: () -> Unit,
 ) {
@@ -143,6 +147,11 @@ fun WideDrawingLayout(
                                 MenuItem(stringResource(Res.string.share), Icons.Outlined.Share, onClick = {
                                     close(); onAction(DrawingAction.OnShareDrawing)
                                 })
+                                if (onExportFile != null) {
+                                    MenuItem(stringResource(Res.string.export_as_file), Icons.Outlined.SaveAlt, onClick = {
+                                        close(); onExportFile()
+                                    })
+                                }
                             }
                             MenuButton(stringResource(Res.string.more_options), Icons.Rounded.MoreVert) { close ->
                                 MenuItem(stringResource(Res.string.rename), Icons.Outlined.Edit, onClick = {

@@ -29,6 +29,7 @@ import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.FormatColorFill
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Save
+import androidx.compose.material.icons.outlined.SaveAlt
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.rounded.Fullscreen
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
@@ -58,6 +59,7 @@ import androidx.compose.ui.unit.dp
 import canvas.composeapp.generated.resources.Res
 import canvas.composeapp.generated.resources.back
 import canvas.composeapp.generated.resources.clear_page
+import canvas.composeapp.generated.resources.export_as_file
 import canvas.composeapp.generated.resources.delete_page
 import canvas.composeapp.generated.resources.focus_mode
 import canvas.composeapp.generated.resources.more_options
@@ -99,6 +101,8 @@ fun MobileDrawingLayout(
     snackbarHostState: SnackbarHostState,
     onSelectTool: (DrawingTool) -> Unit,
     onSave: () -> Unit,
+    /** Null when the drawing cannot be exported as a file (legacy drawings, iOS). */
+    onExportFile: (() -> Unit)?,
     onAction: (DrawingAction) -> Unit,
     navigateBack: () -> Unit,
 ) {
@@ -149,6 +153,11 @@ fun MobileDrawingLayout(
                                 MenuItem(stringResource(Res.string.share), Icons.Outlined.Share, onClick = {
                                     close(); onAction(DrawingAction.OnShareDrawing)
                                 })
+                                if (onExportFile != null) {
+                                    MenuItem(stringResource(Res.string.export_as_file), Icons.Outlined.SaveAlt, onClick = {
+                                        close(); onExportFile()
+                                    })
+                                }
                                 HorizontalDivider()
                                 if (!uiState.isLegacy) {
                                     MenuItem(stringResource(Res.string.page_size), Icons.Outlined.Description, onClick = {

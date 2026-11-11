@@ -17,3 +17,8 @@ val json = Json {
     ignoreUnknownKeys = true
     prettyPrint = true
 }
+
+/** Same rules on one line, for exported drawing files where indentation only adds bytes. */
+val compactJson = Json(from = json) {
+    prettyPrint = false
+}

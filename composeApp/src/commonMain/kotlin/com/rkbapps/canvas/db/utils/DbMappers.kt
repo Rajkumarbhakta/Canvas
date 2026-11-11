@@ -62,6 +62,24 @@ fun PathData.toEntity(designId: Long, index: Int, pageIndex: Int = 0): PathEntit
     )
 }
 
+/**
+ * Every stroke of this drawing as rows for the `paths` table: page by page for
+ * paged drawings, the flat list for legacy ones.
+ */
+fun SavedDesign.toPathEntities(): List<PathEntity> {
+    return if (isLegacy) {
+        state.paths.mapIndexed { index, pathData ->
+            pathData.toEntity(pId, index, pageIndex = 0)
+        }
+    } else {
+        state.pages.flatMapIndexed { pageIdx, page ->
+            page.paths.mapIndexed { strokeIdx, pathData ->
+                pathData.toEntity(pId, strokeIdx, pageIndex = pageIdx)
+            }
+        }
+    }
+}
+
 // ── Entity → Domain ──────────────────────────────────────────────────────────
 
 fun DesignWithPaths.toDomain(): SavedDesign {

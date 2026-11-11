@@ -135,4 +135,13 @@
     <string name="clear_search">Clear search</string>
     <string name="no_search_results">No drawing is named “%1$s”</string>
     <string name="no_search_results_desc">Check the spelling, or clear the search to see all your drawings.</string>
+    <string name="export_as_file">Export as file</string>
+    <string name="import_drawing">Import</string>
+    <string name="open">Open</string>
+    <string name="file_exported">File exported</string>
+    <string name="file_export_failed">Couldn\'t export the file</string>
+    <string name="drawing_imported">Drawing imported</string>
+    <string name="import_not_canvas_file">That file is not a Canvas drawing</string>
+    <string name="import_newer_version">This drawing was made with a newer version of Canvas. Update the app to open it.</string>
+    <string name="import_damaged">This Canvas file is damaged and can\'t be opened</string>
     </resources>

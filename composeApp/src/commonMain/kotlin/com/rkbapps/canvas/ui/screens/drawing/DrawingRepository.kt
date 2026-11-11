@@ -7,6 +7,7 @@ import androidx.navigation.toRoute
 import com.rkbapps.canvas.db.dao.DrawingDao
 import com.rkbapps.canvas.db.utils.toDomain
 import com.rkbapps.canvas.db.utils.toEntity
+import com.rkbapps.canvas.db.utils.toPathEntities
 import com.rkbapps.canvas.model.CanvasPage
 import com.rkbapps.canvas.model.DrawingState
 import com.rkbapps.canvas.model.PathData
@@ -15,6 +16,7 @@ import com.rkbapps.canvas.navigation.Draw
 import com.rkbapps.canvas.ui.screens.drawing.utils.PaintingStyleType
 import com.rkbapps.canvas.ui.screens.drawing.utils.ShapeType
 import com.rkbapps.canvas.util.ImageSharer
+import com.rkbapps.canvas.util.toCanvasFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -23,6 +25,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -465,23 +468,16 @@ class DrawingRepository(
             )
         )
 
-        val designEntity = current.toEntity()
-
-        // Build path entities: iterate all pages for new drawings, flat list for legacy
-        val pathEntities = if (current.isLegacy) {
-            current.state.paths.mapIndexed { index, pathData ->
-                pathData.toEntity(current.pId, index, pageIndex = 0)
-            }
-        } else {
-            current.state.pages.flatMapIndexed { pageIdx, page ->
-                page.paths.mapIndexed { strokeIdx, pathData ->
-                    pathData.toEntity(current.pId, strokeIdx, pageIndex = pageIdx)
-                }
-            }
-        }
-
-        val newDbId = drawingDao.upsertDesignWithPaths(designEntity, pathEntities)
+        val newDbId = drawingDao.upsertDesignWithPaths(current.toEntity(), current.toPathEntities())
         _currentDesign.update { current.copy(pId = newDbId) }
+    }
+
+    /**
+     * The drawing as it is on screen — saved or not — packed as a Canvas file.
+     * Paged drawings only.
+     */
+    suspend fun buildCanvasFile(): ByteArray = withContext(Dispatchers.Default) {
+        _currentDesign.value.copy(state = _state.value).toCanvasFile()
     }
 
     fun updateDrawingName(name: String) {
