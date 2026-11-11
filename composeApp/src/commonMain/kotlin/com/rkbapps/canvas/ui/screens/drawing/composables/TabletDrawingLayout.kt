@@ -202,6 +202,7 @@ fun TabletDrawingLayout(
                             .fillMaxSize()
                             .desktopScrollZoom(
                                 isLegacy = uiState.isLegacy,
+                                isSelectionMode = uiState.isSelectionMode,
                                 onAction = onAction,
                             ),
                         backgroundColor = if (uiState.isLegacy) state.backgroundColor

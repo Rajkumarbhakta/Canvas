@@ -12,7 +12,7 @@ data class DrawingScreenState(
     val selectedPathId: String? = null,
 
     // ── Milestone 1: zoom / pan ───────────────────────────────────────────────
-    /** Current zoom scale. 1f = 100 %. Clamped to [MIN_ZOOM]..[MAX_ZOOM]. */
+    /** Current zoom scale. 1f = page fitted to the canvas area. Clamped to [MIN_ZOOM]..[MAX_ZOOM]. */
     val zoom: Float = 1f,
     /** Pan translation applied to the page frame, in screen pixels. */
     val panOffset: Offset = Offset.Zero,

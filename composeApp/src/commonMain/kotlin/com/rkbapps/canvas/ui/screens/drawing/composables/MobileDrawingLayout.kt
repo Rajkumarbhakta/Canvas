@@ -61,6 +61,7 @@ import com.rkbapps.canvas.ui.composables.DrawingCanvas
 import com.rkbapps.canvas.ui.composables.MinimalDropdownMenu
 import com.rkbapps.canvas.ui.screens.drawing.DrawingAction
 import com.rkbapps.canvas.ui.screens.drawing.DrawingScreenState
+import com.rkbapps.canvas.util.Log
 import com.rkbapps.canvas.util.desktopScrollZoom
 import org.jetbrains.compose.resources.stringResource
 
@@ -177,14 +178,12 @@ fun MobileDrawingLayout(
                 isSelectionMode = uiState.isSelectionMode,
                 selectedPathId = uiState.selectedPathId,
                 dragOffset = state.dragOffset,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .desktopScrollZoom(
+                modifier = Modifier.fillMaxSize().desktopScrollZoom(
                         isLegacy = uiState.isLegacy,
+                        isSelectionMode = uiState.isSelectionMode,
                         onAction = onAction,
                     ),
-                backgroundColor = if (uiState.isLegacy) state.backgroundColor
-                                  else currentPage.backgroundColor,
+                backgroundColor = if (uiState.isLegacy) state.backgroundColor else currentPage.backgroundColor,
                 zoom = uiState.zoom,
                 panOffset = uiState.panOffset,
                 pageWidth = state.pageWidth,
@@ -214,141 +213,144 @@ fun MobileDrawingLayout(
                 }
             }
 
-            // Bottom Toolbar pill (hidden in full screen)
+            // Bottom overlay: page nav bar (paged only) stacked above the toolbar pill
             AnimatedVisibility(
                 visible = !uiState.isFullScreen,
                 enter = fadeIn() + slideInVertically { it },
                 exit = fadeOut() + slideOutVertically { it },
                 modifier = Modifier.align(Alignment.BottomCenter)
             ) {
-                Surface(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 16.dp),
-                    shape = RoundedCornerShape(28.dp),
-                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                    tonalElevation = 8.dp,
-                    shadowElevation = 8.dp,
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Bottom
                 ) {
-                    Column(
-                        modifier = Modifier.padding(vertical = 12.dp),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    // Page navigation bar — only shown for paged drawings
+                    if (!uiState.isLegacy) {
+                        MobilePageNavigationBar(
+                            pages = state.pages,
+                            currentPageIndex = uiState.currentPageIndex,
+                            pageWidth = state.pageWidth,
+                            pageHeight = state.pageHeight,
+                            onAction = onAction,
+                        )
+                    }
+
+                    // Bottom Toolbar pill
+                    Surface(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
+                        shape = RoundedCornerShape(28.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        tonalElevation = 8.dp,
+                        shadowElevation = 8.dp,
                     ) {
-                        // Row 1: Tool row
-                        LazyRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        Column(
+                            modifier = Modifier.padding(vertical = 12.dp),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
-                            item { Spacer(Modifier.width(12.dp)) }
-                            item {
-                                UndoRedoItem(
-                                    onUndo = { onAction(DrawingAction.OnUndo) },
-                                    onRedo = { onAction(DrawingAction.OnRedo) }
-                                )
-                            }
-                            item {
-                                ToolButton(
-                                    isActive = uiState.isSelectionMode,
-                                    label = "Select",
-                                    showLabel = false,
-                                    onClick = {
-                                        onAction(DrawingAction.OnToggleSelectionMode(!uiState.isSelectionMode))
-                                    }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Filled.TouchApp,
-                                        contentDescription = "Select",
-                                        modifier = Modifier.size(22.dp)
+                            // Row 1: Tool row
+                            LazyRow(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                item { Spacer(Modifier.width(12.dp)) }
+                                item {
+                                    UndoRedoItem(
+                                        onUndo = { onAction(DrawingAction.OnUndo) },
+                                        onRedo = { onAction(DrawingAction.OnRedo) }
                                     )
                                 }
-                            }
-                            item {
-                                PaintingStyle(selected = state.selectedPathEffect) { effect ->
-                                    onAction(DrawingAction.OnToggleSelectionMode(false))
-                                    onAction(DrawingAction.OnPathEffectChange(effect))
-                                }
-                            }
-                            item {
-                                EraserItem(isEraserSelected = uiState.isEraserSelected) {
-                                    onAction(DrawingAction.OnToggleSelectionMode(false))
-                                    if (uiState.isEraserSelected) {
-                                        onAction(DrawingAction.OnEraserUnselected)
-                                        onAction(DrawingAction.OnToggleEraser(false))
-                                    } else {
-                                        onAction(DrawingAction.OnEraserSelected)
-                                        onAction(DrawingAction.OnToggleEraser(true))
+                                item {
+                                    ToolButton(
+                                        isActive = uiState.isSelectionMode,
+                                        label = "Select",
+                                        showLabel = false,
+                                        onClick = {
+                                            onAction(DrawingAction.OnToggleSelectionMode(!uiState.isSelectionMode))
+                                        }
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Filled.TouchApp,
+                                            contentDescription = "Select",
+                                            modifier = Modifier.size(22.dp)
+                                        )
                                     }
                                 }
-                            }
-                            item {
-                                ShapeSelector(selectedShape = state.selectedShapeType) { shapeType ->
-                                    onAction(DrawingAction.OnToggleSelectionMode(false))
-                                    onAction(DrawingAction.OnEraserUnselected)
-                                    onAction(DrawingAction.OnToggleEraser(false))
-                                    onAction(DrawingAction.OnShapeTypeChange(shapeType))
+                                item {
+                                    PaintingStyle(
+                                        isActive = !uiState.isSelectionMode && !uiState.isEraserSelected,
+                                        selected = state.selectedPathEffect
+                                    ) { effect ->
+                                        onAction(DrawingAction.OnToggleSelectionMode(false))
+                                        onAction(DrawingAction.OnPathEffectChange(effect))
+                                    }
                                 }
-                            }
-                            item {
-                                ColorItemList(selectedColor = state.selectedColor) { color ->
-                                    onAction(DrawingAction.OnEraserUnselected)
-                                    onAction(DrawingAction.OnToggleEraser(false))
-                                    onAction(DrawingAction.OnSelectColor(color))
+                                item {
+                                    EraserItem(isEraserSelected = uiState.isEraserSelected) {
+                                        onAction(DrawingAction.OnToggleSelectionMode(false))
+                                        if (uiState.isEraserSelected) {
+                                            onAction(DrawingAction.OnEraserUnselected)
+                                            onAction(DrawingAction.OnToggleEraser(false))
+                                        } else {
+                                            onAction(DrawingAction.OnEraserSelected)
+                                            onAction(DrawingAction.OnToggleEraser(true))
+                                        }
+                                    }
                                 }
-                            }
-                            item {
-                                BackgroundColorChangeItem { color ->
-                                    onAction(DrawingAction.OnBackgroundColorChange(color))
+                                item {
+                                    ShapeSelector(selectedShape = state.selectedShapeType) { shapeType ->
+                                        onAction(DrawingAction.OnToggleSelectionMode(false))
+                                        onAction(DrawingAction.OnEraserUnselected)
+                                        onAction(DrawingAction.OnToggleEraser(false))
+                                        onAction(DrawingAction.OnShapeTypeChange(shapeType))
+                                    }
                                 }
+                                item {
+                                    ColorItemList(selectedColor = state.selectedColor) { color ->
+                                        onAction(DrawingAction.OnEraserUnselected)
+                                        onAction(DrawingAction.OnToggleEraser(false))
+                                        onAction(DrawingAction.OnSelectColor(color))
+                                    }
+                                }
+                                item {
+                                    BackgroundColorChangeItem { color ->
+                                        onAction(DrawingAction.OnBackgroundColorChange(color))
+                                    }
+                                }
+                                item { Spacer(Modifier.width(12.dp)) }
                             }
-                            item { Spacer(Modifier.width(12.dp)) }
-                        }
 
-                        // Row 2: Thickness slider
-                        ThicknessManagement(value = state.selectedThickness) { thickness ->
-                            onAction(DrawingAction.OnThicknessChange(thickness))
-                        }
-
-                        // Row 3: Clear + Full screen toggle
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            TextButton(onClick = { showClearConfirm = true }) {
-                                Text(
-                                    text = stringResource(Res.string.clear_canvas),
-                                    color = MaterialTheme.colorScheme.error,
-                                    style = MaterialTheme.typography.labelLarge
-                                )
+                            // Row 2: Thickness slider
+                            ThicknessManagement(value = state.selectedThickness) { thickness ->
+                                onAction(DrawingAction.OnThicknessChange(thickness))
                             }
-                            TextButton(onClick = { onAction(DrawingAction.OnEnterFullScreen) }) {
-                                Text(
-                                    text = "Full Screen",
-                                    style = MaterialTheme.typography.labelLarge
-                                )
+
+                            // Row 3: Clear + Full screen toggle
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                TextButton(onClick = { showClearConfirm = true }) {
+                                    Text(
+                                        text = stringResource(Res.string.clear_canvas),
+                                        color = MaterialTheme.colorScheme.error,
+                                        style = MaterialTheme.typography.labelLarge
+                                    )
+                                }
+                                TextButton(onClick = { onAction(DrawingAction.OnEnterFullScreen) }) {
+                                    Text(
+                                        text = "Full Screen",
+                                        style = MaterialTheme.typography.labelLarge
+                                    )
+                                }
                             }
                         }
                     }
                 }
-            }
-
-            // Page navigation bar (mobile — compact floating bar above the bottom toolbar)
-            AnimatedVisibility(
-                visible = !uiState.isFullScreen && !uiState.isLegacy,
-                enter = fadeIn() + slideInVertically { it },
-                exit = fadeOut() + slideOutVertically { it },
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 200.dp)   // clear the ~180dp toolbar pill
-            ) {
-                MobilePageNavigationBar(
-                    pages = state.pages,
-                    currentPageIndex = uiState.currentPageIndex,
-                    pageWidth = state.pageWidth,
-                    pageHeight = state.pageHeight,
-                    onAction = onAction,
-                )
             }
 
             // Full-screen exit button

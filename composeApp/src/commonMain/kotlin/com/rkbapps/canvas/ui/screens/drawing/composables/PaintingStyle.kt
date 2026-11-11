@@ -52,6 +52,7 @@ import org.jetbrains.compose.resources.vectorResource
  */
 @Composable
 fun PaintingStyle(
+    isActive: Boolean = false,
     selected: PaintingStyleType = PaintingStyleType.STROKE,
     onSelected: (PaintingStyleType) -> Unit = {}
 ) {
@@ -68,7 +69,7 @@ fun PaintingStyle(
     }
 
     CompactToolButton(
-        isActive = false,
+        isActive = isActive,
         onClick = { isPaintingStyleDialogVisible = true }
     ) {
         Icon(

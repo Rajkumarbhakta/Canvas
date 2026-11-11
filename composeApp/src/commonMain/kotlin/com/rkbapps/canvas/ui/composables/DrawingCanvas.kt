@@ -2,10 +2,9 @@ package com.rkbapps.canvas.ui.composables
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,14 +31,21 @@ import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import com.rkbapps.canvas.model.PathData
+import com.rkbapps.canvas.model.buildSmoothPath
 import com.rkbapps.canvas.ui.screens.drawing.DrawingAction
 import com.rkbapps.canvas.ui.screens.drawing.DrawingScreenState
 import com.rkbapps.canvas.ui.screens.drawing.utils.PaintingStyleType
 import com.rkbapps.canvas.ui.screens.drawing.utils.ShapeType
+import com.rkbapps.canvas.util.detectCanvasTransformGestures
 import com.rkbapps.canvas.util.detectTapAndDrag
 import kotlin.math.*
 
@@ -53,15 +59,23 @@ import kotlin.math.*
 //
 //  • isLegacy = false → new paged canvas:
 //                        - outer Box = grey "desk" that accepts 2-finger pan/zoom
-//                        - inner Canvas = white page with a shadow, sized to
-//                          [pageWidth]×[pageHeight] dp.
-//                        - graphicsLayer applies [zoom] + [panOffset] transform.
+//                        - inner Canvas = white page with a shadow, laid out at
+//                          exactly [pageWidth]×[pageHeight] px, so stroke
+//                          coordinates are page units on every screen density.
+//                        - graphicsLayer scales the page to fit the desk, then
+//                          applies [zoom] + [panOffset] on top (zoom 1 = fit).
 //                        - 1-finger gestures hit the inner Canvas only.
 //
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** Background colour shown around the page in paged mode (the "desk"). */
 private val DeskColor = Color(0xFF9E9E9E)
+
+/** Gap kept between the page and the desk edges when the page is fitted (zoom = 1). */
+private val DeskMargin = 16.dp
+
+/** Test tag of the page frame in paged mode. */
+const val DrawingPageTestTag = "drawing_page"
 
 @Composable
 fun DrawingCanvas(
@@ -104,25 +118,64 @@ fun DrawingCanvas(
     //      LaunchedEffect syncs from ViewModel only on external resets (Fit, page switch).
     //      onAction still notifies ViewModel so zoom/pan survives page switches and saves.
     //
-    var localZoom by remember { mutableFloatStateOf(zoom) }
-    var localPan  by remember { mutableStateOf(panOffset) }
+    // Re-initialise local state whenever the page size changes (size change always resets view).
+    var localZoom by remember(pageWidth, pageHeight) { mutableFloatStateOf(zoom) }
+    var localPan  by remember(pageWidth, pageHeight) { mutableStateOf(panOffset) }
 
-    // External reset (Fit button, page switch, design load) — sync local state from ViewModel.
-    LaunchedEffect(zoom, panOffset) {
+    // External reset (Fit button, page switch, design load, page size change) — sync from ViewModel.
+    LaunchedEffect(zoom, panOffset, pageWidth, pageHeight) {
         localZoom = zoom
         localPan  = panOffset
     }
 
+    // Read these inside pointerInput(Unit) without restarting the coroutine.
+    val currentIsSelectionMode by rememberUpdatedState(isSelectionMode)
+    val currentSelectedPathIdForDesk by rememberUpdatedState(selectedPathId)
+
+    // Desk size in px — read at draw-phase only, to fit the page inside the desk.
+    var deskSize by remember { mutableStateOf(IntSize.Zero) }
+
+    // Screen px per page unit: the base scale that fits the whole page inside the desk,
+    // times zoom. Only ever read at draw-phase / in gesture callbacks (no recompose).
+    val deskMarginPx = with(LocalDensity.current) { DeskMargin.toPx() * 2 }
+    val viewScale = {
+        val fitScale = minOf(
+            (deskSize.width - deskMarginPx) / pageWidth,
+            (deskSize.height - deskMarginPx) / pageHeight
+        ).takeIf { it > 0f } ?: 1f
+        fitScale * localZoom
+    }
+
     Box(
         modifier = modifier
+            // The zoomed page may be larger than the desk; keep it off neighbouring UI.
+            .clipToBounds()
             .background(DeskColor)
+            .onSizeChanged { deskSize = it }
             .pointerInput(Unit) {       // Unit key → coroutine NEVER restarts mid-gesture
-                detectTransformGestures(panZoomLock = false) { _, pan, zoomChange, _ ->
+                detectCanvasTransformGestures(
+                    // Decide ownership BEFORE consuming anything, otherwise the desk
+                    // steals gestures the page canvas needs. The desk sits outside the
+                    // graphicsLayer, so its touch slop is in screen px while the page's
+                    // is in page px (screen ÷ zoom) — zoomed in, the desk always wins
+                    // the slop race, which is exactly what must not happen for a stroke.
+                    canClaim = { pointerCount ->
+                        when {
+                            // Zoom/pan is a selection-mode affordance today.
+                            !currentIsSelectionMode -> false
+                            // Two fingers are unambiguously a pinch.
+                            pointerCount > 1 -> true
+                            // One finger is only ours when the page canvas declined it,
+                            // i.e. nothing is selected to drag. Mirrors `canDrag` below.
+                            else -> currentSelectedPathIdForDesk == null
+                        }
+                    }
+                ) { pan, zoomChange ->
                     // Update local state immediately — graphicsLayer redraws at draw-phase
                     // with no recomposition overhead.
                     localZoom = (localZoom * zoomChange)
                         .coerceIn(DrawingScreenState.MIN_ZOOM, DrawingScreenState.MAX_ZOOM)
-                    localPan  = localPan + pan
+                    localPan += pan
                     // Notify ViewModel so state persists across page-switches and saves.
                     // This does NOT drive graphicsLayer — local state does.
                     onAction(DrawingAction.OnZoomPan(zoomChange, pan))
@@ -130,17 +183,26 @@ fun DrawingCanvas(
             },
         contentAlignment = Alignment.Center
     ) {
+        // One page unit = one layout px, whatever the screen density.
+        val (pageWidthDp, pageHeightDp) = with(LocalDensity.current) {
+            pageWidth.toDp() to pageHeight.toDp()
+        }
+
         // Page frame with drop shadow — transform driven by LOCAL state (draw-phase only)
         Box(
             modifier = Modifier
                 .graphicsLayer {
-                    scaleX       = localZoom
-                    scaleY       = localZoom
+                    val scale = viewScale()
+                    scaleX       = scale
+                    scaleY       = scale
                     translationX = localPan.x
                     translationY = localPan.y
                 }
+                // requiredSize, not size: the desk's constraints are the viewport, and
+                // size() would clamp every page larger than the viewport down to it.
+                .requiredSize(pageWidthDp, pageHeightDp)
+                .testTag(DrawingPageTestTag)
                 .shadow(elevation = 8.dp)
-                .size(pageWidth.dp, pageHeight.dp)
         ) {
             // Inner Canvas = actual drawing surface in page coordinates.
             // Compose maps touch coordinates through graphicsLayer automatically.
@@ -152,6 +214,7 @@ fun DrawingCanvas(
                 isSelectionMode = isSelectionMode,
                 selectedPathId = selectedPathId,
                 dragOffset = dragOffset,
+                viewScale = viewScale,
                 modifier = Modifier.fillMaxSize()
             )
         }
@@ -190,14 +253,24 @@ private fun LegacyCanvas(
                     onTap = { offset ->
                         handleTap(offset, isSelectionMode, currentPaths, currentSelectedPathId, currentOnAction)
                     },
-                    onDragStart = { _ ->
-                        if (!isSelectionMode) currentOnAction(DrawingAction.OnNewPathStart)
+                    onDragStart = { offset ->
+                        if (!isSelectionMode) {
+                            currentOnAction(DrawingAction.OnNewPathStart)
+                            // Anchor the stroke at the touch point itself so no
+                            // lead-in is lost, and so shapes start where you
+                            // actually pressed rather than where slop was crossed.
+                            currentOnAction(DrawingAction.OnDraw(offset))
+                        }
                     },
                     onDrag = { change, dragAmount ->
-                        handleDrag(change.position, dragAmount, isSelectionMode, currentSelectedPathId, currentOnAction)
+                        handleDrag(change, dragAmount, isSelectionMode, currentSelectedPathId, currentOnAction)
                     },
                     onDragEnd = { currentOnAction(DrawingAction.OnPathEnd) },
-                    onDragCancel = { currentOnAction(DrawingAction.OnPathEnd) }
+                    onDragCancel = { currentOnAction(DrawingAction.OnPathEnd) },
+                    canDrag = { !isSelectionMode || currentSelectedPathId != null },
+                    // Drawing inks immediately; only selection needs slop to tell
+                    // a tap (select) apart from a drag (move).
+                    requireSlop = { isSelectionMode }
                 )
             }
     ) {
@@ -219,11 +292,14 @@ private fun PagedCanvas(
     isSelectionMode: Boolean,
     selectedPathId: String?,
     dragOffset: Offset,
+    /** Screen px per page unit; keeps selection handles a constant size on screen. */
+    viewScale: () -> Float,
     modifier: Modifier
 ) {
     val currentPaths by rememberUpdatedState(paths)
     val currentSelectedPathId by rememberUpdatedState(selectedPathId)
     val currentOnAction by rememberUpdatedState(onAction)
+    val currentViewScale by rememberUpdatedState(viewScale)
 
     Canvas(
         modifier = modifier
@@ -232,20 +308,38 @@ private fun PagedCanvas(
             .pointerInput(isSelectionMode) {
                 detectTapAndDrag(
                     onTap = { offset ->
-                        handleTap(offset, isSelectionMode, currentPaths, currentSelectedPathId, currentOnAction)
+                        handleTap(
+                            offset, isSelectionMode, currentPaths, currentSelectedPathId, currentOnAction,
+                            decorationScale = density / currentViewScale()
+                        )
                     },
-                    onDragStart = { _ ->
-                        if (!isSelectionMode) currentOnAction(DrawingAction.OnNewPathStart)
+                    onDragStart = { offset ->
+                        if (!isSelectionMode) {
+                            currentOnAction(DrawingAction.OnNewPathStart)
+                            // Anchor the stroke at the touch point itself so no
+                            // lead-in is lost, and so shapes start where you
+                            // actually pressed rather than where slop was crossed.
+                            currentOnAction(DrawingAction.OnDraw(offset))
+                        }
                     },
                     onDrag = { change, dragAmount ->
-                        handleDrag(change.position, dragAmount, isSelectionMode, currentSelectedPathId, currentOnAction)
+                        handleDrag(change, dragAmount, isSelectionMode, currentSelectedPathId, currentOnAction)
                     },
                     onDragEnd = { currentOnAction(DrawingAction.OnPathEnd) },
-                    onDragCancel = { currentOnAction(DrawingAction.OnPathEnd) }
+                    onDragCancel = { currentOnAction(DrawingAction.OnPathEnd) },
+                    // In selection mode with nothing selected a drag is a no-op,
+                    // so don't claim the gesture — it belongs to pinch zoom/pan.
+                    canDrag = { !isSelectionMode || currentSelectedPathId != null },
+                    // Drawing inks immediately; only selection needs slop to tell
+                    // a tap (select) apart from a drag (move).
+                    requireSlop = { isSelectionMode }
                 )
             }
     ) {
-        drawPaths(paths, currentPath, backgroundColor, isSelectionMode, selectedPathId, dragOffset)
+        drawPaths(
+            paths, currentPath, backgroundColor, isSelectionMode, selectedPathId, dragOffset,
+            decorationScale = density / viewScale()
+        )
     }
 }
 
@@ -258,7 +352,9 @@ private fun handleTap(
     isSelectionMode: Boolean,
     paths: List<PathData>,
     selectedPathId: String?,
-    onAction: (DrawingAction) -> Unit
+    onAction: (DrawingAction) -> Unit,
+    /** Canvas units per on-screen dp for the selection handles; 1 = legacy raw px. */
+    decorationScale: Float = 1f
 ) {
     if (!isSelectionMode) return
     val selectedPath = paths.firstOrNull { it.id == selectedPathId }
@@ -266,7 +362,7 @@ private fun handleTap(
         val box = selectedPath.getBoundingBox()
         if (box != null) {
             val deleteButtonCenter = Offset(box.right, box.top)
-            if ((offset - deleteButtonCenter).getDistance() <= 35f) {
+            if ((offset - deleteButtonCenter).getDistance() <= 35f * decorationScale) {
                 onAction(DrawingAction.OnDeleteSelectedPath)
                 return
             }
@@ -277,7 +373,7 @@ private fun handleTap(
 }
 
 private fun handleDrag(
-    position: Offset,
+    change: PointerInputChange,
     dragAmount: Offset,
     isSelectionMode: Boolean,
     selectedPathId: String?,
@@ -286,7 +382,11 @@ private fun handleDrag(
     if (isSelectionMode) {
         if (selectedPathId != null) onAction(DrawingAction.OnDragSelectedPath(dragAmount))
     } else {
-        onAction(DrawingAction.OnDraw(position))
+        // The platform batches several touch samples into one frame's event.
+        // Using only `position` throws the rest away, which is what makes fast
+        // strokes render as a chain of straight segments instead of a curve.
+        change.historical.fastForEach { onAction(DrawingAction.OnDraw(it.position)) }
+        onAction(DrawingAction.OnDraw(change.position))
     }
 }
 
@@ -300,7 +400,9 @@ private fun DrawScope.drawPaths(
     backgroundColor: Color,
     isSelectionMode: Boolean,
     selectedPathId: String?,
-    dragOffset: Offset
+    dragOffset: Offset,
+    /** Canvas units per on-screen dp for the selection handles; 1 = legacy raw px. */
+    decorationScale: Float = 1f
 ) {
     paths.fastForEach { pathData ->
         val isSelected = isSelectionMode && pathData.id == selectedPathId
@@ -310,23 +412,25 @@ private fun DrawScope.drawPaths(
             drawPath(
                 pathData.path, pathData.color, pathData.thickness,
                 pathData.pathEffect, pathData.isEraser, backgroundColor,
-                pathData.shapeType, pathData.shapePoints
+                pathData.shapeType, pathData.shapePoints, pathData.renderPath()
             )
             drawContext.canvas.restore()
         } else {
             drawPath(
                 pathData.path, pathData.color, pathData.thickness,
                 pathData.pathEffect, pathData.isEraser, backgroundColor,
-                pathData.shapeType, pathData.shapePoints
+                pathData.shapeType, pathData.shapePoints, pathData.renderPath()
             )
         }
     }
 
+    // The in-progress stroke is a new PathData per sample, so its cache is
+    // always cold — building it once per frame here is the unavoidable cost.
     currentPath?.let {
         drawPath(
             it.path, it.color, it.thickness,
             it.pathEffect, it.isEraser, backgroundColor,
-            it.shapeType, it.shapePoints
+            it.shapeType, it.shapePoints, it.renderPath()
         )
     }
 
@@ -342,24 +446,26 @@ private fun DrawScope.drawPaths(
                     topLeft = box.topLeft,
                     size = box.size,
                     style = Stroke(
-                        width = 2f,
-                        pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
+                        width = 2f * decorationScale,
+                        pathEffect = PathEffect.dashPathEffect(
+                            floatArrayOf(10f * decorationScale, 10f * decorationScale), 0f
+                        )
                     )
                 )
                 val deleteButtonCenter = Offset(box.right, box.top)
-                drawCircle(color = Color.Red, radius = 14f, center = deleteButtonCenter)
-                val crossSize = 6f
+                drawCircle(color = Color.Red, radius = 14f * decorationScale, center = deleteButtonCenter)
+                val crossSize = 6f * decorationScale
                 drawLine(
                     Color.White,
                     deleteButtonCenter - Offset(crossSize, crossSize),
                     deleteButtonCenter + Offset(crossSize, crossSize),
-                    strokeWidth = 3f
+                    strokeWidth = 3f * decorationScale
                 )
                 drawLine(
                     Color.White,
                     deleteButtonCenter - Offset(crossSize, -crossSize),
                     deleteButtonCenter + Offset(crossSize, -crossSize),
-                    strokeWidth = 3f
+                    strokeWidth = 3f * decorationScale
                 )
             }
         }
@@ -483,25 +589,15 @@ fun DrawScope.drawPath(
     isEraser: Boolean = false,
     backgroundColor: Color = Color.White,
     shapeType: ShapeType = ShapeType.NONE,
-    shapePoints: List<Offset> = emptyList()
+    shapePoints: List<Offset> = emptyList(),
+    /** Pre-built geometry for [path]; pass [PathData.renderPath] to skip rebuilding per frame. */
+    prebuiltPath: Path? = null
 ) {
     if (shapeType != ShapeType.NONE && shapePoints.size >= 2) {
         drawShape(shapePoints, color, thickness, pathEffect, shapeType)
         return
     }
-    val smoothPath = Path().apply {
-        if (path.isNotEmpty()) {
-            moveTo(path.first().x, path.first().y)
-            val smoothness = 5
-            for (i in 1..path.lastIndex) {
-                val from = path[i - 1]; val to = path[i]
-                val dx = abs(from.x - to.x); val dy = abs(from.y - to.y)
-                if (dy >= smoothness || dx >= smoothness) {
-                    quadraticTo((from.x + to.x) / 2f, (from.y + to.y) / 2f, to.x, to.y)
-                }
-            }
-        }
-    }
+    val smoothPath = prebuiltPath ?: buildSmoothPath(path)
     if (isEraser) {
         drawPath(
             path = smoothPath, color = backgroundColor,

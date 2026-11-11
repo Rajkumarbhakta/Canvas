@@ -169,8 +169,6 @@ private fun PageThumbnail(
         72.dp
     }
 
-    val scaleFactor = thumbW.value / pageWidth
-
     Box {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -192,7 +190,8 @@ private fun PageThumbnail(
                     .clickable { onSelect() }
             ) {
                 Canvas(modifier = Modifier.matchParentSize()) {
-                    scale(scaleFactor, pivot = androidx.compose.ui.geometry.Offset.Zero) {
+                    // Strokes are in page units; map the page width onto the thumbnail's px width.
+                    scale(size.width / pageWidth, pivot = androidx.compose.ui.geometry.Offset.Zero) {
                         page.paths.fastForEach { pathData ->
                             drawPath(
                                 path = pathData.path,

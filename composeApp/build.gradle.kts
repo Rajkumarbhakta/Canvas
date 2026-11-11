@@ -84,8 +84,6 @@ kotlin {
 
         commonTest.dependencies {
             implementation(kotlin("test"))
-//            @OptIn(ExperimentalComposeLibrary::class)
-//            implementation(compose.uiTest)
             implementation(libs.kotlinx.coroutines.test)
         }
 
@@ -101,6 +99,11 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
+        }
+
+        // Compose UI tests run headless on desktop; on Android they would need a device.
+        jvmTest.dependencies {
+            implementation(libs.compose.ui.test)
         }
 
         nativeMain.dependencies {}

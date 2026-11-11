@@ -12,11 +12,13 @@ import com.rkbapps.canvas.ui.screens.drawing.DrawingAction
  * Using expect/actual lets [DesktopDrawingLayout] remain in `commonMain` while
  * the JVM-specific `onPointerEvent` API stays in `jvmMain`.
  *
- * @param isLegacy  When true the handler does nothing (legacy drawings are full-screen
- *                  and have no zoom/pan state to modify).
- * @param onAction  Callback to dispatch [DrawingAction.OnZoomPan] events.
+ * @param isLegacy        When true the handler does nothing (legacy drawings are full-screen
+ *                        and have no zoom/pan state to modify).
+ * @param isSelectionMode When false the handler does nothing (zoom/pan only allowed in selection mode).
+ * @param onAction        Callback to dispatch [DrawingAction.OnZoomPan] events.
  */
 expect fun Modifier.desktopScrollZoom(
     isLegacy: Boolean,
+    isSelectionMode: Boolean,
     onAction: (DrawingAction) -> Unit,
 ): Modifier

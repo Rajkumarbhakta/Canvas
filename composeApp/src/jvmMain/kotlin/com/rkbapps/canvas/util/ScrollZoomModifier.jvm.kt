@@ -12,13 +12,16 @@ import com.rkbapps.canvas.ui.screens.drawing.DrawingAction
 
 /**
  * JVM/Desktop actual: Ctrl/Cmd + scroll-wheel = zoom, plain scroll = pan.
+ * Both are no-ops when [isSelectionMode] is false — zoom/pan only available in selection mode.
  */
 @OptIn(ExperimentalComposeUiApi::class)
 actual fun Modifier.desktopScrollZoom(
     isLegacy: Boolean,
+    isSelectionMode: Boolean,
     onAction: (DrawingAction) -> Unit,
 ): Modifier {
-    if (isLegacy) return this   // no-op for legacy full-screen drawings
+    if (isLegacy) return this           // no-op for legacy full-screen drawings
+    if (!isSelectionMode) return this   // zoom/pan locked unless in selection mode
 
     return this.onPointerEvent(PointerEventType.Scroll) { event ->
         val scrollDelta = event.changes.firstOrNull()?.scrollDelta ?: return@onPointerEvent

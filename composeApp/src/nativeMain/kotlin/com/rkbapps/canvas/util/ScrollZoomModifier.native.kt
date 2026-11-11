@@ -6,5 +6,6 @@ import com.rkbapps.canvas.ui.screens.drawing.DrawingAction
 /** Native (iOS) actual: scroll-wheel zoom is not applicable on iOS — no-op. */
 actual fun Modifier.desktopScrollZoom(
     isLegacy: Boolean,
+    isSelectionMode: Boolean,
     onAction: (DrawingAction) -> Unit,
 ): Modifier = this

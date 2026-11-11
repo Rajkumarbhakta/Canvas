@@ -208,6 +208,7 @@ fun DesktopDrawingLayout(
                             // commonMain while the JVM-specific onPointerEvent lives in jvmMain.
                             .desktopScrollZoom(
                                 isLegacy = uiState.isLegacy,
+                                isSelectionMode = uiState.isSelectionMode,
                                 onAction = onAction,
                             ),
                         backgroundColor = if (uiState.isLegacy) state.backgroundColor

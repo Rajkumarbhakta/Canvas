@@ -15,8 +15,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DrawingState(
     // ── Page geometry (Milestone 1) ────────────────────────────────────────
-    val pageWidth: Float = 794f,       // A4 portrait logical dp (96 dpi)
-    val pageHeight: Float = 1123f,     // A4 portrait logical dp (96 dpi)
+    val pageWidth: Float = 794f,       // A4 portrait in page units (px at 96 dpi)
+    val pageHeight: Float = 1123f,     // A4 portrait in page units (px at 96 dpi)
     val pageSizeLabel: String = "A4 Portrait",
 
     // ── Tool state ────────────────────────────────────────────────────────

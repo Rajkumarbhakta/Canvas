@@ -62,7 +62,7 @@ fun PageSizePickerDialog(
         text = {
             Column {
                 Text(
-                    "Applies to new drawings. Existing strokes are not rescaled.",
+                    "Changes the canvas size immediately. Existing strokes are not rescaled.",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -87,7 +87,7 @@ fun PageSizePickerDialog(
                             Text(preset.label, style = MaterialTheme.typography.bodyMedium)
                         }
                         Text(
-                            "${preset.width.toInt()} × ${preset.height.toInt()} dp",
+                            "${preset.width.toInt()} × ${preset.height.toInt()} px",
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
