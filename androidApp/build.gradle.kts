@@ -10,14 +10,14 @@ plugins {
 
 android {
     namespace = "com.rkbapps.canvas"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.rkbapps.canvas"
-        minSdk = 23
-        targetSdk = 36
-        versionCode = 6
-        versionName = "1.2.1"
+        minSdk = 24
+        targetSdk = 37
+        versionCode = 7
+        versionName = "2.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
