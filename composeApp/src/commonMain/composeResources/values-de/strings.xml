@@ -1,27 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Canvas</string>
-    <string name="cyclone">Cyclone</string>
-    <string name="open_github">GitHub öffnen</string>
-    <string name="run">Ausführen</string>
-    <string name="stop">Stoppen</string>
     <string name="theme">Design</string>
     <string name="theme_description">Wählen Sie das Farbschema der Anwendung</string>
-    <string name="edit_name">Name bearbeiten</string>
-    <string name="save_project">Projekt speichern</string>
     <string name="save_as_image">Als Bild speichern</string>
     <string name="share">Teilen</string>
-    <string name="clear">Löschen</string>
-    <string name="clear_canvas">Leinwand löschen</string>
     <string name="done">Fertig</string>
     <string name="cancel">Abbrechen</string>
     <string name="edit_drawing_name">Zeichnungsnamen bearbeiten</string>
     <string name="enter_drawing_name">Zeichnungsnamen eingeben</string>
     <string name="name">Name</string>
-    <string name="erase">Radieren</string>
     <string name="brush">Pinsel</string>
-    <string name="choose_brush_style">Pinselstil wählen</string>
-    <string name="choose_shape">Form wählen</string>
     <string name="undo">Rückgängig</string>
     <string name="redo">Wiederholen</string>
     <string name="my_designs">Meine Designs</string>
@@ -49,25 +38,16 @@
     <string name="shape_pentagon">Fünfeck</string>
     <string name="shape_hexagon">Sechseck</string>
     <string name="draw">Zeichnen</string>
-    <string name="refresh">Aktualisieren</string>
     <string name="settings">Einstellungen</string>
-    <string name="new_drawing">Neue Zeichnung</string>
     <string name="back">Zurück</string>
     <string name="more_options">Weitere Optionen</string>
     <string name="untitled_drawing">Unbenannte Zeichnung</string>
-    <string name="color_picker">Farbauswahl</string>
-    <string name="selected">Ausgewählt</string>
     <string name="github">GitHub</string>
     <string name="mail">E-Mail</string>
     <string name="search_here">Hier suchen</string>
     <string name="confirm">Bestätigen</string>
     <string name="raise_a_issue">Problem melden</string>
     <string name="buy_me_a_coffee">Kauf mir einen Kaffee</string>
-    <string name="follow_system_theme">System-Design folgen</string>
-    <string name="follow_system_theme_desc">Verwende das helle oder dunkle Design basierend auf deinen Systemeinstellungen.</string>
-    <string name="dark_theme">Dunkles Design</string>
-    <string name="dynamic_color">Dynamische Farbe</string>
-    <string name="dynamic_color_desc">Aktiviere dynamische Farben für ein personalisierteres Erlebnis.</string>
     <string name="privacy_policy">Datenschutzerklärung</string>
     <string name="privacy_policy_desc">Datenschutzerklärung lesen</string>
     <string name="english">Englisch</string>
@@ -89,4 +69,88 @@
     <string name="about">Über</string>
     <string name="personalization">Personalisierung</string>
     <string name="app_version">v%1$s</string>
-    </resources>
+    <string name="tool_select">Auswählen</string>
+    <string name="tool_eraser">Radierer</string>
+    <string name="tool_shape">Form</string>
+    <string name="save">Speichern</string>
+    <string name="drawing_saved">Zeichnung gespeichert</string>
+    <string name="rename">Umbenennen</string>
+    <string name="focus_mode">Fokusmodus</string>
+    <string name="exit_focus_mode">Fokusmodus beenden</string>
+    <string name="tool_options">Werkzeugoptionen</string>
+    <string name="color">Farbe</string>
+    <string name="custom_color">Benutzerdefinierte Farbe</string>
+    <string name="pick_a_color">Farbe auswählen</string>
+    <string name="stroke_style">Stil</string>
+    <string name="stroke_width">Stärke</string>
+    <string name="paper">Papier</string>
+    <string name="paper_color">Papierfarbe</string>
+    <string name="page_size">Seitengröße</string>
+    <string name="page_size_desc">Bereits gezeichnete Striche behalten ihre Größe und Position.</string>
+    <string name="apply">Anwenden</string>
+    <string name="pages">Seiten</string>
+    <string name="page_number">Seite %1$d</string>
+    <string name="add_page">Seite hinzufügen</string>
+    <string name="delete_page">Seite löschen</string>
+    <string name="delete_page_title">Seite %1$d löschen?</string>
+    <string name="delete_page_desc">Alles, was auf dieser Seite gezeichnet wurde, geht verloren. Dies kann nicht rückgängig gemacht werden.</string>
+    <string name="previous_page">Vorherige Seite</string>
+    <string name="next_page">Nächste Seite</string>
+    <string name="zoom_in">Vergrößern</string>
+    <string name="zoom_out">Verkleinern</string>
+    <string name="fit_to_screen">Seite an Bildschirm anpassen</string>
+    <string name="clear_page">Seite leeren</string>
+    <string name="clear_page_title">Diese Seite leeren?</string>
+    <string name="clear_page_desc">Alle Striche und Formen auf dieser Seite werden entfernt. Sie können sie mit „Rückgängig“ wiederherstellen.</string>
+    <string name="select_hint">Tippen Sie auf einen Strich oder eine Form, um das Element auszuwählen, und ziehen Sie es dann, um es zu verschieben. Ziehen Sie auf einer leeren Fläche, um die Ansicht zu verschieben, und zoomen Sie mit zwei Fingern.</string>
+    <string name="delete_selection">Auswahl löschen</string>
+    <string name="eraser_hint">Ziehen Sie über die Seite, um zu radieren.</string>
+    <string name="appearance">Darstellung</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Hell</string>
+    <string name="theme_dark">Dunkel</string>
+    <string name="today">Heute</string>
+    <string name="yesterday">Gestern</string>
+    <string name="pages_count">%1$d Seiten</string>
+    <string name="clear_search">Suche löschen</string>
+    <string name="no_search_results">Keine Zeichnung heißt „%1$s“</string>
+    <string name="no_search_results_desc">Prüfen Sie die Schreibweise oder löschen Sie die Suche, um alle Ihre Zeichnungen zu sehen.</string>
+    <string name="export_as_file">Als Datei exportieren</string>
+    <string name="import_drawing">Importieren</string>
+    <string name="open">Öffnen</string>
+    <string name="file_exported">Datei exportiert</string>
+    <string name="file_export_failed">Die Datei konnte nicht exportiert werden</string>
+    <string name="drawing_imported">Zeichnung importiert</string>
+    <string name="import_not_canvas_file">Diese Datei ist keine Canvas-Zeichnung</string>
+    <string name="import_newer_version">Diese Zeichnung wurde mit einer neueren Version von Canvas erstellt. Aktualisieren Sie die App, um sie zu öffnen.</string>
+    <string name="import_damaged">Diese Canvas-Datei ist beschädigt und kann nicht geöffnet werden</string>
+    <string name="share_drawing">Zeichnung teilen</string>
+    <string name="image_saved_to_pictures">In Pictures/Canvas gespeichert</string>
+    <string name="image_save_failed">Bild konnte nicht gespeichert werden</string>
+    <string name="image_saved_to_path">Bild gespeichert unter: %1$s</string>
+    <string name="image_save_failed_reason">Bild konnte nicht gespeichert werden: %1$s</string>
+    <string name="saved_title">Gespeichert</string>
+    <string name="error_title">Fehler</string>
+    <string name="page_a4_portrait">A4 Hochformat</string>
+    <string name="page_a4_landscape">A4 Querformat</string>
+    <string name="page_a3_portrait">A3 Hochformat</string>
+    <string name="page_a3_landscape">A3 Querformat</string>
+    <string name="page_letter_portrait">Letter Hochformat</string>
+    <string name="page_letter_landscape">Letter Querformat</string>
+    <string name="page_square">Quadrat</string>
+    <string name="short_date">%1$d. %2$s %3$d</string>
+    <string-array name="months_short">
+        <item>Jan.</item>
+        <item>Feb.</item>
+        <item>März</item>
+        <item>Apr.</item>
+        <item>Mai</item>
+        <item>Juni</item>
+        <item>Juli</item>
+        <item>Aug.</item>
+        <item>Sept.</item>
+        <item>Okt.</item>
+        <item>Nov.</item>
+        <item>Dez.</item>
+    </string-array>
+</resources>

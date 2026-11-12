@@ -18,8 +18,15 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.core.content.FileProvider
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.toColorInt
+import canvas.composeapp.generated.resources.Res
+import canvas.composeapp.generated.resources.image_save_failed
+import canvas.composeapp.generated.resources.image_saved_to_pictures
+import canvas.composeapp.generated.resources.share_drawing
 import com.rkbapps.canvas.model.DrawingState
 import com.rkbapps.canvas.ui.composables.drawPath
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.getString
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
@@ -161,6 +168,9 @@ class ImageSharerAndroid(private val context: Context) : ImageSharer {
         return bitmap
     }
 
+    /** These run outside composition, so the translated text is read directly. */
+    private fun text(resource: StringResource): String = runBlocking { getString(resource) }
+
     // ── Public API ────────────────────────────────────────────────────────────
 
     override fun shareDrawing(
@@ -190,7 +200,7 @@ class ImageSharerAndroid(private val context: Context) : ImageSharer {
                     putExtra(Intent.EXTRA_STREAM, contentUri)
                     type = "image/png"
                 }
-                val chooser = Intent.createChooser(shareIntent, "Share Drawing").apply {
+                val chooser = Intent.createChooser(shareIntent, text(Res.string.share_drawing)).apply {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
                 context.startActivity(chooser)
@@ -229,11 +239,11 @@ class ImageSharerAndroid(private val context: Context) : ImageSharer {
 
             fos?.use {
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
-                Toast.makeText(context, "Saved to Pictures/Canvas", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, text(Res.string.image_saved_to_pictures), Toast.LENGTH_SHORT).show()
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(context, "Failed to save image", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, text(Res.string.image_save_failed), Toast.LENGTH_SHORT).show()
         }
     }
 }

@@ -1,27 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Canvas</string>
-    <string name="cyclone">Циклон</string>
-    <string name="open_github">Открыть GitHub</string>
-    <string name="run">Запустить</string>
-    <string name="stop">Остановить</string>
     <string name="theme">Тема</string>
     <string name="theme_description">Выберите цветовую тему приложения</string>
-    <string name="edit_name">Редактировать имя</string>
-    <string name="save_project">Сохранить проект</string>
     <string name="save_as_image">Сохранить как изображение</string>
     <string name="share">Поделиться</string>
-    <string name="clear">Очистить</string>
-    <string name="clear_canvas">Очистить холст</string>
     <string name="done">Готово</string>
     <string name="cancel">Отмена</string>
     <string name="edit_drawing_name">Редактировать имя рисунка</string>
     <string name="enter_drawing_name">Введите имя рисунка</string>
     <string name="name">Имя</string>
-    <string name="erase">Ластик</string>
     <string name="brush">Кисть</string>
-    <string name="choose_brush_style">Выберите стиль кисти</string>
-    <string name="choose_shape">Выберите фигуру</string>
     <string name="undo">Отменить</string>
     <string name="redo">Вернуть</string>
     <string name="my_designs">Мои дизайны</string>
@@ -49,25 +38,16 @@
     <string name="shape_pentagon">Пятиугольник</string>
     <string name="shape_hexagon">Шестиугольник</string>
     <string name="draw">Рисовать</string>
-    <string name="refresh">Обновить</string>
     <string name="settings">Настройки</string>
-    <string name="new_drawing">Новый рисунок</string>
     <string name="back">Назад</string>
     <string name="more_options">Больше вариантов</string>
     <string name="untitled_drawing">Безымянный рисунок</string>
-    <string name="color_picker">Выбор цвета</string>
-    <string name="selected">Выбрано</string>
     <string name="github">GitHub</string>
     <string name="mail">Почта</string>
     <string name="search_here">Искать здесь</string>
     <string name="confirm">Подтвердить</string>
     <string name="raise_a_issue">Сообщить о проблеме</string>
     <string name="buy_me_a_coffee">Поддержать проект</string>
-    <string name="follow_system_theme">Использовать системную тему</string>
-    <string name="follow_system_theme_desc">Использовать светлую или темную тему в соответствии с системными настройками.</string>
-    <string name="dark_theme">Темная тема</string>
-    <string name="dynamic_color">Динамические цвета</string>
-    <string name="dynamic_color_desc">Включите динамические цвета для более персонализированного интерфейса.</string>
     <string name="privacy_policy">Политика конфиденциальности</string>
     <string name="privacy_policy_desc">Прочитать политику конфиденциальности</string>
     <string name="english">Английский</string>
@@ -89,4 +69,88 @@
     <string name="spanish">Испанский</string>
     <string name="german">Немецкий</string>
     <string name="japanese">Японский</string>
+    <string name="tool_select">Выделение</string>
+    <string name="tool_eraser">Ластик</string>
+    <string name="tool_shape">Фигура</string>
+    <string name="save">Сохранить</string>
+    <string name="drawing_saved">Рисунок сохранен</string>
+    <string name="rename">Переименовать</string>
+    <string name="focus_mode">Режим фокусировки</string>
+    <string name="exit_focus_mode">Выйти из режима фокусировки</string>
+    <string name="tool_options">Параметры инструмента</string>
+    <string name="color">Цвет</string>
+    <string name="custom_color">Свой цвет</string>
+    <string name="pick_a_color">Выберите цвет</string>
+    <string name="stroke_style">Стиль</string>
+    <string name="stroke_width">Толщина</string>
+    <string name="paper">Бумага</string>
+    <string name="paper_color">Цвет бумаги</string>
+    <string name="page_size">Размер страницы</string>
+    <string name="page_size_desc">Уже нарисованные штрихи сохранят свой размер и положение.</string>
+    <string name="apply">Применить</string>
+    <string name="pages">Страницы</string>
+    <string name="page_number">Страница %1$d</string>
+    <string name="add_page">Добавить страницу</string>
+    <string name="delete_page">Удалить страницу</string>
+    <string name="delete_page_title">Удалить страницу %1$d?</string>
+    <string name="delete_page_desc">Все, что нарисовано на этой странице, будет потеряно. Это действие нельзя отменить.</string>
+    <string name="previous_page">Предыдущая страница</string>
+    <string name="next_page">Следующая страница</string>
+    <string name="zoom_in">Увеличить</string>
+    <string name="zoom_out">Уменьшить</string>
+    <string name="fit_to_screen">Вписать страницу в экран</string>
+    <string name="clear_page">Очистить страницу</string>
+    <string name="clear_page_title">Очистить эту страницу?</string>
+    <string name="clear_page_desc">Все штрихи и фигуры на этой странице будут удалены. Их можно вернуть с помощью кнопки «Отменить».</string>
+    <string name="select_hint">Нажмите на штрих или фигуру, чтобы выделить, затем перетащите, чтобы переместить. Перетаскивайте пустое место для прокрутки и сводите пальцы для масштабирования.</string>
+    <string name="delete_selection">Удалить выделенное</string>
+    <string name="eraser_hint">Проведите по странице, чтобы стереть.</string>
+    <string name="appearance">Внешний вид</string>
+    <string name="theme_system">Системная</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Темная</string>
+    <string name="today">Сегодня</string>
+    <string name="yesterday">Вчера</string>
+    <string name="pages_count">Страниц: %1$d</string>
+    <string name="clear_search">Очистить поиск</string>
+    <string name="no_search_results">Нет рисунка с именем «%1$s»</string>
+    <string name="no_search_results_desc">Проверьте написание или очистите поиск, чтобы увидеть все рисунки.</string>
+    <string name="export_as_file">Экспортировать как файл</string>
+    <string name="import_drawing">Импорт</string>
+    <string name="open">Открыть</string>
+    <string name="file_exported">Файл экспортирован</string>
+    <string name="file_export_failed">Не удалось экспортировать файл</string>
+    <string name="drawing_imported">Рисунок импортирован</string>
+    <string name="import_not_canvas_file">Этот файл не является рисунком Canvas</string>
+    <string name="import_newer_version">Этот рисунок создан в более новой версии Canvas. Обновите приложение, чтобы открыть его.</string>
+    <string name="import_damaged">Этот файл Canvas поврежден, и его нельзя открыть</string>
+    <string name="share_drawing">Поделиться рисунком</string>
+    <string name="image_saved_to_pictures">Сохранено в Pictures/Canvas</string>
+    <string name="image_save_failed">Не удалось сохранить изображение</string>
+    <string name="image_saved_to_path">Изображение сохранено в: %1$s</string>
+    <string name="image_save_failed_reason">Не удалось сохранить изображение: %1$s</string>
+    <string name="saved_title">Сохранено</string>
+    <string name="error_title">Ошибка</string>
+    <string name="page_a4_portrait">A4 книжная</string>
+    <string name="page_a4_landscape">A4 альбомная</string>
+    <string name="page_a3_portrait">A3 книжная</string>
+    <string name="page_a3_landscape">A3 альбомная</string>
+    <string name="page_letter_portrait">Letter книжная</string>
+    <string name="page_letter_landscape">Letter альбомная</string>
+    <string name="page_square">Квадрат</string>
+    <string name="short_date">%1$d %2$s %3$d</string>
+    <string-array name="months_short">
+        <item>янв.</item>
+        <item>февр.</item>
+        <item>мар.</item>
+        <item>апр.</item>
+        <item>мая</item>
+        <item>июн.</item>
+        <item>июл.</item>
+        <item>авг.</item>
+        <item>сент.</item>
+        <item>окт.</item>
+        <item>нояб.</item>
+        <item>дек.</item>
+    </string-array>
 </resources>

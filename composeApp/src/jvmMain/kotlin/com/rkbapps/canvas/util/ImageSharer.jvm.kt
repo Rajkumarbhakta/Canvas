@@ -7,8 +7,17 @@ import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
+import canvas.composeapp.generated.resources.Res
+import canvas.composeapp.generated.resources.error_title
+import canvas.composeapp.generated.resources.image_save_failed
+import canvas.composeapp.generated.resources.image_save_failed_reason
+import canvas.composeapp.generated.resources.image_saved_to_path
+import canvas.composeapp.generated.resources.saved_title
 import com.rkbapps.canvas.model.DrawingState
 import com.rkbapps.canvas.ui.composables.drawPath
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.getString
 import org.jetbrains.skia.Bitmap
 import org.jetbrains.skia.ColorAlphaType
 import org.jetbrains.skia.ImageInfo
@@ -223,18 +232,30 @@ class ImageSharerJvm : ImageSharer {
 
             if (showDialog) {
                 JOptionPane.showMessageDialog(
-                    null, "Image saved to: ${file.absolutePath}", "Saved", JOptionPane.INFORMATION_MESSAGE
+                    null,
+                    text(Res.string.image_saved_to_path, file.absolutePath),
+                    text(Res.string.saved_title),
+                    JOptionPane.INFORMATION_MESSAGE
                 )
             }
             file
         } catch (e: Exception) {
             e.printStackTrace()
             if (showDialog) {
+                val reason = e.message
                 JOptionPane.showMessageDialog(
-                    null, "Failed to save image: ${e.message}", "Error", JOptionPane.ERROR_MESSAGE
+                    null,
+                    if (reason != null) text(Res.string.image_save_failed_reason, reason)
+                    else text(Res.string.image_save_failed),
+                    text(Res.string.error_title),
+                    JOptionPane.ERROR_MESSAGE
                 )
             }
             null
         }
     }
+
+    /** These dialogs open outside composition, so the translated text is read directly. */
+    private fun text(resource: StringResource, vararg args: Any): String =
+        runBlocking { getString(resource, *args) }
 }

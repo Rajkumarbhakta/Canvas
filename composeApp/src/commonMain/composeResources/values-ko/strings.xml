@@ -1,27 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Canvas</string>
-    <string name="cyclone">Cyclone</string>
-    <string name="open_github">GitHub 열기</string>
-    <string name="run">실행</string>
-    <string name="stop">정지</string>
     <string name="theme">테마</string>
     <string name="theme_description">애플리케이션 색상 테마 선택</string>
-    <string name="edit_name">이름 편집</string>
-    <string name="save_project">프로젝트 저장</string>
     <string name="save_as_image">이미지로 저장</string>
     <string name="share">공유</string>
-    <string name="clear">지우기</string>
-    <string name="clear_canvas">캔버스 지우기</string>
     <string name="done">완료</string>
     <string name="cancel">취소</string>
     <string name="edit_drawing_name">그림 이름 편집</string>
     <string name="enter_drawing_name">그림 이름 입력</string>
     <string name="name">이름</string>
-    <string name="erase">지우개</string>
     <string name="brush">브러시</string>
-    <string name="choose_brush_style">브러시 스타일 선택</string>
-    <string name="choose_shape">도형 선택</string>
     <string name="undo">실행 취소</string>
     <string name="redo">다시 실행</string>
     <string name="my_designs">내 디자인</string>
@@ -49,25 +38,16 @@
     <string name="shape_pentagon">오각형</string>
     <string name="shape_hexagon">육각형</string>
     <string name="draw">그리기</string>
-    <string name="refresh">새로고침</string>
     <string name="settings">설정</string>
-    <string name="new_drawing">새 그림</string>
     <string name="back">뒤로</string>
     <string name="more_options">추가 옵션</string>
     <string name="untitled_drawing">제목 없는 그림</string>
-    <string name="color_picker">색상 선택기</string>
-    <string name="selected">선택됨</string>
     <string name="github">GitHub</string>
     <string name="mail">메일</string>
     <string name="search_here">여기에서 검색</string>
     <string name="confirm">확인</string>
     <string name="raise_a_issue">문제 신고</string>
     <string name="buy_me_a_coffee">커피 후원하기</string>
-    <string name="follow_system_theme">시스템 테마 따르기</string>
-    <string name="follow_system_theme_desc">시스템 설정에 따라 라이트 또는 다크 테마를 사용합니다.</string>
-    <string name="dark_theme">다크 테마</string>
-    <string name="dynamic_color">다이내믹 컬러</string>
-    <string name="dynamic_color_desc">보다 개인화된 경험을 위해 다이내믹 컬러를 활성화합니다.</string>
     <string name="privacy_policy">개인정보 처리방침</string>
     <string name="privacy_policy_desc">개인정보 처리방침 읽기</string>
     <string name="english">영어</string>
@@ -89,4 +69,88 @@
     <string name="about">정보</string>
     <string name="personalization">개인화</string>
     <string name="app_version">v%1$s</string>
-    </resources>
+    <string name="tool_select">선택</string>
+    <string name="tool_eraser">지우개</string>
+    <string name="tool_shape">도형</string>
+    <string name="save">저장</string>
+    <string name="drawing_saved">그림이 저장되었습니다</string>
+    <string name="rename">이름 바꾸기</string>
+    <string name="focus_mode">집중 모드</string>
+    <string name="exit_focus_mode">집중 모드 종료</string>
+    <string name="tool_options">도구 옵션</string>
+    <string name="color">색상</string>
+    <string name="custom_color">사용자 지정 색상</string>
+    <string name="pick_a_color">색상 선택</string>
+    <string name="stroke_style">스타일</string>
+    <string name="stroke_width">두께</string>
+    <string name="paper">용지</string>
+    <string name="paper_color">용지 색상</string>
+    <string name="page_size">페이지 크기</string>
+    <string name="page_size_desc">이미 그린 획은 크기와 위치가 그대로 유지됩니다.</string>
+    <string name="apply">적용</string>
+    <string name="pages">페이지</string>
+    <string name="page_number">%1$d페이지</string>
+    <string name="add_page">페이지 추가</string>
+    <string name="delete_page">페이지 삭제</string>
+    <string name="delete_page_title">%1$d페이지를 삭제하시겠습니까?</string>
+    <string name="delete_page_desc">이 페이지에 그린 모든 내용이 사라집니다. 이 작업은 되돌릴 수 없습니다.</string>
+    <string name="previous_page">이전 페이지</string>
+    <string name="next_page">다음 페이지</string>
+    <string name="zoom_in">확대</string>
+    <string name="zoom_out">축소</string>
+    <string name="fit_to_screen">페이지를 화면에 맞추기</string>
+    <string name="clear_page">페이지 지우기</string>
+    <string name="clear_page_title">이 페이지를 지우시겠습니까?</string>
+    <string name="clear_page_desc">이 페이지의 모든 획과 도형이 삭제됩니다. 실행 취소로 되돌릴 수 있습니다.</string>
+    <string name="select_hint">획이나 도형을 탭하여 선택한 다음 드래그하여 이동하세요. 빈 공간을 드래그하면 화면이 이동하고, 두 손가락을 오므리거나 벌리면 확대/축소됩니다.</string>
+    <string name="delete_selection">선택 항목 삭제</string>
+    <string name="eraser_hint">페이지 위를 드래그하여 지우세요.</string>
+    <string name="appearance">모양</string>
+    <string name="theme_system">시스템</string>
+    <string name="theme_light">라이트</string>
+    <string name="theme_dark">다크</string>
+    <string name="today">오늘</string>
+    <string name="yesterday">어제</string>
+    <string name="pages_count">%1$d페이지</string>
+    <string name="clear_search">검색어 지우기</string>
+    <string name="no_search_results">이름이 “%1$s”인 그림이 없습니다</string>
+    <string name="no_search_results_desc">철자를 확인하거나 검색어를 지워 모든 그림을 확인하세요.</string>
+    <string name="export_as_file">파일로 내보내기</string>
+    <string name="import_drawing">가져오기</string>
+    <string name="open">열기</string>
+    <string name="file_exported">파일을 내보냈습니다</string>
+    <string name="file_export_failed">파일을 내보낼 수 없습니다</string>
+    <string name="drawing_imported">그림을 가져왔습니다</string>
+    <string name="import_not_canvas_file">이 파일은 Canvas 그림이 아닙니다</string>
+    <string name="import_newer_version">이 그림은 최신 버전의 Canvas에서 만들어졌습니다. 열려면 앱을 업데이트하세요.</string>
+    <string name="import_damaged">이 Canvas 파일은 손상되어 열 수 없습니다</string>
+    <string name="share_drawing">그림 공유</string>
+    <string name="image_saved_to_pictures">Pictures/Canvas에 저장되었습니다</string>
+    <string name="image_save_failed">이미지를 저장하지 못했습니다</string>
+    <string name="image_saved_to_path">이미지 저장 위치: %1$s</string>
+    <string name="image_save_failed_reason">이미지를 저장하지 못했습니다: %1$s</string>
+    <string name="saved_title">저장됨</string>
+    <string name="error_title">오류</string>
+    <string name="page_a4_portrait">A4 세로</string>
+    <string name="page_a4_landscape">A4 가로</string>
+    <string name="page_a3_portrait">A3 세로</string>
+    <string name="page_a3_landscape">A3 가로</string>
+    <string name="page_letter_portrait">레터 세로</string>
+    <string name="page_letter_landscape">레터 가로</string>
+    <string name="page_square">정사각형</string>
+    <string name="short_date">%3$d년 %2$s %1$d일</string>
+    <string-array name="months_short">
+        <item>1월</item>
+        <item>2월</item>
+        <item>3월</item>
+        <item>4월</item>
+        <item>5월</item>
+        <item>6월</item>
+        <item>7월</item>
+        <item>8월</item>
+        <item>9월</item>
+        <item>10월</item>
+        <item>11월</item>
+        <item>12월</item>
+    </string-array>
+</resources>

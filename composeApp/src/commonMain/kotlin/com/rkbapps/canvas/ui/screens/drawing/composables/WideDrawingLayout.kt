@@ -244,7 +244,7 @@ fun WideDrawingLayout(
 
                 if (showViewControls) {
                     PageSizeChip(
-                        label = state.pageSizeLabel,
+                        label = pageSizeName(state.pageSizeLabel),
                         onClick = { onAction(DrawingAction.OnOpenPageSizePicker) },
                         modifier = Modifier.align(Alignment.BottomStart).padding(12.dp)
                     )

@@ -1,27 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Canvas</string>
-    <string name="cyclone">Cyclone</string>
-    <string name="open_github">Open github</string>
-    <string name="run">Run</string>
-    <string name="stop">Stop</string>
     <string name="theme">Theme</string>
     <string name="theme_description">Choose application color theme</string>
-    <string name="edit_name">Edit name</string>
-    <string name="save_project">Save Project</string>
     <string name="save_as_image">Save as image</string>
     <string name="share">Share</string>
-    <string name="clear">Clear</string>
-    <string name="clear_canvas">Clear Canvas</string>
     <string name="done">Done</string>
     <string name="cancel">Cancel</string>
     <string name="edit_drawing_name">Edit Drawing Name</string>
     <string name="enter_drawing_name">Enter Drawing Name</string>
     <string name="name">Name</string>
-    <string name="erase">Erase</string>
     <string name="brush">Brush</string>
-    <string name="choose_brush_style">Choose Brush Style</string>
-    <string name="choose_shape">Choose Shape</string>
     <string name="undo">Undo</string>
     <string name="redo">Redo</string>
     <string name="my_designs">My Designs</string>
@@ -49,25 +38,16 @@
     <string name="shape_pentagon">Pentagon</string>
     <string name="shape_hexagon">Hexagon</string>
     <string name="draw">Draw</string>
-    <string name="refresh">Refresh</string>
     <string name="settings">Settings</string>
-    <string name="new_drawing">New drawing</string>
     <string name="back">Back</string>
     <string name="more_options">More options</string>
     <string name="untitled_drawing">Untitled drawing</string>
-    <string name="color_picker">Color picker</string>
-    <string name="selected">Selected</string>
     <string name="github">GitHub</string>
     <string name="mail">Mail</string>
     <string name="search_here">Search here</string>
     <string name="confirm">Confirm</string>
     <string name="raise_a_issue">Raise an issue</string>
     <string name="buy_me_a_coffee">Buy me a coffee</string>
-    <string name="follow_system_theme">Follow System Theme</string>
-    <string name="follow_system_theme_desc">Use light or dark theme based on your system settings.</string>
-    <string name="dark_theme">Dark Theme</string>
-    <string name="dynamic_color">Dynamic Color</string>
-    <string name="dynamic_color_desc">Enable dynamic colors for a more personalized experience.</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="privacy_policy_desc">Read the privacy policy</string>
     <string name="english">English</string>
@@ -139,9 +119,38 @@
     <string name="import_drawing">Import</string>
     <string name="open">Open</string>
     <string name="file_exported">File exported</string>
-    <string name="file_export_failed">Couldn\'t export the file</string>
+    <string name="file_export_failed">Couldn't export the file</string>
     <string name="drawing_imported">Drawing imported</string>
     <string name="import_not_canvas_file">That file is not a Canvas drawing</string>
     <string name="import_newer_version">This drawing was made with a newer version of Canvas. Update the app to open it.</string>
-    <string name="import_damaged">This Canvas file is damaged and can\'t be opened</string>
+    <string name="import_damaged">This Canvas file is damaged and can't be opened</string>
+    <string name="share_drawing">Share Drawing</string>
+    <string name="image_saved_to_pictures">Saved to Pictures/Canvas</string>
+    <string name="image_save_failed">Failed to save image</string>
+    <string name="image_saved_to_path">Image saved to: %1$s</string>
+    <string name="image_save_failed_reason">Failed to save image: %1$s</string>
+    <string name="saved_title">Saved</string>
+    <string name="error_title">Error</string>
+    <string name="page_a4_portrait">A4 Portrait</string>
+    <string name="page_a4_landscape">A4 Landscape</string>
+    <string name="page_a3_portrait">A3 Portrait</string>
+    <string name="page_a3_landscape">A3 Landscape</string>
+    <string name="page_letter_portrait">Letter Portrait</string>
+    <string name="page_letter_landscape">Letter Landscape</string>
+    <string name="page_square">Square</string>
+    <string name="short_date">%1$d %2$s %3$d</string>
+    <string-array name="months_short">
+        <item>Jan</item>
+        <item>Feb</item>
+        <item>Mar</item>
+        <item>Apr</item>
+        <item>May</item>
+        <item>Jun</item>
+        <item>Jul</item>
+        <item>Aug</item>
+        <item>Sep</item>
+        <item>Oct</item>
+        <item>Nov</item>
+        <item>Dec</item>
+    </string-array>
     </resources>
