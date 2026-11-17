@@ -23,16 +23,16 @@ expect val platformModule: Module
 
 val dbModule = module {
     single { get<AppDatabase>().drawingDao() }
-    single { PreferenceManager(get()) }
-    single { DataMigrationManager(get(), get(), get()) }
+    singleOf(::PreferenceManager)
+    singleOf(::DataMigrationManager)
 }
 
 
 val provideRepositories = module {
-    single { IncomingFiles() }
+    singleOf(::IncomingFiles)
     factoryOf(::DrawingRepository)
-    factory { HomeRepository(get(), get()) }
-    factory { SettingsRepository(get(),get()) }
+    factoryOf(::HomeRepository)
+    factoryOf(::SettingsRepository)
 }
 
 val provideViewModels = module{
