@@ -1,27 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Canvas</string>
-    <string name="cyclone">Ciclone</string>
-    <string name="open_github">Abrir GitHub</string>
-    <string name="run">Executar</string>
-    <string name="stop">Parar</string>
     <string name="theme">Tema</string>
     <string name="theme_description">Escolha o tema de cores do aplicativo</string>
-    <string name="edit_name">Editar nome</string>
-    <string name="save_project">Salvar Projeto</string>
     <string name="save_as_image">Salvar como Imagem</string>
     <string name="share">Compartilhar</string>
-    <string name="clear">Limpar</string>
-    <string name="clear_canvas">Limpar Tela</string>
     <string name="done">Concluído</string>
     <string name="cancel">Cancelar</string>
     <string name="edit_drawing_name">Editar Nome do Desenho</string>
     <string name="enter_drawing_name">Digite o Nome do Desenho</string>
     <string name="name">Nome</string>
-    <string name="erase">Apagar</string>
     <string name="brush">Pincel</string>
-    <string name="choose_brush_style">Escolha o Estilo do Pincel</string>
-    <string name="choose_shape">Escolha a Forma</string>
     <string name="undo">Desfazer</string>
     <string name="redo">Refazer</string>
     <string name="my_designs">Meus Desenhos</string>
@@ -49,25 +38,16 @@
     <string name="shape_pentagon">Pentágono</string>
     <string name="shape_hexagon">Hexágono</string>
     <string name="draw">Desenhar</string>
-    <string name="refresh">Atualizar</string>
     <string name="settings">Configurações</string>
-    <string name="new_drawing">Novo desenho</string>
     <string name="back">Voltar</string>
     <string name="more_options">Mais opções</string>
     <string name="untitled_drawing">Desenho sem título</string>
-    <string name="color_picker">Seletor de cores</string>
-    <string name="selected">Selecionado</string>
     <string name="github">GitHub</string>
     <string name="mail">E-mail</string>
     <string name="search_here">Pesquise aqui</string>
     <string name="confirm">Confirmar</string>
     <string name="raise_a_issue">Relatar um problema</string>
     <string name="buy_me_a_coffee">Compre-me um café</string>
-    <string name="follow_system_theme">Seguir o Tema do Sistema</string>
-    <string name="follow_system_theme_desc">Use o tema claro ou escuro com base nas configurações do seu sistema.</string>
-    <string name="dark_theme">Tema Escuro</string>
-    <string name="dynamic_color">Cor Dinâmica</string>
-    <string name="dynamic_color_desc">Ative cores dinâmicas para uma experiência mais personalizada.</string>
     <string name="privacy_policy">Política de Privacidade</string>
     <string name="privacy_policy_desc">Leia a política de privacidade</string>
     <string name="english">Inglês</string>
@@ -89,4 +69,88 @@
     <string name="about">Sobre</string>
     <string name="personalization">Personalização</string>
     <string name="app_version">v%1$s</string>
+    <string name="tool_select">Selecionar</string>
+    <string name="tool_eraser">Borracha</string>
+    <string name="tool_shape">Forma</string>
+    <string name="save">Salvar</string>
+    <string name="drawing_saved">Desenho salvo</string>
+    <string name="rename">Renomear</string>
+    <string name="focus_mode">Modo foco</string>
+    <string name="exit_focus_mode">Sair do modo foco</string>
+    <string name="tool_options">Opções da ferramenta</string>
+    <string name="color">Cor</string>
+    <string name="custom_color">Cor personalizada</string>
+    <string name="pick_a_color">Escolha uma cor</string>
+    <string name="stroke_style">Estilo</string>
+    <string name="stroke_width">Espessura</string>
+    <string name="paper">Papel</string>
+    <string name="paper_color">Cor do papel</string>
+    <string name="page_size">Tamanho da página</string>
+    <string name="page_size_desc">Os traços que você já desenhou mantêm o tamanho e a posição.</string>
+    <string name="apply">Aplicar</string>
+    <string name="pages">Páginas</string>
+    <string name="page_number">Página %1$d</string>
+    <string name="add_page">Adicionar página</string>
+    <string name="delete_page">Excluir página</string>
+    <string name="delete_page_title">Excluir a página %1$d?</string>
+    <string name="delete_page_desc">Tudo o que foi desenhado nesta página será perdido. Esta ação não pode ser desfeita.</string>
+    <string name="previous_page">Página anterior</string>
+    <string name="next_page">Próxima página</string>
+    <string name="zoom_in">Aumentar zoom</string>
+    <string name="zoom_out">Diminuir zoom</string>
+    <string name="fit_to_screen">Ajustar página à tela</string>
+    <string name="clear_page">Limpar página</string>
+    <string name="clear_page_title">Limpar esta página?</string>
+    <string name="clear_page_desc">Todos os traços e formas desta página serão removidos. Você pode recuperá-los com Desfazer.</string>
+    <string name="select_hint">Toque em um traço ou forma para selecioná-lo e arraste para movê-lo. Arraste um espaço vazio para mover a visualização e faça o gesto de pinça para dar zoom.</string>
+    <string name="delete_selection">Excluir seleção</string>
+    <string name="eraser_hint">Arraste sobre a página para apagar.</string>
+    <string name="appearance">Aparência</string>
+    <string name="theme_system">Sistema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Escuro</string>
+    <string name="today">Hoje</string>
+    <string name="yesterday">Ontem</string>
+    <string name="pages_count">%1$d páginas</string>
+    <string name="clear_search">Limpar pesquisa</string>
+    <string name="no_search_results">Nenhum desenho se chama “%1$s”</string>
+    <string name="no_search_results_desc">Verifique a ortografia ou limpe a pesquisa para ver todos os seus desenhos.</string>
+    <string name="export_as_file">Exportar como arquivo</string>
+    <string name="import_drawing">Importar</string>
+    <string name="open">Abrir</string>
+    <string name="file_exported">Arquivo exportado</string>
+    <string name="file_export_failed">Não foi possível exportar o arquivo</string>
+    <string name="drawing_imported">Desenho importado</string>
+    <string name="import_not_canvas_file">Esse arquivo não é um desenho do Canvas</string>
+    <string name="import_newer_version">Este desenho foi criado com uma versão mais recente do Canvas. Atualize o app para abri-lo.</string>
+    <string name="import_damaged">Este arquivo do Canvas está danificado e não pode ser aberto</string>
+    <string name="share_drawing">Compartilhar desenho</string>
+    <string name="image_saved_to_pictures">Salvo em Pictures/Canvas</string>
+    <string name="image_save_failed">Falha ao salvar a imagem</string>
+    <string name="image_saved_to_path">Imagem salva em: %1$s</string>
+    <string name="image_save_failed_reason">Falha ao salvar a imagem: %1$s</string>
+    <string name="saved_title">Salvo</string>
+    <string name="error_title">Erro</string>
+    <string name="page_a4_portrait">A4 retrato</string>
+    <string name="page_a4_landscape">A4 paisagem</string>
+    <string name="page_a3_portrait">A3 retrato</string>
+    <string name="page_a3_landscape">A3 paisagem</string>
+    <string name="page_letter_portrait">Carta retrato</string>
+    <string name="page_letter_landscape">Carta paisagem</string>
+    <string name="page_square">Quadrado</string>
+    <string name="short_date">%1$d de %2$s de %3$d</string>
+    <string-array name="months_short">
+        <item>jan.</item>
+        <item>fev.</item>
+        <item>mar.</item>
+        <item>abr.</item>
+        <item>mai.</item>
+        <item>jun.</item>
+        <item>jul.</item>
+        <item>ago.</item>
+        <item>set.</item>
+        <item>out.</item>
+        <item>nov.</item>
+        <item>dez.</item>
+    </string-array>
 </resources>

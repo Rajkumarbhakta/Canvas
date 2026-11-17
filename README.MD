@@ -12,11 +12,16 @@ The simplest way to express your creativity – just tap, draw, and create!
 
 Unleash your inner artist with **Paint & Draw**, the ultimate lightweight and user-friendly drawing app for everyone — from beginners to pros. Whether you want to doodle for fun, sketch ideas, or create digital art masterpieces, this app gives you the tools to make it happen in seconds.
 
+<p align="center">
+    <img src="docs/screenshots/feature_graphic.jpg" alt="Canvas: Draw anything, beautifully" width="720"/>
+</p>
+
 ---
 
 <details>
 <summary><strong>📋Table of Contents</strong></summary>
 
+- [📸 Screenshots](#-screenshots)
 - [✨ Features](#features)
 - [🛠 Tech Stack](#-tech-stack)
 - [📁 Project Structure](#-project-structure)
@@ -30,6 +35,35 @@ Unleash your inner artist with **Paint & Draw**, the ultimate lightweight and us
 - [Contributors](#contributors)
 
 </details>
+
+---
+
+## 📸 Screenshots
+
+### Phone
+
+<p align="center">
+    <img src="docs/screenshots/phone_01_draw_anything.jpg" alt="Drawing canvas" width="200"/>
+    <img src="docs/screenshots/phone_02_brushes.jpg" alt="Brush colours, styles and widths" width="200"/>
+    <img src="docs/screenshots/phone_03_gallery.jpg" alt="Gallery of drawings" width="200"/>
+    <img src="docs/screenshots/phone_04_shapes.jpg" alt="Shapes" width="200"/>
+</p>
+<p align="center">
+    <img src="docs/screenshots/phone_05_focus_mode.jpg" alt="Focus mode" width="200"/>
+    <img src="docs/screenshots/phone_06_save_share_export.jpg" alt="Save, share or export" width="200"/>
+    <img src="docs/screenshots/phone_07_themes.jpg" alt="Light theme and colour themes" width="200"/>
+</p>
+
+### Tablet
+
+<p align="center">
+    <img src="docs/screenshots/tablet_01_draw_anything.jpg" alt="Tablet drawing layout" width="410"/>
+    <img src="docs/screenshots/tablet_02_pages.jpg" alt="Multi-page drawings" width="410"/>
+</p>
+<p align="center">
+    <img src="docs/screenshots/tablet_05_focus_mode.jpg" alt="Focus mode on tablet" width="410"/>
+    <img src="docs/screenshots/tablet_07_themes.jpg" alt="Themes on tablet and phone" width="410"/>
+</p>
 
 ---
 
@@ -165,10 +199,43 @@ Thank you for helping make Canvas better!
 
 ## Licence
 
-This project is licensed under the [MIT License](LICENSE).  
-You are free to use, modify, and distribute this software for personal or commercial purposes, provided that you include the original copyright and license notice in any copies or substantial portions of the software.
+Copyright (C) 2025-2026 Rajkumar Bhakta and contributors.
+
+This project is licensed under the [GNU General Public License v3.0](LICENSE).  
+You are free to use, study, modify, and share this software. If you distribute it or a modified version of it, you must release the complete source code under the same licence and keep the copyright and licence notices.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the [LICENSE](LICENSE) file for full license text.
+
+<details>
+<summary><strong>Earlier versions (MIT License)</strong></summary>
+
+Versions of Canvas before 2.0.0 were released under the MIT License. Those releases, and the code contributed under them, remain available under the MIT License:
+
+```
+Copyright (c) 2025 Rajkumar Bhakta
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+</details>
 
 ## Contributors
 

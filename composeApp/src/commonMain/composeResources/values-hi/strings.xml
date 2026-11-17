@@ -1,27 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Canvas</string>
-    <string name="cyclone">Cyclone</string>
-    <string name="open_github">GitHub खोलें</string>
-    <string name="run">चलाएँ</string>
-    <string name="stop">रोकें</string>
-    <string name="theme">थीম</string>
+    <string name="theme">थीम</string>
     <string name="theme_description">एप्लिकेशन का रंग थीम चुनें</string>
-    <string name="edit_name">नाम संपादित करें</string>
-    <string name="save_project">प्रोजेक्ट सहेजें</string>
     <string name="save_as_image">इमेज के रूप में सहेजें</string>
     <string name="share">साझा करें</string>
-    <string name="clear">साफ़ करें</string>
-    <string name="clear_canvas">कैनवास साफ़ करें</string>
     <string name="done">हो गया</string>
     <string name="cancel">रद्द करें</string>
     <string name="edit_drawing_name">ड्राइंग का नाम संपादित करें</string>
     <string name="enter_drawing_name">ड्राइंग का नाम दर्ज करें</string>
     <string name="name">नाम</string>
-    <string name="erase">मिटाएं</string>
     <string name="brush">ब्रश</string>
-    <string name="choose_brush_style">ब्रश की शैली चुनें</string>
-    <string name="choose_shape">आकृति चुनें</string>
     <string name="undo">पूर्ववत करें</string>
     <string name="redo">फिर से करें</string>
     <string name="my_designs">मेरे डिज़ाइन</string>
@@ -49,25 +38,16 @@
     <string name="shape_pentagon">पंचकोण</string>
     <string name="shape_hexagon">षट्कोण</string>
     <string name="draw">ड्रॉ करें</string>
-    <string name="refresh">रीफ्रेश करें</string>
     <string name="settings">सेटिंग्स</string>
-    <string name="new_drawing">नई ड्राइंग</string>
     <string name="back">पीछे</string>
     <string name="more_options">अधिक विकल्प</string>
     <string name="untitled_drawing">बिना शीर्षक वाली ड्राइंग</string>
-    <string name="color_picker">रंग चयनकर्ता</string>
-    <string name="selected">चयनित</string>
     <string name="github">GitHub</string>
     <string name="mail">मेल</string>
     <string name="search_here">यहाँ खोजें</string>
     <string name="confirm">पुष्टि करें</string>
     <string name="raise_a_issue">समस्या दर्ज करें</string>
     <string name="buy_me_a_coffee">मेरे लिए एक कॉफी खरीदें</string>
-    <string name="follow_system_theme">सिस्टम थीम का पालन करें</string>
-    <string name="follow_system_theme_desc">अपनी सिस्टम सेटिंग्स के आधार पर लाइट या डार्क थीम का उपयोग करें।</string>
-    <string name="dark_theme">डार्क थीम</string>
-    <string name="dynamic_color">डायनेमिक रंग</string>
-    <string name="dynamic_color_desc">अधिक व्यक्तिगत अनुभव के लिए डायनेमिक रंगों को सक्षम करें।</string>
     <string name="privacy_policy">गोपनीयता नीति</string>
     <string name="privacy_policy_desc">गोपनीयता नीति पढ़ें</string>
     <string name="english">अंग्रेज़ी</string>
@@ -89,4 +69,88 @@
     <string name="about">के बारे में</string>
     <string name="personalization">वैयक्तिकरण</string>
     <string name="app_version">v%1$s</string>
+    <string name="tool_select">चुनें</string>
+    <string name="tool_eraser">इरेज़र</string>
+    <string name="tool_shape">आकृति</string>
+    <string name="save">सहेजें</string>
+    <string name="drawing_saved">ड्राइंग सहेजी गई</string>
+    <string name="rename">नाम बदलें</string>
+    <string name="focus_mode">फ़ोकस मोड</string>
+    <string name="exit_focus_mode">फ़ोकस मोड से बाहर निकलें</string>
+    <string name="tool_options">टूल विकल्प</string>
+    <string name="color">रंग</string>
+    <string name="custom_color">कस्टम रंग</string>
+    <string name="pick_a_color">कोई रंग चुनें</string>
+    <string name="stroke_style">शैली</string>
+    <string name="stroke_width">मोटाई</string>
+    <string name="paper">काग़ज़</string>
+    <string name="paper_color">काग़ज़ का रंग</string>
+    <string name="page_size">पेज का आकार</string>
+    <string name="page_size_desc">आपके द्वारा पहले से बनाए गए स्ट्रोक का आकार और स्थान वही रहता है।</string>
+    <string name="apply">लागू करें</string>
+    <string name="pages">पेज</string>
+    <string name="page_number">पेज %1$d</string>
+    <string name="add_page">पेज जोड़ें</string>
+    <string name="delete_page">पेज हटाएं</string>
+    <string name="delete_page_title">पेज %1$d हटाएं?</string>
+    <string name="delete_page_desc">इस पेज पर बनाया गया सब कुछ मिट जाएगा। इसे पूर्ववत नहीं किया जा सकता।</string>
+    <string name="previous_page">पिछला पेज</string>
+    <string name="next_page">अगला पेज</string>
+    <string name="zoom_in">ज़ूम इन करें</string>
+    <string name="zoom_out">ज़ूम आउट करें</string>
+    <string name="fit_to_screen">पेज को स्क्रीन में फ़िट करें</string>
+    <string name="clear_page">पेज साफ़ करें</string>
+    <string name="clear_page_title">यह पेज साफ़ करें?</string>
+    <string name="clear_page_desc">इस पेज के सभी स्ट्रोक और आकृतियाँ हटा दी जाएँगी। आप उन्हें «पूर्ववत करें» से वापस ला सकते हैं।</string>
+    <string name="select_hint">किसी स्ट्रोक या आकृति को चुनने के लिए उस पर टैप करें, फिर उसे खिसकाने के लिए खींचें। पैन करने के लिए खाली जगह को खींचें और ज़ूम करने के लिए पिंच करें।</string>
+    <string name="delete_selection">चयन हटाएं</string>
+    <string name="eraser_hint">मिटाने के लिए पेज पर खींचें।</string>
+    <string name="appearance">दिखावट</string>
+    <string name="theme_system">सिस्टम</string>
+    <string name="theme_light">लाइट</string>
+    <string name="theme_dark">डार्क</string>
+    <string name="today">आज</string>
+    <string name="yesterday">कल</string>
+    <string name="pages_count">%1$d पेज</string>
+    <string name="clear_search">खोज साफ़ करें</string>
+    <string name="no_search_results">“%1$s” नाम की कोई ड्राइंग नहीं है</string>
+    <string name="no_search_results_desc">वर्तनी जाँचें या अपनी सभी ड्राइंग देखने के लिए खोज साफ़ करें।</string>
+    <string name="export_as_file">फ़ाइल के रूप में निर्यात करें</string>
+    <string name="import_drawing">आयात करें</string>
+    <string name="open">खोलें</string>
+    <string name="file_exported">फ़ाइल निर्यात की गई</string>
+    <string name="file_export_failed">फ़ाइल निर्यात नहीं की जा सकी</string>
+    <string name="drawing_imported">ड्राइंग आयात की गई</string>
+    <string name="import_not_canvas_file">यह फ़ाइल Canvas ड्राइंग नहीं है</string>
+    <string name="import_newer_version">यह ड्राइंग Canvas के नए संस्करण से बनाई गई थी। इसे खोलने के लिए ऐप अपडेट करें।</string>
+    <string name="import_damaged">यह Canvas फ़ाइल खराब हो गई है और इसे खोला नहीं जा सकता</string>
+    <string name="share_drawing">ड्राइंग साझा करें</string>
+    <string name="image_saved_to_pictures">Pictures/Canvas में सहेजा गया</string>
+    <string name="image_save_failed">इमेज सहेजी नहीं जा सकी</string>
+    <string name="image_saved_to_path">इमेज यहाँ सहेजी गई: %1$s</string>
+    <string name="image_save_failed_reason">इमेज सहेजी नहीं जा सकी: %1$s</string>
+    <string name="saved_title">सहेजा गया</string>
+    <string name="error_title">त्रुटि</string>
+    <string name="page_a4_portrait">A4 पोर्ट्रेट</string>
+    <string name="page_a4_landscape">A4 लैंडस्केप</string>
+    <string name="page_a3_portrait">A3 पोर्ट्रेट</string>
+    <string name="page_a3_landscape">A3 लैंडस्केप</string>
+    <string name="page_letter_portrait">लेटर पोर्ट्रेट</string>
+    <string name="page_letter_landscape">लेटर लैंडस्केप</string>
+    <string name="page_square">वर्ग</string>
+    <string name="short_date">%1$d %2$s %3$d</string>
+    <string-array name="months_short">
+        <item>जन॰</item>
+        <item>फ़र॰</item>
+        <item>मार्च</item>
+        <item>अप्रैल</item>
+        <item>मई</item>
+        <item>जून</item>
+        <item>जुल॰</item>
+        <item>अग॰</item>
+        <item>सित॰</item>
+        <item>अक्टू॰</item>
+        <item>नव॰</item>
+        <item>दिस॰</item>
+    </string-array>
 </resources>

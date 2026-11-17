@@ -39,8 +39,15 @@ import canvas.composeapp.generated.resources.delete
 import canvas.composeapp.generated.resources.delete_page_desc
 import canvas.composeapp.generated.resources.delete_page_title
 import canvas.composeapp.generated.resources.done
+import canvas.composeapp.generated.resources.page_a3_landscape
+import canvas.composeapp.generated.resources.page_a3_portrait
+import canvas.composeapp.generated.resources.page_a4_landscape
+import canvas.composeapp.generated.resources.page_a4_portrait
+import canvas.composeapp.generated.resources.page_letter_landscape
+import canvas.composeapp.generated.resources.page_letter_portrait
 import canvas.composeapp.generated.resources.page_size
 import canvas.composeapp.generated.resources.page_size_desc
+import canvas.composeapp.generated.resources.page_square
 import canvas.composeapp.generated.resources.paper_color
 import canvas.composeapp.generated.resources.pick_a_color
 import com.github.skydoves.colorpicker.compose.AlphaSlider
@@ -49,6 +56,7 @@ import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.rkbapps.canvas.ui.screens.drawing.DrawingAction
 import com.rkbapps.canvas.ui.screens.drawing.utils.paperPalette
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -157,20 +165,31 @@ fun PaperColorDialog(
     )
 }
 
-private data class PagePreset(val label: String, val width: Float, val height: Float)
+/**
+ * [label] is what gets stored with the drawing, so it stays in English;
+ * [title] is the translated name shown to the user.
+ */
+private data class PagePreset(val label: String, val title: StringResource, val width: Float, val height: Float)
 
 private val PAGE_PRESETS = listOf(
-    PagePreset("A4 Portrait", 794f, 1123f),
-    PagePreset("A4 Landscape", 1123f, 794f),
-    PagePreset("A3 Portrait", 1123f, 1587f),
-    PagePreset("A3 Landscape", 1587f, 1123f),
-    PagePreset("Letter Portrait", 816f, 1056f),
-    PagePreset("Letter Landscape", 1056f, 816f),
-    PagePreset("Square", 800f, 800f),
+    PagePreset("A4 Portrait", Res.string.page_a4_portrait, 794f, 1123f),
+    PagePreset("A4 Landscape", Res.string.page_a4_landscape, 1123f, 794f),
+    PagePreset("A3 Portrait", Res.string.page_a3_portrait, 1123f, 1587f),
+    PagePreset("A3 Landscape", Res.string.page_a3_landscape, 1587f, 1123f),
+    PagePreset("Letter Portrait", Res.string.page_letter_portrait, 816f, 1056f),
+    PagePreset("Letter Landscape", Res.string.page_letter_landscape, 1056f, 816f),
+    PagePreset("Square", Res.string.page_square, 800f, 800f),
 )
 
 /** Longest side among the presets; the sheet outlines are drawn relative to it. */
 private val LARGEST_SIDE = PAGE_PRESETS.maxOf { maxOf(it.width, it.height) }
+
+// Older drawings stored the square preset with its size in the label.
+private fun presetFor(label: String) = PAGE_PRESETS.firstOrNull { label.startsWith(it.label) }
+
+/** The translated name of the page size a drawing stores as [label]. */
+@Composable
+fun pageSizeName(label: String): String = presetFor(label)?.let { stringResource(it.title) } ?: label
 
 /**
  * Page size picker. Each preset is shown as a sheet outline drawn to scale with
@@ -181,9 +200,8 @@ fun PageSizePickerDialog(
     currentLabel: String,
     onAction: (DrawingAction) -> Unit,
 ) {
-    // Older drawings stored the square preset with its size in the label.
     var selected by remember {
-        mutableStateOf(PAGE_PRESETS.firstOrNull { currentLabel.startsWith(it.label) } ?: PAGE_PRESETS.first())
+        mutableStateOf(presetFor(currentLabel) ?: PAGE_PRESETS.first())
     }
     val dismiss = { onAction(DrawingAction.OnClosePageSizePicker) }
 
@@ -223,7 +241,7 @@ fun PageSizePickerDialog(
                             )
                         }
                         Text(
-                            text = preset.label,
+                            text = stringResource(preset.title),
                             modifier = Modifier.weight(1f),
                             style = MaterialTheme.typography.bodyLarge,
                             color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer

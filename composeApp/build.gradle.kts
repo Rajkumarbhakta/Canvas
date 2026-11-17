@@ -126,7 +126,7 @@ room {
 
 android {
     namespace = "com.rkbapps.canvas.shared"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 23

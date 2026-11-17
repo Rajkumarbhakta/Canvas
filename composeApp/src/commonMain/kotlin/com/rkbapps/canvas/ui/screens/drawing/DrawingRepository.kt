@@ -4,6 +4,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
+import canvas.composeapp.generated.resources.Res
+import canvas.composeapp.generated.resources.untitled_drawing
 import com.rkbapps.canvas.db.dao.DrawingDao
 import com.rkbapps.canvas.db.utils.toDomain
 import com.rkbapps.canvas.db.utils.toEntity
@@ -26,6 +28,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.compose.resources.getString
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -39,7 +42,7 @@ class DrawingRepository(
     val state = _state.asStateFlow()
 
     private val _currentDesign =
-        MutableStateFlow(SavedDesign(name = "Untitled drawing", state = DrawingState()))
+        MutableStateFlow(SavedDesign(name = "", state = DrawingState()))
     val currentDesign = _currentDesign.asStateFlow()
 
     private val _uiState = MutableStateFlow(DrawingScreenState())
@@ -60,6 +63,13 @@ class DrawingRepository(
                     // Propagate legacy flag into UI state
                     _uiState.update { ui -> ui.copy(isLegacy = design.isLegacy) }
                 }
+            }
+        }
+        if (draw.id == null) {
+            // A new drawing starts out named in the user's language.
+            CoroutineScope(Dispatchers.Default).launch {
+                val untitled = getString(Res.string.untitled_drawing)
+                _currentDesign.update { if (it.name.isBlank()) it.copy(name = untitled) else it }
             }
         }
     }

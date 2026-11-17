@@ -1,27 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Canvas</string>
-    <string name="cyclone">Cyclone</string>
-    <string name="open_github">GitHubを開く</string>
-    <string name="run">実行</string>
-    <string name="stop">停止</string>
     <string name="theme">テーマ</string>
     <string name="theme_description">アプリケーションのカラーテーマを選択してください</string>
-    <string name="edit_name">名前を編集</string>
-    <string name="save_project">プロジェクトを保存</string>
     <string name="save_as_image">画像として保存</string>
     <string name="share">共有</string>
-    <string name="clear">クリア</string>
-    <string name="clear_canvas">キャンバスをクリア</string>
     <string name="done">完了</string>
     <string name="cancel">キャンセル</string>
     <string name="edit_drawing_name">図面の名前を編集</string>
     <string name="enter_drawing_name">図面の名前を入力</string>
     <string name="name">名前</string>
-    <string name="erase">消しゴム</string>
     <string name="brush">ブラシ</string>
-    <string name="choose_brush_style">ブラシのスタイルを選択</string>
-    <string name="choose_shape">図形を選択</string>
     <string name="undo">元に戻す</string>
     <string name="redo">やり直し</string>
     <string name="my_designs">マイデザイン</string>
@@ -49,25 +38,16 @@
     <string name="shape_pentagon">五角形</string>
     <string name="shape_hexagon">六角形</string>
     <string name="draw">描く</string>
-    <string name="refresh">更新</string>
     <string name="settings">設定</string>
-    <string name="new_drawing">新しい図面</string>
     <string name="back">戻る</string>
     <string name="more_options">その他のオプション</string>
     <string name="untitled_drawing">無題の図面</string>
-    <string name="color_picker">カラーピッカー</string>
-    <string name="selected">選択済み</string>
     <string name="github">GitHub</string>
     <string name="mail">メール</string>
     <string name="search_here">ここで検索</string>
     <string name="confirm">確認</string>
     <string name="raise_a_issue">問題を報告</string>
     <string name="buy_me_a_coffee">コーヒーをおごる</string>
-    <string name="follow_system_theme">システムテーマに従う</string>
-    <string name="follow_system_theme_desc">システム設定に基づいてライトテーマまたはダークテーマを使用します。</string>
-    <string name="dark_theme">ダークテーマ</string>
-    <string name="dynamic_color">ダイナミックカラー</string>
-    <string name="dynamic_color_desc">よりパーソナライズされた体験のためにダイナミックカラーを有効にします。</string>
     <string name="privacy_policy">プライバシーポリシー</string>
     <string name="privacy_policy_desc">プライバシーポリシーを読む</string>
     <string name="english">英語</string>
@@ -89,4 +69,88 @@
     <string name="about">概要</string>
     <string name="personalization">パーソナライゼーション</string>
     <string name="app_version">v%1$s</string>
+    <string name="tool_select">選択</string>
+    <string name="tool_eraser">消しゴム</string>
+    <string name="tool_shape">図形</string>
+    <string name="save">保存</string>
+    <string name="drawing_saved">図面を保存しました</string>
+    <string name="rename">名前を変更</string>
+    <string name="focus_mode">フォーカスモード</string>
+    <string name="exit_focus_mode">フォーカスモードを終了</string>
+    <string name="tool_options">ツールオプション</string>
+    <string name="color">色</string>
+    <string name="custom_color">カスタムカラー</string>
+    <string name="pick_a_color">色を選択</string>
+    <string name="stroke_style">スタイル</string>
+    <string name="stroke_width">太さ</string>
+    <string name="paper">用紙</string>
+    <string name="paper_color">用紙の色</string>
+    <string name="page_size">ページサイズ</string>
+    <string name="page_size_desc">すでに描いたストロークのサイズと位置は変わりません。</string>
+    <string name="apply">適用</string>
+    <string name="pages">ページ</string>
+    <string name="page_number">ページ %1$d</string>
+    <string name="add_page">ページを追加</string>
+    <string name="delete_page">ページを削除</string>
+    <string name="delete_page_title">ページ %1$d を削除しますか？</string>
+    <string name="delete_page_desc">このページに描いた内容はすべて失われます。この操作は元に戻せません。</string>
+    <string name="previous_page">前のページ</string>
+    <string name="next_page">次のページ</string>
+    <string name="zoom_in">拡大</string>
+    <string name="zoom_out">縮小</string>
+    <string name="fit_to_screen">ページを画面に合わせる</string>
+    <string name="clear_page">ページをクリア</string>
+    <string name="clear_page_title">このページをクリアしますか？</string>
+    <string name="clear_page_desc">このページのストロークと図形がすべて削除されます。「元に戻す」で復元できます。</string>
+    <string name="select_hint">ストロークまたは図形をタップして選択し、ドラッグして移動します。空白部分をドラッグすると表示を移動でき、ピンチでズームできます。</string>
+    <string name="delete_selection">選択範囲を削除</string>
+    <string name="eraser_hint">ページ上をドラッグして消去します。</string>
+    <string name="appearance">外観</string>
+    <string name="theme_system">システム</string>
+    <string name="theme_light">ライト</string>
+    <string name="theme_dark">ダーク</string>
+    <string name="today">今日</string>
+    <string name="yesterday">昨日</string>
+    <string name="pages_count">%1$d ページ</string>
+    <string name="clear_search">検索をクリア</string>
+    <string name="no_search_results">「%1$s」という名前の図面はありません</string>
+    <string name="no_search_results_desc">入力内容を確認するか、検索をクリアしてすべての図面を表示してください。</string>
+    <string name="export_as_file">ファイルとしてエクスポート</string>
+    <string name="import_drawing">インポート</string>
+    <string name="open">開く</string>
+    <string name="file_exported">ファイルをエクスポートしました</string>
+    <string name="file_export_failed">ファイルをエクスポートできませんでした</string>
+    <string name="drawing_imported">図面をインポートしました</string>
+    <string name="import_not_canvas_file">このファイルは Canvas の図面ではありません</string>
+    <string name="import_newer_version">この図面は新しいバージョンの Canvas で作成されています。開くにはアプリを更新してください。</string>
+    <string name="import_damaged">この Canvas ファイルは破損しているため開けません</string>
+    <string name="share_drawing">図面を共有</string>
+    <string name="image_saved_to_pictures">Pictures/Canvas に保存しました</string>
+    <string name="image_save_failed">画像を保存できませんでした</string>
+    <string name="image_saved_to_path">画像の保存先: %1$s</string>
+    <string name="image_save_failed_reason">画像を保存できませんでした: %1$s</string>
+    <string name="saved_title">保存しました</string>
+    <string name="error_title">エラー</string>
+    <string name="page_a4_portrait">A4 縦</string>
+    <string name="page_a4_landscape">A4 横</string>
+    <string name="page_a3_portrait">A3 縦</string>
+    <string name="page_a3_landscape">A3 横</string>
+    <string name="page_letter_portrait">レター 縦</string>
+    <string name="page_letter_landscape">レター 横</string>
+    <string name="page_square">正方形</string>
+    <string name="short_date">%3$d年%2$s%1$d日</string>
+    <string-array name="months_short">
+        <item>1月</item>
+        <item>2月</item>
+        <item>3月</item>
+        <item>4月</item>
+        <item>5月</item>
+        <item>6月</item>
+        <item>7月</item>
+        <item>8月</item>
+        <item>9月</item>
+        <item>10月</item>
+        <item>11月</item>
+        <item>12月</item>
+    </string-array>
 </resources>

@@ -104,6 +104,7 @@ import canvas.composeapp.generated.resources.import_drawing
 import canvas.composeapp.generated.resources.import_newer_version
 import canvas.composeapp.generated.resources.import_not_canvas_file
 import canvas.composeapp.generated.resources.migrating_data
+import canvas.composeapp.generated.resources.months_short
 import canvas.composeapp.generated.resources.more_options
 import canvas.composeapp.generated.resources.my_designs
 import canvas.composeapp.generated.resources.no_designs
@@ -115,6 +116,7 @@ import canvas.composeapp.generated.resources.pages_count
 import canvas.composeapp.generated.resources.please_wait
 import canvas.composeapp.generated.resources.search_here
 import canvas.composeapp.generated.resources.settings
+import canvas.composeapp.generated.resources.short_date
 import canvas.composeapp.generated.resources.today
 import canvas.composeapp.generated.resources.untitled_drawing
 import canvas.composeapp.generated.resources.yesterday
@@ -142,6 +144,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.stringArrayResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.math.PI
@@ -606,8 +609,6 @@ private fun List<PathData>.boundsOrNull(): Rect? =
         Rect(minOf(a.left, b.left), minOf(a.top, b.top), maxOf(a.right, b.right), maxOf(a.bottom, b.bottom))
     }
 
-private val MonthNames = listOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
-
 /** "Today", "Yesterday", or a short date. */
 @Composable
 private fun dateLabel(time: Instant): String {
@@ -616,7 +617,10 @@ private fun dateLabel(time: Instant): String {
     return when (date.daysUntil(Clock.System.now().toLocalDateTime(zone).date)) {
         0 -> stringResource(Res.string.today)
         1 -> stringResource(Res.string.yesterday)
-        else -> "${date.day} ${MonthNames[date.month.number - 1]} ${date.year}"
+        else -> {
+            val month = stringArrayResource(Res.array.months_short)[date.month.number - 1]
+            stringResource(Res.string.short_date, date.day, month, date.year)
+        }
     }
 }
 

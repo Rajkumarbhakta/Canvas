@@ -1,27 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Canvas</string>
-    <string name="cyclone">Cyclone</string>
-    <string name="open_github">GitHub খুলুন</string>
-    <string name="run">চালান</string>
-    <string name="stop">থামুন</string>
     <string name="theme">থিম</string>
     <string name="theme_description">অ্যাপ্লিকেশনের রঙের থিম চয়ন করুন</string>
-    <string name="edit_name">নাম সম্পাদনা করুন</string>
-    <string name="save_project">প্রকল্প সংরক্ষণ করুন</string>
     <string name="save_as_image">ছবি হিসেবে সংরক্ষণ করুন</string>
     <string name="share">শেয়ার করুন</string>
-    <string name="clear">মুছে ফেলুন</string>
-    <string name="clear_canvas">ক্যানভাস মুছুন</string>
     <string name="done">সম্পন্ন</string>
     <string name="cancel">বাতিল করুন</string>
     <string name="edit_drawing_name">অঙ্কনের নাম সম্পাদনা করুন</string>
     <string name="enter_drawing_name">অঙ্কনের নাম লিখুন</string>
     <string name="name">নাম</string>
-    <string name="erase">মুছে ফেলা</string>
     <string name="brush">ব্রাশ</string>
-    <string name="choose_brush_style">ব্রাশ শৈলী চয়ন করুন</string>
-    <string name="choose_shape">আকৃতি চয়ন করুন</string>
     <string name="undo">পূর্বাবস্থায় ফিরুন</string>
     <string name="redo">পুনরায় করুন</string>
     <string name="my_designs">আমার ডিজাইন</string>
@@ -49,25 +38,16 @@
     <string name="shape_pentagon">পঞ্চভুজ</string>
     <string name="shape_hexagon">ষড়ভুজ</string>
     <string name="draw">আঁকুন</string>
-    <string name="refresh">রিফ্রেশ করুন</string>
     <string name="settings">সেটিংস</string>
-    <string name="new_drawing">নতুন অঙ্কন</string>
     <string name="back">পিছনে</string>
     <string name="more_options">আরও বিকল্প</string>
     <string name="untitled_drawing">শিরোনামহীন অঙ্কন</string>
-    <string name="color_picker">রঙ নির্বাচক</string>
-    <string name="selected">নির্বাচিত</string>
     <string name="github">GitHub</string>
     <string name="mail">মেইল</string>
     <string name="search_here">এখানে খুঁজুন</string>
     <string name="confirm">নিশ্চিত করুন</string>
     <string name="raise_a_issue">সমস্যা রিপোর্ট করুন</string>
     <string name="buy_me_a_coffee">আমাকে একটি কফি খাওয়ান</string>
-    <string name="follow_system_theme">সিস্টেম থিম অনুসরণ করুন</string>
-    <string name="follow_system_theme_desc">আপনার সিস্টেম সেটিংসের উপর ভিত্তি করে লাইট বা ডার্ক থিম ব্যবহার করুন।</string>
-    <string name="dark_theme">ডার্ক থিম</string>
-    <string name="dynamic_color">ডায়নামিক রঙ</string>
-    <string name="dynamic_color_desc">আরও ব্যক্তিগত অভিজ্ঞতার জন্য ডায়নামিক রঙ সক্রিয় করুন।</string>
     <string name="privacy_policy">গোপনীয়তা নীতি</string>
     <string name="privacy_policy_desc">গোপনীয়তা নীতি পড়ুন</string>
     <string name="english">ইংরেজি</string>
@@ -89,4 +69,88 @@
     <string name="about">সম্পর্কে</string>
     <string name="personalization">ব্যক্তিগতকরণ</string>
     <string name="app_version">v%1$s</string>
-    </resources>
+    <string name="tool_select">নির্বাচন</string>
+    <string name="tool_eraser">ইরেজার</string>
+    <string name="tool_shape">আকৃতি</string>
+    <string name="save">সংরক্ষণ করুন</string>
+    <string name="drawing_saved">অঙ্কন সংরক্ষিত হয়েছে</string>
+    <string name="rename">নাম পরিবর্তন করুন</string>
+    <string name="focus_mode">ফোকাস মোড</string>
+    <string name="exit_focus_mode">ফোকাস মোড থেকে বেরিয়ে আসুন</string>
+    <string name="tool_options">টুলের বিকল্প</string>
+    <string name="color">রঙ</string>
+    <string name="custom_color">কাস্টম রঙ</string>
+    <string name="pick_a_color">একটি রঙ বেছে নিন</string>
+    <string name="stroke_style">শৈলী</string>
+    <string name="stroke_width">পুরুত্ব</string>
+    <string name="paper">কাগজ</string>
+    <string name="paper_color">কাগজের রঙ</string>
+    <string name="page_size">পৃষ্ঠার আকার</string>
+    <string name="page_size_desc">আপনার আগে আঁকা স্ট্রোকগুলির আকার ও অবস্থান একই থাকবে।</string>
+    <string name="apply">প্রয়োগ করুন</string>
+    <string name="pages">পৃষ্ঠা</string>
+    <string name="page_number">পৃষ্ঠা %1$d</string>
+    <string name="add_page">পৃষ্ঠা যোগ করুন</string>
+    <string name="delete_page">পৃষ্ঠা মুছে ফেলুন</string>
+    <string name="delete_page_title">পৃষ্ঠা %1$d মুছে ফেলবেন?</string>
+    <string name="delete_page_desc">এই পৃষ্ঠায় আঁকা সবকিছু হারিয়ে যাবে। এটি পূর্বাবস্থায় ফেরানো যাবে না।</string>
+    <string name="previous_page">আগের পৃষ্ঠা</string>
+    <string name="next_page">পরের পৃষ্ঠা</string>
+    <string name="zoom_in">জুম ইন করুন</string>
+    <string name="zoom_out">জুম আউট করুন</string>
+    <string name="fit_to_screen">পৃষ্ঠাটি স্ক্রিনে ফিট করুন</string>
+    <string name="clear_page">পৃষ্ঠা পরিষ্কার করুন</string>
+    <string name="clear_page_title">এই পৃষ্ঠাটি পরিষ্কার করবেন?</string>
+    <string name="clear_page_desc">এই পৃষ্ঠার সব স্ট্রোক ও আকৃতি সরিয়ে ফেলা হবে। আপনি “পূর্বাবস্থায় ফিরুন” দিয়ে সেগুলি ফিরিয়ে আনতে পারবেন।</string>
+    <string name="select_hint">কোনো স্ট্রোক বা আকৃতি নির্বাচন করতে সেটিতে ট্যাপ করুন, তারপর সরাতে টেনে আনুন। প্যান করতে ফাঁকা জায়গা টানুন এবং জুম করতে পিঞ্চ করুন।</string>
+    <string name="delete_selection">নির্বাচিত অংশ মুছে ফেলুন</string>
+    <string name="eraser_hint">মুছতে পৃষ্ঠার উপর দিয়ে টানুন।</string>
+    <string name="appearance">চেহারা</string>
+    <string name="theme_system">সিস্টেম</string>
+    <string name="theme_light">লাইট</string>
+    <string name="theme_dark">ডার্ক</string>
+    <string name="today">আজ</string>
+    <string name="yesterday">গতকাল</string>
+    <string name="pages_count">%1$d পৃষ্ঠা</string>
+    <string name="clear_search">অনুসন্ধান মুছুন</string>
+    <string name="no_search_results">“%1$s” নামে কোনো অঙ্কন নেই</string>
+    <string name="no_search_results_desc">বানান পরীক্ষা করুন, অথবা আপনার সব অঙ্কন দেখতে অনুসন্ধান মুছুন।</string>
+    <string name="export_as_file">ফাইল হিসেবে এক্সপোর্ট করুন</string>
+    <string name="import_drawing">ইম্পোর্ট করুন</string>
+    <string name="open">খুলুন</string>
+    <string name="file_exported">ফাইল এক্সপোর্ট হয়েছে</string>
+    <string name="file_export_failed">ফাইলটি এক্সপোর্ট করা যায়নি</string>
+    <string name="drawing_imported">অঙ্কন ইম্পোর্ট হয়েছে</string>
+    <string name="import_not_canvas_file">এই ফাইলটি Canvas অঙ্কন নয়</string>
+    <string name="import_newer_version">এই অঙ্কনটি Canvas-এর নতুন সংস্করণ দিয়ে তৈরি। এটি খুলতে অ্যাপটি আপডেট করুন।</string>
+    <string name="import_damaged">এই Canvas ফাইলটি ক্ষতিগ্রস্ত এবং খোলা যাচ্ছে না</string>
+    <string name="share_drawing">অঙ্কন শেয়ার করুন</string>
+    <string name="image_saved_to_pictures">Pictures/Canvas-এ সংরক্ষিত হয়েছে</string>
+    <string name="image_save_failed">ছবি সংরক্ষণ করা যায়নি</string>
+    <string name="image_saved_to_path">ছবি এখানে সংরক্ষিত হয়েছে: %1$s</string>
+    <string name="image_save_failed_reason">ছবি সংরক্ষণ করা যায়নি: %1$s</string>
+    <string name="saved_title">সংরক্ষিত</string>
+    <string name="error_title">ত্রুটি</string>
+    <string name="page_a4_portrait">A4 পোর্ট্রেট</string>
+    <string name="page_a4_landscape">A4 ল্যান্ডস্কেপ</string>
+    <string name="page_a3_portrait">A3 পোর্ট্রেট</string>
+    <string name="page_a3_landscape">A3 ল্যান্ডস্কেপ</string>
+    <string name="page_letter_portrait">লেটার পোর্ট্রেট</string>
+    <string name="page_letter_landscape">লেটার ল্যান্ডস্কেপ</string>
+    <string name="page_square">বর্গক্ষেত্র</string>
+    <string name="short_date">%1$d %2$s %3$d</string>
+    <string-array name="months_short">
+        <item>জানু</item>
+        <item>ফেব</item>
+        <item>মার্চ</item>
+        <item>এপ্রিল</item>
+        <item>মে</item>
+        <item>জুন</item>
+        <item>জুলাই</item>
+        <item>আগস্ট</item>
+        <item>সেপ্টে</item>
+        <item>অক্টো</item>
+        <item>নভে</item>
+        <item>ডিসে</item>
+    </string-array>
+</resources>
